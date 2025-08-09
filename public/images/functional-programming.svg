@@ -1,0 +1,12 @@
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="400" height="300" fill="#f8fafc"/>
+  <rect x="50" y="50" width="300" height="200" fill="#e2e8f0" rx="10"/>
+  <rect x="80" y="80" width="40" height="40" fill="#3b82f6" rx="5"/>
+  <rect x="140" y="80" width="40" height="40" fill="#8b5cf6" rx="5"/>
+  <rect x="200" y="80" width="40" height="40" fill="#10b981" rx="5"/>
+  <rect x="260" y="80" width="40" height="40" fill="#f59e0b" rx="5"/>
+  <rect x="80" y="140" width="220" height="6" fill="#6b7280" rx="3"/>
+  <rect x="80" y="160" width="180" height="6" fill="#9ca3af" rx="3"/>
+  <rect x="80" y="180" width="140" height="6" fill="#d1d5db" rx="3"/>
+  <text x="200" y="250" text-anchor="middle" fill="#6b7280" font-family="Arial, sans-serif" font-size="14">Functional Programming</text>
+</svg>
