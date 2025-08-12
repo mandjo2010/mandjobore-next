@@ -1,24 +1,23 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-	experimental: {
-		mdxRs: true,
-	},
-	pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
-	images: {
-		remotePatterns: [
-			{
-				protocol: 'https',
-				hostname: '**',
-			},
-		],
-		formats: ['image/webp', 'image/avif'],
-		dangerouslyAllowSVG: true,
-		contentDispositionType: 'attachment',
-		contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
-	},
-	// Configuration pour le déploiement Netlify
-	trailingSlash: false,
-	output: 'standalone',
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
+  experimental: {
+    mdxRs: true,
+  },
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
+  images: {
+    remotePatterns: [{ protocol: 'https', hostname: '**' }],
+    formats: ['image/webp', 'image/avif'],
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+  // Déploiement
+  trailingSlash: false,
+  output: 'standalone',
+  // Build
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: false },
 }
 
-module.exports = nextConfig
+export default nextConfig

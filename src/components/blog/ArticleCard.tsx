@@ -51,7 +51,7 @@ export default function ArticleCard({ post }: ArticleCardProps) {
 
           {/* Lien */}
           <button className="text-blue-600 hover:text-blue-700 font-medium text-sm flex items-center space-x-1 transition-colors mb-4">
-            <span>Lire l'article</span>
+            <span>Lire l&apos;article</span>
             <ArrowRight size={16} />
           </button>
 

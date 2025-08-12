@@ -1,29 +1,47 @@
-import { SiteConfig } from '@/types'
+export type NavLink = { label: string; href: string }
 
-export const siteConfig: SiteConfig = {
-	title: 'Mandjo Béa Boré',
-	description: 'Data analyst - Python Developer',
+export type SiteConfig = {
+	name: string
+	url: string
+	siteUrl?: string
+	description: string
 	author: {
-		name: 'Mandjo Béa Boré',
-		bio: 'Data analyst passionné par la visualisation de données, le développement Python et les technologies géospatiales.',
-		avatar: '/images/avatar.svg',
-		social: {
-			twitter: '#',
-			linkedin: '#',
-			github: '#',
-			email: 'contact@mandjobore.com',
-		},
-	},
-	siteUrl: 'https://www.mandjobore.com',
+		name: string
+		title?: string
+		bio?: string
+		avatar?: string
+	}
+	links: {
+		github?: string
+		linkedin?: string
+		twitter?: string
+		email?: string
+	}
+	footerNav: NavLink[]
 }
 
-export const navigationItems = [
-	{ title: 'Accueil', href: '/' },
-	{ title: 'Blog', href: '/blog' },
-	{ title: 'Cartographie', href: '/starters' },
-	{ title: 'Portfolio', href: '/starters' },
-	{ title: 'À propos', href: '/about' },
-	{ title: 'Contact', href: '/contact' },
-]
-
-export const categories = ['Data viz', 'Satellite', 'Spatial Data', 'Agro']
+export const siteConfig: SiteConfig = {
+	name: 'Mandjo Béa Boré',
+	url: 'https://www.mandjobore.com',
+	siteUrl: 'https://www.mandjobore.com',
+	description:
+		'Design and build applications to support data including spatial & geospatial ones.',
+	author: {
+		name: 'Mandjo Béa Boré',
+		title: 'Data analyst - Developer',
+		bio: 'I enjoy coding and the challenge of learning something new every day.',
+		// avatar: '/images/avatar.jpg', // optionnel si tu en as un
+	},
+	links: {
+		github: 'https://github.com/mandjo2010',
+		linkedin: 'https://www.linkedin.com/in/mandjobore/',
+		twitter: 'https://twitter.com/mandjobore',
+		email: 'mailto:boremandjo@gmail.com',
+	},
+	footerNav: [
+		{ label: 'about', href: '/about' },
+		{ label: 'cartography', href: '/cartography' },
+		{ label: 'portfolio', href: '/portfolio' },
+		{ label: 'contact', href: '/contact' },
+	],
+}

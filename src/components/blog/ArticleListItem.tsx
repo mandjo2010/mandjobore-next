@@ -1,54 +1,90 @@
-import Image from 'next/image'
+import * as React from 'react'
 import Link from 'next/link'
+import {
+	ListItemButton,
+	ListItemAvatar,
+	Avatar,
+	ListItemText,
+	Typography,
+} from '@mui/material'
 import type { Post } from '@/types'
+import { Chip } from '@mui/material'
+import { normalizeCategory, toLabel } from '@/lib/categories'
 
-interface ArticleListItemProps {
-  post: Post
-}
+/**
+ * Item de la liste d’articles, 100% client-safe.
+ */
+export default function ArticleListItem({
+	post,
+	active = false,
+}: {
+	post: Post
+	active?: boolean
+}) {
+	const href = `/posts/${post.slug}`
+	const coverSrc = post.coverImage
+	const catSlug = normalizeCategory(post.category || '')
+	const catLabel = catSlug ? toLabel(catSlug) : ''
 
-export default function ArticleListItem({ post }: ArticleListItemProps) {
-  return (
-    <article className="group hover:bg-gray-25 transition-colors duration-200 cursor-pointer py-4">
-      <Link href={`/posts/${post.slug}`} className="block">
-        <div className="flex items-start space-x-4">
-          {/* Thumbnail ovale penchée - Plus proche de la sidebar gauche */}
-          <div className="flex-shrink-0 -ml-2">
-            <div 
-              className="relative w-20 h-20 rounded-full overflow-hidden bg-gray-200 transform -rotate-[65deg] group-hover:rotate-[65deg] transition-transform duration-300 ease-out"
-              style={{ clipPath: 'ellipse(38px 35px at 50% 50%)' }}
-            >
-              {post.coverImage ? (
-                <Image
-                  src={post.coverImage}
-                  alt={post.title}
-                  fill
-                  className="object-cover transform rotate-[65deg]"
-                  sizes="80px"
-                />
-              ) : (
-                <div className="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
-                  <span className="text-white font-semibold text-lg transform rotate-[65deg]">
-                    {post.title.charAt(0).toUpperCase()}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
+	return (
+		<Link href={href} passHref legacyBehavior>
+			<ListItemButton
+				component='a'
+				selected={active}
+				data-testid='post-card'
+				data-category={catSlug}
+				sx={{
+					gap: 2,
+					py: 1.25,
+					alignItems: 'center',
+					'&.Mui-selected': {
+						backgroundColor: 'action.hover',
+					},
+				}}
+			>
+				<ListItemAvatar sx={{ minWidth: 56 }}>
+					<Avatar
+						src={coverSrc}
+						alt={post.title}
+						sx={{ width: 48, height: 48 }}
+						variant='circular'
+					/>
+				</ListItemAvatar>
 
-          {/* Contenu textuel uniquement */}
-          <div className="flex-1 min-w-0 pl-2">
-            {/* Titre */}
-            <h2 className="text-xl font-medium text-gray-900 mb-2 leading-tight">
-              {post.title}
-            </h2>
-            
-            {/* Description */}
-            <p className="text-gray-600 text-base leading-relaxed">
-              {post.excerpt || post.description}
-            </p>
-          </div>
-        </div>
-      </Link>
-    </article>
-  )
+				<ListItemText
+					primary={
+						<>
+							<Typography
+								variant='h6'
+								sx={{ fontWeight: 600, lineHeight: 1.2 }}
+							>
+								{post.title}
+							</Typography>
+							{catSlug && (
+								<Chip
+									label={catLabel}
+									size='small'
+									aria-label={`Catégorie : ${catLabel}`}
+									sx={{ mt: 0.5 }}
+								/>
+							)}
+						</>
+					}
+					secondary={
+						post.excerpt ? (
+							<Typography
+								component='span'
+								variant='body2'
+								sx={{
+									color: (t) => t.main.colors.meta,
+								}}
+							>
+								{post.excerpt}
+							</Typography>
+						) : null
+					}
+				/>
+			</ListItemButton>
+		</Link>
+	)
 }

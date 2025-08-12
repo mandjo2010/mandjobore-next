@@ -1,28 +1,68 @@
-import { type ClassValue, clsx } from 'clsx'
-import { twMerge } from 'tailwind-merge'
+// src/lib/utils.ts
 
-export function cn(...inputs: ClassValue[]) {
-	return twMerge(clsx(inputs))
+// Petite fonction pour composer des classes (équivalent clsx)
+export function cn(
+	...values: Array<string | false | null | undefined | Record<string, boolean>>
+): string {
+	const out: string[] = []
+
+	for (const v of values) {
+		if (!v) continue
+		if (typeof v === 'string') {
+			out.push(v)
+		} else {
+			for (const [k, ok] of Object.entries(v)) {
+				if (ok) out.push(k)
+			}
+		}
+	}
+	// Déduplique proprement
+	return Array.from(new Set(out.join(' ').trim().split(/\s+/))).join(' ')
 }
 
-export function formatDate(dateString: string): string {
-	const date = new Date(dateString)
-	return date.toLocaleDateString('fr-FR', {
-		year: 'numeric',
-		month: 'long',
-		day: 'numeric',
-	})
+// Helpers génériques (facultatifs mais utiles partout)
+export const isBrowser = typeof window !== 'undefined'
+
+export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+export function throttle<F extends (...args: unknown[]) => void>(
+	fn: F,
+	wait = 200
+): F {
+	let last = 0
+	let timer: ReturnType<typeof setTimeout> | undefined
+	return function (this: unknown, ...args: Parameters<F>) {
+		const now = Date.now()
+		const remaining = wait - (now - last)
+		if (remaining <= 0) {
+			last = now
+			fn.apply(this as unknown as ThisParameterType<F>, args)
+		} else {
+			if (timer) clearTimeout(timer)
+			timer = setTimeout(() => {
+				last = Date.now()
+				fn.apply(this as unknown as ThisParameterType<F>, args)
+			}, remaining)
+		}
+	} as F
 }
 
-export function slugify(text: string): string {
-	return text
+export function slugify(input: string): string {
+	return input
 		.toLowerCase()
-		.replace(/[^\w\s-]/g, '')
-		.replace(/[\s_-]+/g, '-')
-		.replace(/^-+|-+$/g, '')
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/(^-|-$)/g, '')
 }
 
-export function truncateText(text: string, length: number): string {
-	if (text.length <= length) return text
-	return text.substring(0, length) + '...'
+export function formatDate(iso: string, locale = 'fr-FR') {
+	const d = new Date(iso)
+	return isNaN(d.getTime())
+		? iso
+		: d.toLocaleDateString(locale, {
+				year: 'numeric',
+				month: 'long',
+				day: 'numeric',
+		  })
 }

@@ -1,68 +1,72 @@
-'use client'
+import * as React from 'react'
+import Link from 'next/link'
+import { Box, Container, Stack, Typography } from '@mui/material'
+import { useTheme } from '@mui/material/styles'
+import type { Theme } from '@mui/material/styles'
 
-import { useState } from 'react'
-import { Search, Sun, Moon, Menu, X } from 'lucide-react'
-import { useTheme } from 'next-themes'
+type NavLink = { label: string; href: string }
+
+const NAV: NavLink[] = [
+	{ label: 'About', href: '/pages/1--about' }, // mappe les contenus présents
+	{ label: 'Cartography', href: '/pages/2--starters' },
+	// { label: "Portfolio", href: "/pages/portfolio" }, // ajoute quand tu auras la page
+	// { label: "Contact", href: "/pages/contact" },
+]
 
 export default function Header() {
-  const [isSearchOpen, setIsSearchOpen] = useState(false)
-  const { theme, setTheme } = useTheme()
+	const t = useTheme() as Theme & import('@/types/theme').CustomTheme
 
-  return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-20">
-      <div className="px-8 py-4">
-        <div className="flex items-center justify-between">
-          {/* Navigation principale */}
-          <nav className="flex items-center space-x-8">
-            <span className="text-sm font-medium text-gray-900 border-b-2 border-blue-600 pb-1">
-              all posts
-            </span>
-          </nav>
+	return (
+		<Box
+			component='header'
+			sx={{
+				height: t.bars.sizes.infoBar,
+				color: t.bars.colors.text,
+				bgcolor: t.bars.colors.background,
+				borderBottom: `1px solid ${t.base.colors.lines}`,
+			}}
+		>
+			<Container
+				maxWidth='lg'
+				sx={{ height: 1, display: 'flex', alignItems: 'center' }}
+			>
+				<Stack
+					direction='row'
+					alignItems='center'
+					justifyContent='space-between'
+					sx={{ width: 1 }}
+				>
+					<Typography sx={{ fontWeight: 600 }}>
+						Mandjo&nbsp;Béa&nbsp;Boré
+						<Typography
+							component='span'
+							sx={{
+								ml: 1,
+								color: t.main.colors.meta,
+								fontSize: 14,
+							}}
+						>
+							Data analyst · Developer
+						</Typography>
+					</Typography>
 
-          {/* Actions */}
-          <div className="flex items-center space-x-3">
-            {/* Search */}
-            <button
-              onClick={() => setIsSearchOpen(true)}
-              className="p-2 text-gray-500 hover:text-gray-700 transition-colors rounded-md hover:bg-gray-100"
-              aria-label="Search"
-            >
-              <Search className="w-5 h-5" />
-            </button>
-
-            {/* Theme toggle */}
-            <button
-              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-              className="p-2 text-gray-500 hover:text-gray-700 transition-colors rounded-md hover:bg-gray-100"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? (
-                <Sun className="w-5 h-5" />
-              ) : (
-                <Moon className="w-5 h-5" />
-              )}
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Search Modal */}
-      {isSearchOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50" onClick={() => setIsSearchOpen(false)}>
-          <div className="flex items-start justify-center pt-16 px-4">
-            <div className="bg-white rounded-lg shadow-xl w-full max-w-lg" onClick={(e) => e.stopPropagation()}>
-              <div className="p-4">
-                <input
-                  type="text"
-                  placeholder="Search articles..."
-                  className="w-full px-4 py-3 text-gray-900 bg-gray-100 border-0 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  autoFocus
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-    </header>
-  )
+					<Stack
+						direction='row'
+						spacing={3}
+						sx={{ a: { fontWeight: 600 } }}
+					>
+						{NAV.map((n) => (
+							<Link
+								key={n.label}
+								href={n.href}
+								style={{ color: t.bars.colors.text }}
+							>
+								{n.label}
+							</Link>
+						))}
+					</Stack>
+				</Stack>
+			</Container>
+		</Box>
+	)
 }
