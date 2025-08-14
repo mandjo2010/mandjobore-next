@@ -1,5 +1,6 @@
-import Link from 'next/link'
 import { Calendar, Clock, ArrowRight } from 'lucide-react'
+import Link from 'next/link'
+
 import type { Post } from '@/types'
 
 interface ArticleCardProps {
@@ -28,8 +29,8 @@ export default function ArticleCard({ post }: ArticleCardProps) {
             <div className="flex items-center space-x-1">
               <Calendar size={14} />
               <span>{new Date(post.date).toLocaleDateString('en-US', {
-                month: 'short',
                 day: 'numeric',
+                month: 'short',
                 year: 'numeric'
               })}</span>
             </div>

@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import Link from 'next/link'
 import Fuse from 'fuse.js'
+import Link from 'next/link'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 export type SearchItem = { title: string; slug: string; description?: string }
 
@@ -18,7 +18,7 @@ export default function SearchOverlay({ isOpen, onClose, posts }: SearchOverlayP
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   // Fuse index
-  const fuse = useMemo(() => new Fuse<SearchItem>(posts, { keys: ['title', 'description'], threshold: 0.35, includeScore: true }), [posts])
+  const fuse = useMemo(() => new Fuse<SearchItem>(posts, { includeScore: true, keys: ['title', 'description'], threshold: 0.35 }), [posts])
 
   // Handle mount/unmount for fade in/out
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function SearchOverlay({ isOpen, onClose, posts }: SearchOverlayP
     const r = fuse
       .search(query)
       .slice(0, 20)
-      .map((x) => ({ title: x.item.title, slug: x.item.slug, description: x.item.description }))
+      .map((x) => ({ description: x.item.description, slug: x.item.slug, title: x.item.title }))
     setResults(r)
   }, [query, fuse])
 

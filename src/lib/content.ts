@@ -1,6 +1,8 @@
 import fs from "fs";
 import path from "path";
+
 import matter from "gray-matter";
+
 import type { FrontMatter, MDEntry } from "@/types";
 
 const CONTENT_DIR = path.join(process.cwd(), "public", "content");
@@ -30,8 +32,8 @@ function rewriteRelativeImages(md: string, type: string, slug: string) {
 export function getBySlug(type: "posts" | "pages", slug: string): MDEntry {
   const file = path.join(CONTENT_DIR, type, slug, "index.md");
   const raw = fs.readFileSync(file, "utf8");
-  const { data, content } = matter(raw);
-  return { slug, data: data as FrontMatter, content: rewriteRelativeImages(content, type, slug) };
+  const { content, data } = matter(raw);
+  return { content: rewriteRelativeImages(content, type, slug), data: data as FrontMatter, slug };
 }
 
 export function getAll(type: "posts" | "pages"): MDEntry[] {

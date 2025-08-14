@@ -7,10 +7,10 @@ export default function useScrollToTop(container?: HTMLElement | null) {
     if (!target) return
 
     if (target === win) {
-      win!.scrollTo({ top: 0, behavior: 'smooth' })
+      win!.scrollTo({ behavior: 'smooth', top: 0 })
     } else {
       // HTMLElement has optional scrollTo in lib.dom
-      ;(target as HTMLElement).scrollTo?.({ top: 0, behavior: 'smooth' })
+      ;(target as HTMLElement).scrollTo?.({ behavior: 'smooth', top: 0 })
     }
   }, [container])
 }

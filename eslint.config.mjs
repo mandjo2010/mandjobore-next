@@ -4,6 +4,8 @@ import tseslint from 'typescript-eslint'
 import nextPlugin from '@next/eslint-plugin-next'
 import reactHooks from 'eslint-plugin-react-hooks'
 import react from 'eslint-plugin-react'
+import perfectionist from 'eslint-plugin-perfectionist'
+import jsxA11y from 'eslint-plugin-jsx-a11y'
 import globals from 'globals'
 
 export default [
@@ -38,6 +40,8 @@ export default [
       '@next/next': nextPlugin,
       'react-hooks': reactHooks,
       react,
+      perfectionist,
+      'jsx-a11y': jsxA11y,
     },
     settings: { react: { version: 'detect' } },
     rules: {
@@ -51,6 +55,22 @@ export default [
       '@next/next/no-img-element': 'off',
       // JS ergonomie
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
+      // Perfectionist - Organisation imports et objets
+      'perfectionist/sort-imports': ['warn', { 
+        type: 'natural', 
+        groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index']], 
+        newlinesBetween: 'always' 
+      }],
+      'perfectionist/sort-objects': ['warn', { type: 'natural' }],
+      // Accessibilité (jsx-a11y) - Règles essentielles
+      'jsx-a11y/alt-text': 'warn',
+      'jsx-a11y/anchor-is-valid': 'warn',
+      'jsx-a11y/aria-props': 'error',
+      'jsx-a11y/aria-role': 'error',
+      'jsx-a11y/click-events-have-key-events': 'warn',
+      'jsx-a11y/heading-has-content': 'warn',
+      'jsx-a11y/img-redundant-alt': 'warn',
+      'jsx-a11y/no-static-element-interactions': 'warn',
     },
   },
 
@@ -72,6 +92,8 @@ export default [
       '@next/next': nextPlugin,
       'react-hooks': reactHooks,
       react,
+      perfectionist,
+      'jsx-a11y': jsxA11y,
     },
     settings: { react: { version: 'detect' } },
     rules: {
@@ -82,6 +104,22 @@ export default [
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@next/next/no-img-element': 'off',
+      // Perfectionist - Organisation imports et objets
+      'perfectionist/sort-imports': ['warn', { 
+        type: 'natural', 
+        groups: ['builtin', 'external', 'internal', ['parent', 'sibling', 'index']], 
+        newlinesBetween: 'always' 
+      }],
+      'perfectionist/sort-objects': ['warn', { type: 'natural' }],
+      // Accessibilité (jsx-a11y) - Règles essentielles
+      'jsx-a11y/alt-text': 'warn',
+      'jsx-a11y/anchor-is-valid': 'warn',
+      'jsx-a11y/aria-props': 'error',
+      'jsx-a11y/aria-role': 'error',
+      'jsx-a11y/click-events-have-key-events': 'warn',
+      'jsx-a11y/heading-has-content': 'warn',
+      'jsx-a11y/img-redundant-alt': 'warn',
+      'jsx-a11y/no-static-element-interactions': 'warn',
     },
   },
 
@@ -93,7 +131,7 @@ export default [
       ...(cfg.languageOptions ?? {}),
       parserOptions: {
         ...(cfg.languageOptions?.parserOptions ?? {}),
-        projectService: true,
+        project: './tsconfig.json',
         tsconfigRootDir: import.meta.dirname,
       },
     },

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
 import Link from 'next/link'
+import React, { useState } from 'react'
 
 export default function LeftSidebar({ posts }: { posts: Array<{ slug: string; title: string }> }) {
   const [expanded, setExpanded] = useState(false)

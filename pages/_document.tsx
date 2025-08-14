@@ -1,7 +1,7 @@
-import * as React from 'react'
-import Document, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from 'next/document'
 import createCache from '@emotion/cache'
 import createEmotionServer from '@emotion/server/create-instance'
+import Document, { Html, Head, Main, NextScript, DocumentContext, DocumentInitialProps } from 'next/document'
+import * as React from 'react'
 
 function createEmotionCache() {
 	return createCache({ key: 'css', prepend: true })

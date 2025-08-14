@@ -6,19 +6,23 @@ interface ThreeColumnLayoutProps {
   right?: React.ReactNode
 }
 
-export default function ThreeColumnLayout({ left, center, right }: ThreeColumnLayoutProps) {
+export default function ThreeColumnLayout({ center, left, right }: ThreeColumnLayoutProps) {
   return (
-    <div className="min-h-screen bg-white">
-      <div className="mx-auto max-w-[1200px]">
+    <div className="min-h-screen bg-white layout-container">
+      <div className="mx-auto max-w-[1200px] relative">
         <div className="flex min-h-screen">
           {/* Left */}
-          <aside className="hidden md:block w-[280px] border-r border-gray-200 overflow-y-auto">{left}</aside>
+          <aside className="hidden md:block w-[280px] overflow-y-auto relative">
+            {left}
+          </aside>
 
           {/* Center */}
-          <main className="flex-1 min-w-0 overflow-y-auto">{center}</main>
+          <main className="flex-1 min-w-0 overflow-y-auto px-6 main-content">{center}</main>
 
           {/* Right */}
-          <aside className="hidden lg:block w-[60px] border-l border-gray-200">{right}</aside>
+          <aside className="hidden lg:block w-[60px] relative">
+            {right}
+          </aside>
         </div>
       </div>
     </div>

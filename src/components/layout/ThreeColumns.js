@@ -1,40 +1,40 @@
-import { styled } from '@mui/material/styles'
 import Box from '@mui/material/Box'
+import { styled } from '@mui/material/styles'
 
 export const Shell = styled('div')(({ theme }) => ({
 	display: 'grid',
-	gridTemplateColumns: '320px 1fr 320px',
 	gap: '24px',
-	maxWidth: '1280px',
+	gridTemplateColumns: '320px 1fr 320px',
 	margin: '0 auto',
+	maxWidth: '1280px',
 	padding: '24px',
-	[theme.breakpoints.down(theme.custom.mediaQueryTresholds.L)]: {
-		gridTemplateColumns: '280px 1fr 280px',
-	},
 	[theme.breakpoints.down('md')]: {
 		gridTemplateColumns: '1fr',
+	},
+	[theme.breakpoints.down(theme.custom.mediaQueryTresholds.L)]: {
+		gridTemplateColumns: '280px 1fr 280px',
 	},
 }))
 
 export const LeftCol = styled(Box)(() => ({
+	alignSelf: 'start',
 	position: 'sticky',
 	top: 0,
-	alignSelf: 'start',
 }))
 
 export const CenterCol = styled(Box)(({ theme }) => ({
+	margin: '0 auto',
 	maxWidth: theme.custom.main.sizes.articleMaxWidth,
 	width: '100%',
-	margin: '0 auto',
 }))
 
 export const RightCol = styled(Box)(() => ({
+	alignSelf: 'start',
 	position: 'sticky',
 	top: 0,
-	alignSelf: 'start',
 }))
 
-export default function ThreeColumns({ left, center, right }) {
+export default function ThreeColumns({ center, left, right }) {
 	return (
 		<Shell>
 			<LeftCol component='aside' aria-label='Left sidebar'>

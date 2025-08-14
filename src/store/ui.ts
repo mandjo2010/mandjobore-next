@@ -10,6 +10,6 @@ type UIState = {
 export const useUIStore = create<UIState>((set) => ({
 	isSearchOpen: false,
 	showPostsList: false,
-	toggleSearch: () => set((s) => ({ isSearchOpen: !s.isSearchOpen })),
 	togglePostsList: () => set((s) => ({ showPostsList: !s.showPostsList })),
+	toggleSearch: () => set((s) => ({ isSearchOpen: !s.isSearchOpen })),
 }))

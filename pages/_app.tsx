@@ -1,10 +1,25 @@
-import * as React from 'react'
-import Head from 'next/head'
-import { CacheProvider, EmotionCache } from '@emotion/react'
 import createCache from '@emotion/cache'
-import { ThemeProvider, CssBaseline } from '@mui/material'
-import { theme } from '../src/theme'
+import { CacheProvider, EmotionCache } from '@emotion/react'
+import { ThemeProvider, CssBaseline, createTheme } from '@mui/material'
+import { Open_Sans } from 'next/font/google'
+import Head from 'next/head'
+import * as React from 'react'
+
 import GlobalCss from '../src/theme/GlobalCss'
+import '../src/styles/typography.css'
+
+const openSans = Open_Sans({
+	display: 'swap',
+	subsets: ['latin'],
+	variable: '--font-open-sans',
+	weight: ['300', '400', '600'],
+})
+
+const theme = createTheme({
+	typography: {
+		fontFamily: '"Open Sans", Arial, sans-serif',
+	},
+})
 
 const createEmotionCache = () => createCache({ key: 'css', prepend: true })
 const clientSideEmotionCache = createEmotionCache()
@@ -16,8 +31,8 @@ export default function MyApp(props: {
 }) {
 	const {
 		Component,
-		pageProps,
 		emotionCache = clientSideEmotionCache,
+		pageProps,
 	} = props
 	return (
 		<CacheProvider value={emotionCache}>
@@ -30,7 +45,9 @@ export default function MyApp(props: {
 			<ThemeProvider theme={theme}>
 				<CssBaseline />
 				<GlobalCss />
-				<Component {...pageProps} />
+				<main className={openSans.className}>
+					<Component {...pageProps} />
+				</main>
 			</ThemeProvider>
 		</CacheProvider>
 	)

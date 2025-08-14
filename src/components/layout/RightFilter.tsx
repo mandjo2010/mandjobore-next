@@ -1,6 +1,6 @@
-import * as React from 'react'
 import { Drawer, Box, Typography, Stack, ButtonBase } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import * as React from 'react'
 
 type Props = {
 	open: boolean
@@ -11,11 +11,11 @@ type Props = {
 }
 
 export default function RightFilter({
-	open,
-	onClose,
-	categories,
 	active,
+	categories,
+	onClose,
 	onSelect,
+	open,
 }: Props) {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const t: any = useTheme()
@@ -30,7 +30,7 @@ export default function RightFilter({
 			<Box sx={{ p: 2 }}>
 				<Typography
 					variant='h6'
-					sx={{ color: t.main.colors.title, mb: 2, fontWeight: 700 }}
+					sx={{ color: t.main.colors.title, fontWeight: 700, mb: 2 }}
 				>
 					Filter by category
 				</Typography>
@@ -39,11 +39,11 @@ export default function RightFilter({
 					<ButtonBase
 						onClick={() => (onSelect(undefined), onClose())}
 						sx={{
-							justifyContent: 'flex-start',
 							color: !active
 								? t.base.colors.accent
 								: t.navigator.colors.postsListItemLink,
 							fontWeight: 600,
+							justifyContent: 'flex-start',
 							px: 0,
 						}}
 					>
@@ -55,12 +55,12 @@ export default function RightFilter({
 							key={c}
 							onClick={() => (onSelect(c), onClose())}
 							sx={{
-								justifyContent: 'flex-start',
 								color:
 									active === c
 										? t.base.colors.accent
 										: t.navigator.colors.postsListItemLink,
 								fontWeight: 600,
+								justifyContent: 'flex-start',
 								px: 0,
 							}}
 						>

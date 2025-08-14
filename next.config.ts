@@ -1,23 +1,32 @@
+import './src/env.ts'
+
 import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
+  // Build
+  eslint: { ignoreDuringBuilds: true },
   experimental: {
     mdxRs: true,
   },
-  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: '**' }],
-    formats: ['image/webp', 'image/avif'],
-    dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    dangerouslyAllowSVG: true,
+    formats: ['image/webp', 'image/avif'],
+    remotePatterns: [{ hostname: '**', protocol: 'https' }],
   },
+  output: 'standalone',
+  pageExtensions: ['ts', 'tsx', 'js', 'jsx', 'md', 'mdx'],
   // Déploiement
   trailingSlash: false,
-  output: 'standalone',
-  // Build
-  eslint: { ignoreDuringBuilds: true },
   typescript: { ignoreBuildErrors: false },
 }
 
-export default nextConfig
+// Bundle analyzer configuration - only when ANALYZE=true
+import bundleAnalyzer from '@next/bundle-analyzer'
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+})
+
+export default withBundleAnalyzer(nextConfig)

@@ -1,14 +1,14 @@
-import * as React from 'react'
-import Link from 'next/link'
 import { Box, Container, Stack, Typography } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
+import Link from 'next/link'
+import * as React from 'react'
 
 type NavLink = { label: string; href: string }
 
 const NAV: NavLink[] = [
-	{ label: 'About', href: '/pages/1--about' }, // mappe les contenus présents
-	{ label: 'Cartography', href: '/pages/2--starters' },
+	{ href: '/pages/1--about', label: 'About' }, // mappe les contenus présents
+	{ href: '/pages/2--starters', label: 'Cartography' },
 	// { label: "Portfolio", href: "/pages/portfolio" }, // ajoute quand tu auras la page
 	// { label: "Contact", href: "/pages/contact" },
 ]
@@ -20,15 +20,15 @@ export default function Header() {
 		<Box
 			component='header'
 			sx={{
-				height: t.bars.sizes.infoBar,
-				color: t.bars.colors.text,
 				bgcolor: t.bars.colors.background,
 				borderBottom: `1px solid ${t.base.colors.lines}`,
+				color: t.bars.colors.text,
+				height: t.bars.sizes.infoBar,
 			}}
 		>
 			<Container
 				maxWidth='lg'
-				sx={{ height: 1, display: 'flex', alignItems: 'center' }}
+				sx={{ alignItems: 'center', display: 'flex', height: 1 }}
 			>
 				<Stack
 					direction='row'
@@ -41,9 +41,9 @@ export default function Header() {
 						<Typography
 							component='span'
 							sx={{
-								ml: 1,
 								color: t.main.colors.meta,
 								fontSize: 14,
+								ml: 1,
 							}}
 						>
 							Data analyst · Developer

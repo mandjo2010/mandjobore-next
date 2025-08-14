@@ -17,11 +17,35 @@ export default function PostDetail({ post }) {
 			left={<LeftSidebar />}
 			center={
 				<Box sx={{ maxWidth: '50em', mx: 'auto' }}>
-					<Typography variant='h4' sx={{ mb: 1 }}>
+					<Typography 
+						component='h1'
+						className='blog-title'
+						sx={{ 
+							fontFamily: '"Open Sans", sans-serif !important',
+							fontStyle: 'normal !important',
+							fontWeight: '600 !important',
+							fontSize: '27px !important',
+							lineHeight: '31px !important',
+							color: 'rgb(51, 51, 51) !important',
+							margin: '0 0 0.5rem 0 !important',
+						}}
+					>
 						{frontmatter.title}
 					</Typography>
 					{frontmatter.subTitle && (
-						<Typography variant='h6' sx={{ mb: 2 }}>
+						<Typography 
+							component='h2'
+							className='blog-subtitle'
+							sx={{ 
+								fontFamily: '"Open Sans", sans-serif !important',
+								fontStyle: 'normal !important',
+								fontWeight: '300 !important',
+								fontSize: '23px !important',
+								lineHeight: '27px !important',
+								color: 'rgb(85, 85, 85) !important',
+								margin: '0 0 1rem 0 !important',
+							}}
+						>
 							{frontmatter.subTitle}
 						</Typography>
 					)}

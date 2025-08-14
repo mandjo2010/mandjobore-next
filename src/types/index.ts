@@ -15,6 +15,14 @@ export interface Post {
 	}
 }
 
+export interface PostCard {
+	slug: string
+	title: string
+	excerpt?: string
+	category?: string
+	cover?: string
+}
+
 export interface PostMatter {
 	title: string
 	date: string

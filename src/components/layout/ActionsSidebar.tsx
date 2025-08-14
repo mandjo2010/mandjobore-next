@@ -1,6 +1,8 @@
 import { useRouter } from 'next/router'
-import ActionsBar from './ActionsBar'
+
 import { useUIStore } from '@/store/ui'
+
+import ActionsBar from './ActionsBar'
 
 export default function ActionsSidebar() {
   const router = useRouter()

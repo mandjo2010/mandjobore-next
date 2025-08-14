@@ -1,6 +1,7 @@
+const path = require('path')
+
 // scripts/copy-content.js
 const fs = require('fs-extra')
-const path = require('path')
 
 async function run() {
 	const src = path.join(process.cwd(), 'content')

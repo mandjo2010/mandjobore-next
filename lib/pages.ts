@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+
 import matter from 'gray-matter'
 
 const pagesDir = path.join(process.cwd(), 'content', 'pages')
@@ -10,10 +11,10 @@ export function getAllPages() {
     .filter((d) => d.endsWith('index.md'))
     .map((file) => {
       const source = fs.readFileSync(file, 'utf-8')
-      const { data, content } = matter(source)
+      const { content, data } = matter(source)
       const rel = path.relative(pagesDir, file)
       const dir = path.dirname(rel)
-      return { dir, data, content }
+      return { content, data, dir }
     })
 }
 
@@ -21,8 +22,8 @@ export function getPageByDir(dir: string) {
   const file = path.join(pagesDir, dir, 'index.md')
   if (!fs.existsSync(file)) return null
   const source = fs.readFileSync(file, 'utf-8')
-  const { data, content } = matter(source)
-  return { dir, data, content }
+  const { content, data } = matter(source)
+  return { content, data, dir }
 }
 
 export function getAllPageDirs() {

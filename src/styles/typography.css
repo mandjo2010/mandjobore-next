@@ -1,0 +1,219 @@
+/**
+ * Typography Styles - Migration Gatsby vers Next.js
+ * Configuration exacte selon spécifications de design
+ * CORRECTION DES TAILLES: Titres 27px/31px, Sous-titres 23px/27px
+ */
+
+/* Configuration de base pour Open Sans */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap');
+
+/* RESET COMPLET DES TITRES POUR ÉVITER CONFLITS */
+h1, h2, h3, h4, h5, h6 {
+  font-size: inherit !important;
+  font-weight: inherit !important;
+  line-height: inherit !important;
+  margin: 0 !important;
+  font-family: inherit !important;
+}
+
+/* Variables typographiques - CORRECTION DES TAILLES */
+:root {
+  --font-open-sans: "Open Sans", Arial, sans-serif;
+  
+  /* Titres d'articles - TAILLES EXACTES */
+  --title-font-family: "Open Sans", sans-serif;
+  --title-font-style: normal;
+  --title-font-weight: 600;
+  --title-font-size: 27px;
+  --title-line-height: 31px;
+  --title-color: rgb(51, 51, 51);
+  
+  /* Sous-titres d'articles - TAILLES EXACTES */
+  --subtitle-font-family: "Open Sans", sans-serif;
+  --subtitle-font-style: normal;
+  --subtitle-font-weight: 300;
+  --subtitle-font-size: 23px;
+  --subtitle-line-height: 27px;
+  --subtitle-color: rgb(85, 85, 85);
+}
+
+/* ============================================
+   PRIORITÉ ULTRA-HAUTE - CORRECTION IMMÉDIATE
+   ============================================ */
+
+/* Force les tailles exactes avec spécificité maximale */
+h1.blog-title,
+h1.article-title,
+h1.post-title,
+h1.gatsby-title,
+.blog-title,
+.article-title,
+.post-title,
+.gatsby-title {
+  font-family: "Open Sans", sans-serif !important;
+  font-style: normal !important;
+  font-weight: 600 !important;
+  font-size: 27px !important;
+  line-height: 31px !important;
+  color: rgb(51, 51, 51) !important;
+  margin: 0 0 0.5rem 0 !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h2.blog-subtitle,
+h2.article-subtitle,
+h2.post-subtitle,
+h2.gatsby-subtitle,
+.blog-subtitle,
+.article-subtitle,
+.post-subtitle,
+.gatsby-subtitle {
+  font-family: "Open Sans", sans-serif !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 23px !important;
+  line-height: 27px !important;
+  color: rgb(85, 85, 85) !important;
+  margin: 0 0 1rem 0 !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   TITRES D'ARTICLES - CORRECTION TAILLES EXACTES
+   ============================================ */
+
+.blog-title,
+.article-title,
+.post-title,
+.gatsby-title {
+  font-family: var(--title-font-family) !important;
+  font-style: var(--title-font-style) !important;
+  font-weight: var(--title-font-weight) !important;
+  font-size: 27px !important;
+  line-height: 31px !important;
+  color: var(--title-color) !important;
+  margin: 0 0 0.5rem 0 !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   SOUS-TITRES D'ARTICLES - CORRECTION TAILLES EXACTES
+   ============================================ */
+
+.blog-subtitle,
+.article-subtitle,
+.post-subtitle,
+.gatsby-subtitle {
+  font-family: var(--subtitle-font-family) !important;
+  font-style: var(--subtitle-font-style) !important;
+  font-weight: var(--subtitle-font-weight) !important;
+  font-size: 23px !important;
+  line-height: 27px !important;
+  color: var(--subtitle-color) !important;
+  margin: 0 0 1rem 0 !important;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ============================================
+   CLASSES UTILITAIRES
+   ============================================ */
+
+/* Titre pour les listes d'articles */
+.post-list-title {
+  font-family: var(--title-font-family);
+  font-style: var(--title-font-style);
+  font-weight: var(--title-font-weight);
+  font-size: var(--title-font-size);
+  line-height: var(--title-line-height);
+  color: var(--title-color);
+  margin: 0;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.post-list-title:hover {
+  color: #709425; /* Couleur accent */
+}
+
+/* Sous-titre pour les listes d'articles */
+.post-list-subtitle {
+  font-family: var(--subtitle-font-family);
+  font-style: var(--subtitle-font-style);
+  font-weight: var(--subtitle-font-weight);
+  font-size: var(--subtitle-font-size);
+  line-height: var(--subtitle-line-height);
+  color: var(--subtitle-color);
+  margin: 0.25rem 0 0;
+}
+
+/* ============================================
+   OPTIMISATIONS RESPONSIVE
+   ============================================ */
+
+/* Maintien des tailles exactes sur tous les écrans */
+@media (max-width: 768px) {
+  .blog-title,
+  .article-title,
+  .post-title,
+  .gatsby-title {
+    font-size: var(--title-font-size) !important;
+    line-height: var(--title-line-height) !important;
+  }
+  
+  .blog-subtitle,
+  .article-subtitle,
+  .post-subtitle,
+  .gatsby-subtitle {
+    font-size: var(--subtitle-font-size) !important;
+    line-height: var(--subtitle-line-height) !important;
+  }
+}
+
+/* ============================================
+   AMÉLIORATIONS ACCESSIBILITÉ
+   ============================================ */
+
+.blog-title:focus,
+.article-title:focus,
+.post-title:focus {
+  outline: 2px solid #709425;
+  outline-offset: 2px;
+}
+
+/* Respect du mode sombre si nécessaire */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --title-color: rgb(240, 240, 240);
+    --subtitle-color: rgb(200, 200, 200);
+  }
+}
+
+/* ============================================
+   PERFORMANCE ET OPTIMISATION
+   ============================================ */
+
+/* Préchargement de la police */
+.typography-preload {
+  font-family: var(--font-open-sans);
+  visibility: hidden;
+  position: absolute;
+  font-weight: 300;
+}
+
+.typography-preload::after {
+  content: '';
+  font-weight: 400;
+}
+
+.typography-preload::before {
+  content: '';
+  font-weight: 600;
+}

@@ -1,108 +1,103 @@
+import { GetStaticProps } from 'next'
 import Head from 'next/head'
 import * as React from 'react'
-import { GetStaticProps } from 'next'
-import { getAll, getAllCategories } from '@/lib/content'
-import type { MDEntry, Post } from '@/types'
-import Layout from '@/components/layout/Layout'
-import ProfileSidebar from '@/components/layout/ProfileSidebar'
+
 import ArticleListView from '@/components/blog/ArticleListView'
-import { useRouter } from 'next/router'
-import { normalizeCategory } from '@/lib/categories'
+import CategoryFilterPanel from '@/components/filters/CategoryFilterPanel'
+import ProfileSidebar from '@/components/layout/ProfileSidebar'
+import RightRail from '@/components/layout/RightRail'
 
-export default function Home({
-	posts,
-	categories,
-}: {
-	posts: MDEntry[]
+import { getAllPostsForList, adaptPostForGatsbyView } from '../lib/posts'
+import MainLayout from '../src/components/layout/MainLayout'
+
+type Post = {
+  slug: string
+  title: string
+  excerpt: string
+  image: string
+  category?: string
+}
+
+interface HomeProps {
+	posts: Post[]
 	categories: string[]
-}) {
-	const router = useRouter()
+}
+
+export default function Home({ categories, posts }: HomeProps) {
 	const [selectedCategory, setSelectedCategory] = React.useState<string>('')
+	const [filterOpen, setFilterOpen] = React.useState(false)
 
-	// Build a stable set of valid category slugs from provided categories
-	const validSlugs = React.useMemo(() => {
-		return new Set(categories.map((c) => normalizeCategory(c)).filter(Boolean))
-	}, [categories])
-
-	// Initialize selectedCategory from URL query (?cat=...), accepting legacy labels and unknowns
-	React.useEffect(() => {
-		if (!router.isReady) return
-		const q = router.query.cat
-		let next = ''
-		if (typeof q === 'string') {
-			const normalized = normalizeCategory(q)
-			next = validSlugs.has(normalized) ? normalized : ''
-		}
-		setSelectedCategory(next)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [router.isReady])
-
-	// Keep the URL in sync when selectedCategory changes
-	React.useEffect(() => {
-		if (!router.isReady) return
-		const query = { ...router.query }
-		if (selectedCategory) {
-			(query as Record<string, string>).cat = selectedCategory
-		} else {
-			delete (query as Record<string, string>).cat
-		}
-		router.replace({ pathname: router.pathname, query }, undefined, { shallow: true })
-	}, [selectedCategory, router])
-
-	// Adapt MDEntry -> Post for the list
-	const mapToPost = (e: MDEntry): Post => ({
-		slug: e.slug,
-		title: e.data?.title ?? e.slug,
-		date: e.data?.date ?? '',
-		excerpt: e.data?.subTitle ?? e.data?.description ?? '',
-		content: e.content,
-		coverImage: e.data?.cover
-			? `/content/posts/${e.slug}/${e.data.cover}`
-			: undefined,
-		category: e.data?.category ?? '',
-		tags: Array.isArray(e.data?.tags) ? (e.data!.tags as string[]) : [],
-		readingTime: 0,
-		author: undefined,
-	})
-
-	const allCategories = React.useMemo(() => {
-		const set = new Set<string>(categories)
-		return Array.from(set)
-	}, [categories])
-
+	// Filter posts by category if one is selected
 	const visiblePosts = React.useMemo(() => {
-		const all = posts.map(mapToPost)
-		if (!selectedCategory) return all
-		return all.filter((p) => normalizeCategory(p.category || '') === selectedCategory)
+		if (!selectedCategory || selectedCategory === 'all posts') return posts
+		return posts.filter(post => post.category === selectedCategory)
 	}, [posts, selectedCategory])
-
-	const allAsPosts = React.useMemo(() => posts.map(mapToPost), [posts])
 
 	const handleCategoryChange = React.useCallback((c?: string) => {
 		setSelectedCategory(c ?? '')
+	}, [])
+
+	const handleCategoryPick = React.useCallback((category: string) => {
+		setSelectedCategory(category === 'all posts' ? '' : category)
+	}, [])
+
+	const handleOpenFilter = React.useCallback(() => {
+		setFilterOpen(true)
+	}, [])
+
+	const handleOpenSearch = React.useCallback(() => {
+		// TODO: Connect to existing search overlay
+		console.log('Open search')
 	}, [])
 
 	return (
 		<>
 			<Head>
 				<title>mandjobore.com</title>
+				<meta name="description" content="Blog personnel de développement et technologies" />
 			</Head>
 
-			<Layout
+			<MainLayout
 				left={<ProfileSidebar />}
-				categories={allCategories}
+				right={<RightRail onOpenSearch={handleOpenSearch} onOpenFilter={handleOpenFilter} />}
+				categories={categories}
 				activeCategory={selectedCategory || undefined}
 				onCategoryChange={handleCategoryChange}
-				searchPosts={allAsPosts}
 			>
 				<ArticleListView posts={visiblePosts} />
-			</Layout>
+			</MainLayout>
+
+			{filterOpen && (
+				<CategoryFilterPanel
+					categories={categories}
+					active={selectedCategory || 'all posts'}
+					onPick={handleCategoryPick}
+					onClose={() => setFilterOpen(false)}
+				/>
+			)}
 		</>
 	)
 }
 
-export const getStaticProps: GetStaticProps = async () => {
-	const posts = getAll('posts')
-	const categories = getAllCategories(posts)
-	return { props: { posts, categories } }
+export const getStaticProps: GetStaticProps<HomeProps> = async () => {
+	const rawPosts = getAllPostsForList()
+	
+	// Use adapter to ensure consistent data format
+	const posts: Post[] = rawPosts.map(adaptPostForGatsbyView)
+	
+	// Extract unique categories from posts
+	const categorySet = new Set<string>()
+	posts.forEach(post => {
+		if (post.category) {
+			categorySet.add(post.category)
+		}
+	})
+	const categories = Array.from(categorySet).sort()
+	
+	return { 
+		props: { 
+			categories,
+			posts 
+		} 
+	}
 }

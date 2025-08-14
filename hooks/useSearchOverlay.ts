@@ -7,5 +7,5 @@ export default function useSearchOverlay(initial = false) {
   const close = useCallback(() => setIsOpen(false), [])
   const toggle = useCallback(() => setIsOpen((v) => !v), [])
 
-  return { isOpen, open, close, toggle }
+  return { close, isOpen, open, toggle }
 }

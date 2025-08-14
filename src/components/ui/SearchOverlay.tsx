@@ -1,10 +1,5 @@
 'use client'
 
-import * as React from 'react'
-import type { KeyboardEvent, ChangeEvent } from 'react'
-import { useState, useEffect, useRef, useMemo } from 'react'
-import { Search, X, Calendar } from 'lucide-react'
-import Link from 'next/link'
 import { 
   Dialog,
   DialogTitle,
@@ -25,13 +20,19 @@ import {
   Stack,
   Chip
 } from '@mui/material'
+import type { SelectChangeEvent } from '@mui/material/Select'
 import { alpha } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
-import type { SelectChangeEvent } from '@mui/material/Select'
-import type { Post } from '@/types'
-import { useUIStore } from '@/store/ui'
+import { Search, X, Calendar } from 'lucide-react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
+import * as React from 'react'
+import type { KeyboardEvent, ChangeEvent } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
+
 import { highlightParts, includesBase } from '@/lib/search'
+import { useUIStore } from '@/store/ui'
+import type { Post } from '@/types'
 
 export default function SearchOverlay({ posts }: { posts: Post[] }) {
   const isOpen = useUIStore((s: { isSearchOpen: boolean }) => s.isSearchOpen)
@@ -109,7 +110,7 @@ export default function SearchOverlay({ posts }: { posts: Post[] }) {
   }
 
   const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short', day: 'numeric', year: 'numeric'
+    day: 'numeric', month: 'short', year: 'numeric'
   })
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
@@ -147,25 +148,25 @@ export default function SearchOverlay({ posts }: { posts: Post[] }) {
         sx: (theme: Theme) => ({
           bgcolor: theme.base?.colors?.background ?? '#fff',
           color: theme.main?.colors?.content ?? '#111',
-          maxHeight: '80vh',
           m: 2,
+          maxHeight: '80vh',
         })
       }}
       BackdropProps={{
         sx: (theme: Theme) => ({
-          bgcolor: alpha((theme.base?.colors?.background ?? '#fff'), 0.92),
           backdropFilter: 'blur(2px)',
+          bgcolor: alpha((theme.base?.colors?.background ?? '#fff'), 0.92),
         })
       }}
     >
       <DialogTitle
         id="search-title"
         sx={(theme: Theme) => ({
-          color: theme.main?.colors?.title ?? '#111',
-          fontWeight: 600,
-          borderBottom: `1px solid ${(theme.base?.colors?.lines ?? '#eee')}`,
-          display: 'flex',
           alignItems: 'center',
+          borderBottom: `1px solid ${(theme.base?.colors?.lines ?? '#eee')}`,
+          color: theme.main?.colors?.title ?? '#111',
+          display: 'flex',
+          fontWeight: 600,
           justifyContent: 'space-between',
         })}
      >
@@ -173,8 +174,8 @@ export default function SearchOverlay({ posts }: { posts: Post[] }) {
         <IconButton
           onClick={toggleSearch}
           sx={(theme: Theme) => ({
-            color: theme.info?.colors?.background ?? '#666',
             '&:hover': { color: theme.main?.colors?.link ?? '#000' },
+            color: theme.info?.colors?.background ?? '#666',
           })}
           aria-label="Close search"
         >
@@ -193,13 +194,13 @@ export default function SearchOverlay({ posts }: { posts: Post[] }) {
             onChange={(e: ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
             onKeyDown={onKeyDown}
             sx={(theme: Theme) => ({
-              mb: 3,
               '& .MuiOutlinedInput-root': {
-                bgcolor: theme.base?.colors?.background ?? '#fff',
-                '& fieldset': { borderColor: theme.base?.colors?.lines ?? '#eee' },
-                '&:hover fieldset': { borderColor: theme.main?.colors?.link ?? '#09c' },
                 '&.Mui-focused fieldset': { borderColor: theme.main?.colors?.link ?? '#09c' },
+                '&:hover fieldset': { borderColor: theme.main?.colors?.link ?? '#09c' },
+                '& fieldset': { borderColor: theme.base?.colors?.lines ?? '#eee' },
+                bgcolor: theme.base?.colors?.background ?? '#fff',
               },
+              mb: 3,
             })}
             InputProps={{
               startAdornment: (
@@ -210,20 +211,20 @@ export default function SearchOverlay({ posts }: { posts: Post[] }) {
             }}
           />
 
-          <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ mb: 2 }}>
+          <Stack direction={{ sm: 'row', xs: 'column' }} spacing={2} sx={{ mb: 2 }}>
             <FormControl fullWidth sx={{ minWidth: 200 }}>
               <InputLabel sx={(theme: Theme) => ({
-                color: theme.main?.colors?.content ?? '#666',
                 '&.Mui-focused': { color: theme.main?.colors?.link ?? '#09c' },
+                color: theme.main?.colors?.content ?? '#666',
               })}>Category</InputLabel>
               <Select
                 value={selectedCategory}
                 onChange={(e: SelectChangeEvent<string>) => setSelectedCategory(e.target.value)}
                 label="Category"
                 sx={(theme: Theme) => ({
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: theme.main?.colors?.link ?? '#09c' },
                   '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.base?.colors?.lines ?? '#eee' },
                   '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: theme.main?.colors?.link ?? '#09c' },
-                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: theme.main?.colors?.link ?? '#09c' },
                 })}
               >
                 <MenuItem value="">All categories</MenuItem>
@@ -235,17 +236,17 @@ export default function SearchOverlay({ posts }: { posts: Post[] }) {
 
             <FormControl fullWidth sx={{ minWidth: 200 }}>
               <InputLabel sx={(theme: Theme) => ({
-                color: theme.main?.colors?.content ?? '#666',
                 '&.Mui-focused': { color: theme.main?.colors?.link ?? '#09c' },
+                color: theme.main?.colors?.content ?? '#666',
               })}>Tag</InputLabel>
               <Select
                 value={selectedTag}
                 onChange={(e: SelectChangeEvent<string>) => setSelectedTag(e.target.value)}
                 label="Tag"
                 sx={(theme: Theme) => ({
+                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: theme.main?.colors?.link ?? '#09c' },
                   '& .MuiOutlinedInput-notchedOutline': { borderColor: theme.base?.colors?.lines ?? '#eee' },
                   '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: theme.main?.colors?.link ?? '#09c' },
-                  '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: theme.main?.colors?.link ?? '#09c' },
                 })}
               >
                 <MenuItem value="">All tags</MenuItem>
@@ -260,12 +261,12 @@ export default function SearchOverlay({ posts }: { posts: Post[] }) {
                 variant="outlined"
                 onClick={clearFilters}
                 sx={(theme: Theme) => ({
-                  color: theme.main?.colors?.content ?? '#666',
-                  borderColor: theme.base?.colors?.lines ?? '#eee',
                   '&:hover': {
                     bgcolor: alpha((theme.main?.colors?.link ?? '#09c'), 0.1),
                     borderColor: theme.main?.colors?.link ?? '#09c',
                   },
+                  borderColor: theme.base?.colors?.lines ?? '#eee',
+                  color: theme.main?.colors?.content ?? '#666',
                 })}
               >
                 Clear filters
@@ -285,7 +286,7 @@ export default function SearchOverlay({ posts }: { posts: Post[] }) {
               <>
                 <Box sx={{ maxHeight: '400px', overflow: 'auto' }} role="listbox">
                   {slice.length === 0 ? (
-                    <Box sx={(theme: Theme) => ({ textAlign: 'center', py: 4, color: theme.main?.colors?.content ?? '#666' })}>
+                    <Box sx={(theme: Theme) => ({ color: theme.main?.colors?.content ?? '#666', py: 4, textAlign: 'center' })}>
                       <Search size={48} color="#ccc" style={{ marginBottom: 16 }} />
                       <Typography variant="body1">Aucun article ne correspond à vos critères.</Typography>
                     </Box>
@@ -298,39 +299,39 @@ export default function SearchOverlay({ posts }: { posts: Post[] }) {
                             role="option"
                             aria-selected={idx === activeIndex}
                             sx={(theme: Theme) => ({
-                              cursor: 'pointer',
-                              bgcolor: theme.base?.colors?.background ?? '#fff',
-                              border: `1px solid ${(theme.base?.colors?.lines ?? '#eee')}`,
-                              outline: idx === activeIndex ? `2px solid ${(theme.main?.colors?.link ?? '#09c')}` : 'none',
                               '&:hover': {
                                 borderColor: theme.main?.colors?.link ?? '#09c',
                                 boxShadow: `0 2px 8px ${alpha((theme.main?.colors?.link ?? '#09c'), 0.1)}`,
                               },
+                              bgcolor: theme.base?.colors?.background ?? '#fff',
+                              border: `1px solid ${(theme.base?.colors?.lines ?? '#eee')}`,
+                              cursor: 'pointer',
+                              outline: idx === activeIndex ? `2px solid ${(theme.main?.colors?.link ?? '#09c')}` : 'none',
                             })}
                           >
                             <CardContent>
                               <Stack direction="row" spacing={2}>
                                 {post.coverImage && (
-                                  <Avatar variant="rounded" sx={{ width: 64, height: 64 }} src={post.coverImage} alt={post.title} />
+                                  <Avatar variant="rounded" sx={{ height: 64, width: 64 }} src={post.coverImage} alt={post.title} />
                                 )}
                                 <Box sx={{ flex: 1 }}>
                                   <Typography variant="h6" sx={(theme: Theme) => ({
+                                    '&:hover': { color: theme.main?.colors?.link ?? '#09c' },
                                     color: theme.main?.colors?.title ?? '#111',
                                     fontSize: '1.1rem',
                                     fontWeight: 600,
                                     mb: 1,
-                                    '&:hover': { color: theme.main?.colors?.link ?? '#09c' },
                                   })}>
                                     {highlightParts(post.title, searchQuery)}
                                   </Typography>
                                   {post.excerpt && (
                                     <Typography variant="body2" sx={(theme: Theme) => ({
                                       color: theme.main?.colors?.content ?? '#222',
-                                      mb: 1,
                                       display: '-webkit-box',
-                                      WebkitLineClamp: 2,
-                                      WebkitBoxOrient: 'vertical',
+                                      mb: 1,
                                       overflow: 'hidden',
+                                      WebkitBoxOrient: 'vertical',
+                                      WebkitLineClamp: 2,
                                     })}>
                                       {highlightParts(post.excerpt, searchQuery)}
                                     </Typography>
@@ -360,7 +361,7 @@ export default function SearchOverlay({ posts }: { posts: Post[] }) {
                   )}
                 </Box>
                 {remaining > 0 && (
-                  <Typography variant="caption" sx={(theme: Theme) => ({ mt: 1, display: 'block', color: theme.main?.colors?.content ?? '#666' })}>
+                  <Typography variant="caption" sx={(theme: Theme) => ({ color: theme.main?.colors?.content ?? '#666', display: 'block', mt: 1 })}>
                     +{remaining} autres résultats…
                   </Typography>
                 )}

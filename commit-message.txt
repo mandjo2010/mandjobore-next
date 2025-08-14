@@ -1,0 +1,23 @@
+feat: migration typographique Gatsby vers Next.js
+
+✨ Implémentation complète des styles typographiques
+- Titres: 27px/31px, poids 600, Open Sans, rgb(51,51,51)
+- Sous-titres: 23px/27px, poids 300, Open Sans, rgb(85,85,85)
+
+🎨 Architecture CSS robuste
+- Nouveau fichier src/styles/typography.css avec classes dédiées
+- Variables CSS centralisées et réutilisables
+- Reset complet des styles par défaut conflictuels
+- Priorité CSS maximale avec spécificité élevée
+
+🔧 Configuration optimisée
+- Google Fonts intégrée avec poids 300, 400, 600
+- Thème Material-UI harmonisé
+- Styles appliqués sur tous les composants
+
+🛠️ Outils de développement
+- Composant TypographyTest pour validation
+- Script de vérification typography-check.js
+- Documentation complète TYPOGRAPHY_MIGRATION.md
+
+Référence: Reproduction fidèle du design mandjobore.com

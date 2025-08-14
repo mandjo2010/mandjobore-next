@@ -29,7 +29,7 @@ export default function PostShare({ slug, title }: { slug: string; title: string
       </Tooltip>
       <Tooltip title="Share on Facebook">
         <span>
-          <FacebookShareButton url={url} quote={title}>
+          <FacebookShareButton url={url} hashtag={title}>
             <IconButton size="small" aria-label="Share on Facebook">f</IconButton>
           </FacebookShareButton>
         </span>

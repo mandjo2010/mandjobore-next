@@ -49,7 +49,7 @@ export function highlightParts(text: string, query: string): React.ReactNode[] {
     nodes.push(
       React.createElement(
         'mark',
-        { key: `h-${idx}`, style: { padding: 0, background: 'transparent', fontWeight: 700 } },
+        { key: `h-${idx}`, style: { background: 'transparent', fontWeight: 700, padding: 0 } },
         text.slice(start, end)
       )
     )

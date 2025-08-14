@@ -1,7 +1,7 @@
-import * as React from 'react'
 import { Box } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
+import * as React from 'react'
 
 export default function ScrollProgress() {
 	const t = useTheme() as Theme & import('@/types/theme').CustomTheme
@@ -22,28 +22,28 @@ export default function ScrollProgress() {
 		<Box
 			aria-hidden
 			sx={{
-				position: 'fixed',
-				right: { xs: 44, md: 56 },
-				top: { xs: 88, md: 96 },
-				height: {
-					xs: 'calc(100vh - 160px)',
-					md: 'calc(100vh - 180px)',
-				},
-				width: 2,
 				backgroundColor: t.base.colors.lines,
 				borderRadius: 2,
+				height: {
+					md: 'calc(100vh - 180px)',
+					xs: 'calc(100vh - 160px)',
+				},
+				position: 'fixed',
+				right: { md: 56, xs: 44 },
+				top: { md: 96, xs: 88 },
+				width: 2,
 				zIndex: 1,
 			}}
 		>
 			<Box
 				sx={{
-					position: 'absolute',
-					left: 0,
-					bottom: 0,
-					width: 2,
-					borderRadius: 2,
-					height: `calc(${pct * 100}% + 1px)`,
 					backgroundColor: t.base.colors.accent,
+					borderRadius: 2,
+					bottom: 0,
+					height: `calc(${pct * 100}% + 1px)`,
+					left: 0,
+					position: 'absolute',
+					width: 2,
 				}}
 			/>
 		</Box>

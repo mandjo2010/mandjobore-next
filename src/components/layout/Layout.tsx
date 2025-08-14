@@ -1,13 +1,15 @@
-import * as React from "react";
 import { Box, Drawer, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import ActionsBar from "./ActionsBar";
-import CategoryFilter from "../sidebar/CategoryFilter";
-import { useRouter } from 'next/router';
-import { useUIStore } from '@/store/ui';
-import SearchOverlay from '@/components/ui/SearchOverlay';
-import type { Post } from '@/types';
 import type { Theme } from '@mui/material/styles';
+import { useRouter } from 'next/router';
+import * as React from "react";
+
+import SearchOverlay from '@/components/ui/SearchOverlay';
+import { useUIStore } from '@/store/ui';
+import type { Post } from '@/types';
+
+import CategoryFilter from "../sidebar/CategoryFilter";
+import ActionsBar from "./ActionsBar";
 
 type Props = {
   left: React.ReactNode;
@@ -20,10 +22,10 @@ type Props = {
 };
 
 export default function Layout({ 
-  left, 
-  children, 
-  categories = [], 
   activeCategory, 
+  categories = [], 
+  children, 
+  left, 
   onCategoryChange,
   searchPosts = [],
 }: Props) {
@@ -66,9 +68,9 @@ export default function Layout({
   return (
     <Box 
       sx={{ 
+        bgcolor: t?.base?.colors?.background ?? 'background.default',
         display: 'flex',
         height: '100vh',
-        bgcolor: t?.base?.colors?.background ?? 'background.default',
         overflow: 'hidden', // Empêche le scroll global
       }}
     >
@@ -76,17 +78,17 @@ export default function Layout({
       <Box
         component="aside"
         sx={{
-          width: leftW,
-          flexShrink: 0,
-          position: 'sticky',
-          top: 0,
-          height: '100vh',
-          overflowY: 'auto',
           bgcolor: t?.info?.colors?.background ?? 'background.paper',
           borderRight: `1px solid ${t?.base?.colors?.lines ?? '#eee'}`,
-          p: 2,
           // Masquer sur petits écrans
-          display: { xs: 'none', md: 'block' }
+          display: { md: 'block', xs: 'none' },
+          flexShrink: 0,
+          height: '100vh',
+          overflowY: 'auto',
+          p: 2,
+          position: 'sticky',
+          top: 0,
+          width: leftW
         }}
       >
         {left}
@@ -96,91 +98,91 @@ export default function Layout({
       <Box
         component="main"
         sx={{
-          flex: 1,
-          height: '100vh',
-          overflowY: 'auto',
-          bgcolor: t?.main?.colors?.background ?? 'background.paper',
-          position: 'relative',
-          // Séparateur vertical à droite (seulement si ActionsBar visible)
-          borderRight: isLargeScreen ? `1px solid ${t?.base?.colors?.lines ?? '#eee'}` : 'none',
-          // Styles pour le contenu
-          color: t?.main?.colors?.content ?? 'text.primary',
-          px: 3,
-          py: 2,
           // Scrollbar personnalisée
           '&::-webkit-scrollbar': {
             width: '6px',
           },
-          '&::-webkit-scrollbar-track': {
-            background: 'transparent',
-          },
           '&::-webkit-scrollbar-thumb': {
-            background: t?.base?.colors?.lines ?? '#eee',
-            borderRadius: '3px',
             '&:hover': {
               background: t?.navigator?.colors?.postsListItemLink ?? '#999',
             },
+            background: t?.base?.colors?.lines ?? '#eee',
+            borderRadius: '3px',
+          },
+          '&::-webkit-scrollbar-track': {
+            background: 'transparent',
           },
           // Styles pour le contenu Markdown
           '& a': { 
+            '&:hover': { color: t?.main?.colors?.linkHover ?? '#036' }, 
             color: t?.main?.colors?.link ?? '#09c', 
-            fontWeight: 700, 
-            textDecoration: 'none',
-            '&:hover': { color: t?.main?.colors?.linkHover ?? '#036' } 
-          },
-          '& img': { 
-            maxWidth: '100%', 
-            height: 'auto' 
-          },
-          '& blockquote': {
-            borderLeft: `4px solid ${t?.main?.colors?.blockquoteFrame ?? '#ddd'}`,
-            pl: 2,
-            ml: 0,
-            color: t?.main?.colors?.content ?? 'text.primary',
-          },
-          '& h1': {
-            fontSize: `${t?.main?.fonts?.title?.size ?? 1.9}rem`,
-            lineHeight: t?.main?.fonts?.title?.lineHeight ?? 1.1,
-            fontWeight: t?.main?.fonts?.title?.weight ?? 600,
-            color: t?.main?.colors?.title ?? '#111',
-            mb: 2,
-            [t.breakpoints.up('md')]: {
-              fontSize: `${t?.main?.fonts?.title?.sizeM ?? 2.5}rem`,
-            },
-            [t.breakpoints.up('lg')]: {
-              fontSize: `${t?.main?.fonts?.title?.sizeL ?? 2.7}rem`,
-            },
-          },
-          '& h2': {
-            fontSize: `${t?.main?.fonts?.contentHeading?.h2Size ?? 1.5}rem`,
-            lineHeight: t?.main?.fonts?.contentHeading?.lineHeight ?? 1.3,
-            fontWeight: t?.main?.fonts?.contentHeading?.weight ?? 600,
-            color: t?.main?.colors?.contentHeading ?? '#333',
-            mt: 3,
-            mb: 1,
-          },
-          '& h3': {
-            fontSize: `${t?.main?.fonts?.contentHeading?.h3Size ?? 1.3}rem`,
-            lineHeight: t?.main?.fonts?.contentHeading?.lineHeight ?? 1.3,
-            fontWeight: t?.main?.fonts?.contentHeading?.weight ?? 600,
-            color: t?.main?.colors?.contentHeading ?? '#333',
-            mt: 2,
-            mb: 1,
-          },
-          '& p, & li': {
-            fontSize: `${t?.main?.fonts?.content?.size ?? 1}rem`,
-            lineHeight: t?.main?.fonts?.content?.lineHeight ?? 1.6,
-            [t.breakpoints.up('md')]: {
-              fontSize: `${t?.main?.fonts?.content?.sizeM ?? 1.15}rem`,
-            },
-            [t.breakpoints.up('lg')]: {
-              fontSize: `${t?.main?.fonts?.content?.sizeL ?? 1.1}rem`,
-            },
+            fontWeight: 700,
+            textDecoration: 'none' 
           },
           // Limitation de largeur pour les articles
           '& article, & .article-content': {
             maxWidth: t?.main?.sizes?.articleMaxWidth ?? '50em',
           },
+          '& blockquote': {
+            borderLeft: `4px solid ${t?.main?.colors?.blockquoteFrame ?? '#ddd'}`,
+            color: t?.main?.colors?.content ?? 'text.primary',
+            ml: 0,
+            pl: 2,
+          },
+          '& h1': {
+            color: t?.main?.colors?.title ?? '#111',
+            fontSize: `${t?.main?.fonts?.title?.size ?? 1.9}rem`,
+            fontWeight: t?.main?.fonts?.title?.weight ?? 600,
+            lineHeight: t?.main?.fonts?.title?.lineHeight ?? 1.1,
+            mb: 2,
+            [t.breakpoints.up('lg')]: {
+              fontSize: `${t?.main?.fonts?.title?.sizeL ?? 2.7}rem`,
+            },
+            [t.breakpoints.up('md')]: {
+              fontSize: `${t?.main?.fonts?.title?.sizeM ?? 2.5}rem`,
+            },
+          },
+          '& h2': {
+            color: t?.main?.colors?.contentHeading ?? '#333',
+            fontSize: `${t?.main?.fonts?.contentHeading?.h2Size ?? 1.5}rem`,
+            fontWeight: t?.main?.fonts?.contentHeading?.weight ?? 600,
+            lineHeight: t?.main?.fonts?.contentHeading?.lineHeight ?? 1.3,
+            mb: 1,
+            mt: 3,
+          },
+          '& h3': {
+            color: t?.main?.colors?.contentHeading ?? '#333',
+            fontSize: `${t?.main?.fonts?.contentHeading?.h3Size ?? 1.3}rem`,
+            fontWeight: t?.main?.fonts?.contentHeading?.weight ?? 600,
+            lineHeight: t?.main?.fonts?.contentHeading?.lineHeight ?? 1.3,
+            mb: 1,
+            mt: 2,
+          },
+          '& img': { 
+            height: 'auto', 
+            maxWidth: '100%' 
+          },
+          '& p, & li': {
+            fontSize: `${t?.main?.fonts?.content?.size ?? 1}rem`,
+            lineHeight: t?.main?.fonts?.content?.lineHeight ?? 1.6,
+            [t.breakpoints.up('lg')]: {
+              fontSize: `${t?.main?.fonts?.content?.sizeL ?? 1.1}rem`,
+            },
+            [t.breakpoints.up('md')]: {
+              fontSize: `${t?.main?.fonts?.content?.sizeM ?? 1.15}rem`,
+            },
+          },
+          bgcolor: t?.main?.colors?.background ?? 'background.paper',
+          // Séparateur vertical à droite (seulement si ActionsBar visible)
+          borderRight: isLargeScreen ? `1px solid ${t?.base?.colors?.lines ?? '#eee'}` : 'none',
+          // Styles pour le contenu
+          color: t?.main?.colors?.content ?? 'text.primary',
+          flex: 1,
+          height: '100vh',
+          overflowY: 'auto',
+          position: 'relative',
+          px: 3,
+          py: 2,
         }}
       >
         {children}
@@ -204,8 +206,8 @@ export default function Layout({
         onClose={() => setFilterOpen(false)}
         PaperProps={{ 
           sx: { 
-            width: 280,
             bgcolor: t?.info?.colors?.background ?? 'background.paper',
+            width: 280,
           } 
         }}
       >

@@ -1,6 +1,7 @@
-import * as React from 'react'
 import { Box, Typography, Stack, Chip } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
+import * as React from 'react'
+
 import { normalizeCategory, toLabel } from '@/lib/categories'
 
 type Props = {
@@ -12,10 +13,10 @@ type Props = {
 }
 
 export default function CategoryFilter({
-	categories,
-	selected,
 	active, // legacy prop
+	categories,
 	onChange,
+	selected,
 }: Props) {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	const t: any = useTheme()
@@ -26,7 +27,7 @@ export default function CategoryFilter({
 	// Build stable options: [{ value: slug, label: }]
 	const options = React.useMemo(() => {
 		const slugs = Array.from(new Set(categories.map((c) => normalizeCategory(c)).filter(Boolean)))
-		return slugs.map((s) => ({ value: s, label: toLabel(s) }))
+		return slugs.map((s) => ({ label: toLabel(s), value: s }))
 	}, [categories])
 
 	// Current value is a slug; if only legacy `active` is provided, normalize it
@@ -43,9 +44,9 @@ export default function CategoryFilter({
 				variant="h6"
 				sx={{
 					color: nav.colors?.postsHeader ?? '#555',
-					mb: 2,
-					fontWeight: 600,
 					fontSize: `${info.fonts?.boxTitleSize ?? 1.3}rem`,
+					fontWeight: 600,
+					mb: 2,
 				}}
 			>
 				Filter by category
@@ -58,21 +59,21 @@ export default function CategoryFilter({
 					variant={isAll ? 'filled' : 'outlined'}
 					onClick={() => handleChange('')}
 					sx={{
-						bgcolor: isAll ? base.colors?.accent ?? '#0aa' : 'transparent',
-						color: isAll
-							? base.colors?.background ?? '#fff'
-							: nav.colors?.postsListItemLink ?? '#666',
-						borderColor: nav.colors?.postsListItemLink ?? '#666',
-						fontWeight: 600,
+						'& .MuiChip-label': {
+							px: 1.5,
+						},
 						'&:hover': {
 							bgcolor: isAll ? base.colors?.accent ?? '#0aa' : info.colors?.background ?? '#f7f7f7',
 							color: isAll
 								? base.colors?.background ?? '#fff'
 								: nav.colors?.postsListItemLinkHover ?? '#111',
 						},
-						'& .MuiChip-label': {
-							px: 1.5,
-						},
+						bgcolor: isAll ? base.colors?.accent ?? '#0aa' : 'transparent',
+						borderColor: nav.colors?.postsListItemLink ?? '#666',
+						color: isAll
+							? base.colors?.background ?? '#fff'
+							: nav.colors?.postsListItemLink ?? '#666',
+						fontWeight: 600,
 					}}
 				/>
 
@@ -86,21 +87,21 @@ export default function CategoryFilter({
 							variant={isActive ? 'filled' : 'outlined'}
 							onClick={() => handleChange(opt.value)}
 							sx={{
-								bgcolor: isActive ? base.colors?.accent ?? '#0aa' : 'transparent',
-								color: isActive
-									? base.colors?.background ?? '#fff'
-									: nav.colors?.postsListItemLink ?? '#666',
-								borderColor: nav.colors?.postsListItemLink ?? '#666',
-								fontWeight: 600,
+								'& .MuiChip-label': {
+									px: 1.5,
+								},
 								'&:hover': {
 									bgcolor: isActive ? base.colors?.accent ?? '#0aa' : info.colors?.background ?? '#f7f7f7',
 									color: isActive
 										? base.colors?.background ?? '#fff'
 										: nav.colors?.postsListItemLinkHover ?? '#111',
 								},
-								'& .MuiChip-label': {
-									px: 1.5,
-								},
+								bgcolor: isActive ? base.colors?.accent ?? '#0aa' : 'transparent',
+								borderColor: nav.colors?.postsListItemLink ?? '#666',
+								color: isActive
+									? base.colors?.background ?? '#fff'
+									: nav.colors?.postsListItemLink ?? '#666',
+								fontWeight: 600,
 							}}
 						/>
 					)

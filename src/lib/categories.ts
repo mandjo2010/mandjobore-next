@@ -1,12 +1,12 @@
 export type CategorySlug = string;
 
 const LABELS: Record<CategorySlug, string> = {
+  'ai': 'Intelligence artificielle',
   'data': 'Data',
   'data-science': 'Data Science',
+  'design': 'Design',
   'gis': 'GIS',
   'python': 'Python',
-  'ai': 'Intelligence artificielle',
-  'design': 'Design',
 };
 
 export function toSlug(input: string): CategorySlug {

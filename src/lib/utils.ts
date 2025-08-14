@@ -61,8 +61,8 @@ export function formatDate(iso: string, locale = 'fr-FR') {
 	return isNaN(d.getTime())
 		? iso
 		: d.toLocaleDateString(locale, {
-				year: 'numeric',
-				month: 'long',
 				day: 'numeric',
+				month: 'long',
+				year: 'numeric',
 		  })
 }

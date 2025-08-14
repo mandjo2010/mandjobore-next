@@ -1,19 +1,20 @@
-import Head from 'next/head'
+import { Typography, Box } from '@mui/material'
 import { GetStaticProps, GetStaticPaths } from 'next'
+import dynamic from 'next/dynamic'
+import Head from 'next/head'
+
+import Layout from '@/components/layout/Layout'
+import ProfileSidebar from '@/components/layout/ProfileSidebar'
+import Sidebar from '@/components/layout/Sidebar'
 import { getSlugs, getBySlug, getAll, getAllCategories } from '@/lib/content'
 import type { MDEntry } from '@/types'
-import dynamic from 'next/dynamic'
-import Layout from '@/components/layout/Layout'
-import Sidebar from '@/components/layout/Sidebar'
-import ProfileSidebar from '@/components/layout/ProfileSidebar'
-import { Typography, Box } from '@mui/material'
 
 const ReactMarkdown = dynamic(() => import('react-markdown'))
 
 export default function StaticPage({
+	categories,
 	page,
 	posts,
-	categories,
 }: {
 	page: MDEntry
 	posts: MDEntry[]
@@ -30,20 +31,32 @@ export default function StaticPage({
 			>
 				<article>
 					<Typography
-						variant='h3'
+						component='h1'
+						className='blog-title'
 						sx={{
-							color: (t) => t.main.colors.title,
-							fontWeight: 600,
+							color: 'rgb(51, 51, 51) !important',
+							fontFamily: '"Open Sans", sans-serif !important',
+							fontSize: '27px !important',
+							fontStyle: 'normal !important',
+							fontWeight: '600 !important',
+							lineHeight: '31px !important',
+							margin: '0 0 0.5rem 0 !important',
 						}}
 					>
 						{page.data?.title}
 					</Typography>
 					{page.data?.subTitle && (
 						<Typography
-							variant='subtitle1'
+							component='h2'
+							className='blog-subtitle'
 							sx={{
-								color: (t) => t.main.colors.subTitle,
-								mb: 2,
+								color: 'rgb(85, 85, 85) !important',
+								fontFamily: '"Open Sans", sans-serif !important',
+								fontSize: '23px !important',
+								fontStyle: 'normal !important',
+								fontWeight: '300 !important',
+								lineHeight: '27px !important',
+								margin: '0 0 1rem 0 !important',
 							}}
 						>
 							{page.data.subTitle}
@@ -51,7 +64,7 @@ export default function StaticPage({
 					)}
 					<Box
 						sx={{
-							'& img': { maxWidth: '100%', height: 'auto' },
+							'& img': { height: 'auto', maxWidth: '100%' },
 							maxWidth: (t) => t.main.sizes.articleMaxWidth,
 						}}
 					>
@@ -66,13 +79,13 @@ export default function StaticPage({
 export const getStaticPaths: GetStaticPaths = async () => {
 	const slugs = getSlugs('pages')
 	return {
-		paths: slugs.map((slug) => ({ params: { slug } })),
 		fallback: false,
+		paths: slugs.map((slug) => ({ params: { slug } })),
 	}
 }
 export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const page = getBySlug('pages', params!.slug as string)
 	const posts = getAll('posts')
 	const categories = getAllCategories(posts)
-	return { props: { page, posts, categories } }
+	return { props: { categories, page, posts } }
 }

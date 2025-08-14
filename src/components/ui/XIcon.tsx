@@ -5,7 +5,7 @@ interface XIconProps {
   className?: string
 }
 
-export default function XIcon({ size = 24, className = '' }: XIconProps) {
+export default function XIcon({ className = '', size = 24 }: XIconProps) {
   return (
     <svg
       width={size}

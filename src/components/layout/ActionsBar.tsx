@@ -1,5 +1,3 @@
-import * as React from 'react'
-import { Box, IconButton, Tooltip } from '@mui/material'
 import {
 	Home,
 	FilterList,
@@ -7,8 +5,10 @@ import {
 	Fullscreen,
 	FullscreenExit,
 } from '@mui/icons-material'
+import { Box, IconButton, Tooltip } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
+import * as React from 'react'
 
 type Props = {
 	onHome?: () => void
@@ -19,11 +19,11 @@ type Props = {
 }
 
 export default function ActionsBar({
+	expanded = false,
 	onHome,
-	onToggleFilter,
 	onSearch,
 	onToggleExpand,
-	expanded = false,
+	onToggleFilter,
 }: Props) {
 	const t = useTheme() as Theme & import('@/types/theme').CustomTheme
 
@@ -37,18 +37,18 @@ export default function ActionsBar({
 			role="navigation"
 			aria-label="Actions principales"
 			sx={{
+				alignItems: 'center',
+				bgcolor: barBg,
+				borderLeft: `1px solid ${borderCol}`,
+				display: { lg: 'flex', xs: 'none' }, // Caché en < 1024px
+				flexDirection: 'column',
+				gap: 3,
+				height: '100vh',
+				justifyContent: 'center',
 				position: 'fixed',
 				right: 0,
 				top: 0,
-				height: '100vh',
 				width: '56px',
-				display: { xs: 'none', lg: 'flex' }, // Caché en < 1024px
-				flexDirection: 'column',
-				alignItems: 'center',
-				justifyContent: 'center',
-				gap: 3,
-				bgcolor: barBg,
-				borderLeft: `1px solid ${borderCol}`,
 				zIndex: 10,
 			}}
 		>
@@ -58,8 +58,8 @@ export default function ActionsBar({
 					size="medium"
 					onClick={onHome}
 					sx={{ 
-						color: iconColor,
 						'&:hover': { color: iconHover },
+						color: iconColor,
 					}}
 				>
 					<Home />
@@ -73,8 +73,8 @@ export default function ActionsBar({
 					size="medium"
 					onClick={onToggleFilter}
 					sx={{ 
-						color: iconColor,
 						'&:hover': { color: iconHover },
+						color: iconColor,
 					}}
 				>
 					<FilterList />
@@ -88,8 +88,8 @@ export default function ActionsBar({
 					size="medium"
 					onClick={onSearch}
 					sx={{ 
-						color: iconColor,
 						'&:hover': { color: iconHover },
+						color: iconColor,
 					}}
 				>
 					<Search />
@@ -102,8 +102,8 @@ export default function ActionsBar({
 					size="medium"
 					onClick={onToggleExpand}
 					sx={{ 
-						color: iconColor,
 						'&:hover': { color: iconHover },
+						color: iconColor,
 					}}
 				>
 					{expanded ? <FullscreenExit /> : <Fullscreen />}

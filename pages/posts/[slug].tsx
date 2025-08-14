@@ -1,18 +1,19 @@
-import Head from 'next/head'
+import { Typography, Box } from '@mui/material'
 import type { GetStaticProps, GetStaticPaths } from 'next'
-import { getSlugs, getBySlug, getAll, getAllCategories } from '@/lib/content'
-import type { MDEntry } from '@/types'
 import dynamic from 'next/dynamic'
+import Head from 'next/head'
 import * as React from 'react'
+
 import Layout from '@/components/layout/Layout'
 import ProfileSidebar from '@/components/layout/ProfileSidebar'
-import { Typography, Box } from '@mui/material'
+import { getSlugs, getBySlug, getAll, getAllCategories } from '@/lib/content'
+import type { MDEntry } from '@/types'
 
 const ReactMarkdown = dynamic(() => import('react-markdown'))
 
 export default function PostPage({
-	post,
 	categories,
+	post,
 }: {
 	post: MDEntry
 	categories: string[]
@@ -26,17 +27,23 @@ export default function PostPage({
 			</Head>
 
 			<Layout
-				left={<ProfileSidebar defaultCollapsed />}
+				left={<ProfileSidebar />}
 				categories={categories}
 				activeCategory={cat}
 				onCategoryChange={setCat}
 			>
 				<article>
 					<Typography
-						variant='h3'
+						component='h1'
+						className='blog-title'
 						sx={{
-							color: (t) => t.main.colors.title,
-							fontWeight: 600,
+							color: 'rgb(51, 51, 51) !important',
+							fontFamily: '"Open Sans", sans-serif !important',
+							fontSize: '27px !important',
+							fontStyle: 'normal !important',
+							fontWeight: '600 !important',
+							lineHeight: '31px !important',
+							margin: '0 0 0.5rem 0 !important',
 						}}
 					>
 						{post.data?.title}
@@ -44,10 +51,16 @@ export default function PostPage({
 
 					{post.data?.subTitle && (
 						<Typography
-							variant='subtitle1'
+							component='h2'
+							className='blog-subtitle'
 							sx={{
-								color: (t) => t.main.colors.subTitle,
-								mb: 2,
+								color: 'rgb(85, 85, 85) !important',
+								fontFamily: '"Open Sans", sans-serif !important',
+								fontSize: '23px !important',
+								fontStyle: 'normal !important',
+								fontWeight: '300 !important',
+								lineHeight: '27px !important',
+								margin: '0 0 1rem 0 !important',
 							}}
 						>
 							{post.data.subTitle}
@@ -56,6 +69,18 @@ export default function PostPage({
 
 					<Box
 						sx={{
+							'& a': {
+								'&:hover': {
+									color: (t) => t.main.colors.linkHover,
+								},
+								color: (t) => t.main.colors.link,
+							},
+							'& blockquote': {
+								borderLeft: (t) =>
+									`4px solid ${t.main.colors.blockquoteFrame}`,
+								color: (t) => t.main.colors.content,
+								pl: 2,
+							},
 							'& h2': {
 								fontSize: (t) =>
 									`${t.main.fonts.contentHeading.h2Size}rem`,
@@ -74,18 +99,6 @@ export default function PostPage({
 								lineHeight: (t) =>
 									t.main.fonts.content.lineHeight,
 							},
-							'& blockquote': {
-								borderLeft: (t) =>
-									`4px solid ${t.main.colors.blockquoteFrame}`,
-								pl: 2,
-								color: (t) => t.main.colors.content,
-							},
-							'& a': {
-								color: (t) => t.main.colors.link,
-								'&:hover': {
-									color: (t) => t.main.colors.linkHover,
-								},
-							},
 							maxWidth: (t) => t.main.sizes.articleMaxWidth,
 						}}
 					>
@@ -100,8 +113,8 @@ export default function PostPage({
 export const getStaticPaths: GetStaticPaths = async () => {
 	const slugs = getSlugs('posts')
 	return {
-		paths: slugs.map((slug) => ({ params: { slug } })),
 		fallback: false,
+		paths: slugs.map((slug) => ({ params: { slug } })),
 	}
 }
 
@@ -109,5 +122,5 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 	const post = getBySlug('posts', params!.slug as string)
 	const posts = getAll('posts')
 	const categories = getAllCategories(posts)
-	return { props: { post, categories } }
+	return { props: { categories, post } }
 }

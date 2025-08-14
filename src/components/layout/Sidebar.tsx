@@ -1,5 +1,3 @@
-import * as React from 'react'
-import Link from 'next/link'
 import {
 	Box,
 	Typography,
@@ -8,9 +6,12 @@ import {
 	Stack,
 	Chip,
 } from '@mui/material'
-import type { MDEntry } from '@/types'
 import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
+import Link from 'next/link'
+import * as React from 'react'
+
+import type { MDEntry } from '@/types'
 
 type Props = {
 	posts: MDEntry[]
@@ -20,10 +21,10 @@ type Props = {
 }
 
 export default function Sidebar({
-	posts,
-	categories,
 	activeCategory,
+	categories,
 	onCategory,
+	posts,
 }: Props) {
 	const t = useTheme() as Theme & import('@/types/theme').CustomTheme
 
@@ -36,14 +37,14 @@ export default function Sidebar({
 					onClick={() => onCategory?.(undefined)}
 					variant={activeCategory ? 'outlined' : 'filled'}
 					sx={{
-						fontWeight: 600,
+						'&:hover': { cursor: 'pointer', opacity: 0.9 },
 						bgcolor: !activeCategory
 							? t.base.colors.accent
 							: 'transparent',
 						color: !activeCategory
 							? t.base.colors.background
 							: t.navigator.colors.postsListItemLink,
-						'&:hover': { opacity: 0.9, cursor: 'pointer' },
+						fontWeight: 600,
 					}}
 				/>
 				{categories.map((c) => (
@@ -53,8 +54,7 @@ export default function Sidebar({
 						onClick={() => onCategory?.(c)}
 						variant={activeCategory === c ? 'filled' : 'outlined'}
 						sx={{
-							textTransform: 'none',
-							fontWeight: 600,
+							'&:hover': { cursor: 'pointer', opacity: 0.9 },
 							bgcolor:
 								activeCategory === c
 									? t.base.colors.accent
@@ -63,7 +63,8 @@ export default function Sidebar({
 								activeCategory === c
 									? t.base.colors.background
 									: t.navigator.colors.postsListItemLink,
-							'&:hover': { opacity: 0.9, cursor: 'pointer' },
+							fontWeight: 600,
+							textTransform: 'none',
 						}}
 					/>
 				))}
@@ -87,18 +88,18 @@ export default function Sidebar({
 					>
 						<ListItemButton
 							sx={{
-								px: 0,
-								color: t.navigator.colors.postsListItemLink,
 								'&:hover': {
 									color: t.navigator.colors
 										.postsListItemLinkHover,
 								},
+								color: t.navigator.colors.postsListItemLink,
+								px: 0,
 							}}
 						>
 							<Typography
 								sx={{
+									fontSize: `${t.navigator.sizes?.postsListItemH1Font || 1.3}rem`,
 									fontWeight: 600,
-									fontSize: `${t.navigator.sizes.postsListItemH1Font}rem`,
 								}}
 							>
 								{p.data?.title}
