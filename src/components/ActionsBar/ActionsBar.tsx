@@ -14,9 +14,9 @@ import React, { useState, useEffect } from 'react';
 
 import { useUIStore, usePreferences } from '@/store/ui';
 
-import CategoryFilterModal from '../ActionsBar/CategoryFilterModal';
-import FontSizeModal from '../ActionsBar/FontSizeModal';
 import styles from './ActionsBar.module.css';
+import CategoryFilterModal from './CategoryFilterModal';
+import FontSizeModal from './FontSizeModal';
 
 interface ActionButtonProps {
   icon: React.ReactNode;
@@ -38,13 +38,7 @@ const ActionButton: React.FC<ActionButtonProps> = ({ icon, isActive = false, onC
   );
 };
 
-/**
- * ActionsBar - Barre d'actions style "This.png"
- * Icônes Material-UI dans des cercles blancs avec ombre
- * Position: intégrée dans la 3ème colonne (sidebar droite) du layout
- * Disposition: 2 groupes (haut/bas) comme sur mandjobore.com
- */
-export default function ActionsBar() {
+const ActionsBar: React.FC = () => {
   const router = useRouter();
   const pathname = usePathname();
   const { 
@@ -58,7 +52,7 @@ export default function ActionsBar() {
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showCategoryFilter, setShowCategoryFilter] = useState(false);
   const [showFontSize, setShowFontSize] = useState(false);
-  const [scrollY, setScrollY] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   // Gestion du plein écran
   useEffect(() => {
@@ -70,10 +64,10 @@ export default function ActionsBar() {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // Gestion du scroll pour l'état actif du bouton "retour en haut"
+  // Gestion du scroll pour afficher le bouton "retour en haut"
   useEffect(() => {
     const handleScroll = () => {
-      setScrollY(window.scrollY);
+      setShowScrollTop(window.scrollY > 300);
     };
 
     window.addEventListener('scroll', handleScroll);
@@ -119,9 +113,8 @@ export default function ActionsBar() {
   const hasCustomFontSize = fontSize !== 1.0;
 
   return (
-    <div className={styles.actionsContainer}>
-      {/* Groupe du haut : Navigation principale */}
-      <div className={styles.topGroup}>
+    <>
+      <div className={styles.actionsContainer}>
         <ActionButton
           icon={<HomeIcon sx={{ color: '#000', fontSize: 24 }} />}
           title="Accueil"
@@ -142,16 +135,21 @@ export default function ActionsBar() {
           onClick={handleCategoryFilter}
           isActive={hasActiveFilter}
         />
-      </div>
-
-      {/* Groupe du bas : Outils et actions */}
-      <div className={styles.bottomGroup}>
+        
         <ActionButton
           icon={<FormatSizeIcon sx={{ color: '#000', fontSize: 24 }} />}
           title="Taille de police"
           onClick={handleFontSize}
           isActive={hasCustomFontSize}
         />
+        
+        {showScrollTop && (
+          <ActionButton
+            icon={<ArrowUpwardIcon sx={{ color: '#000', fontSize: 24 }} />}
+            title="Retour en haut"
+            onClick={handleScrollToTop}
+          />
+        )}
         
         <ActionButton
           icon={isFullscreen ? 
@@ -161,13 +159,6 @@ export default function ActionsBar() {
           title={isFullscreen ? "Quitter le plein écran" : "Plein écran"}
           onClick={handleFullscreen}
           isActive={isFullscreen}
-        />
-        
-        <ActionButton
-          icon={<ArrowUpwardIcon sx={{ color: '#000', fontSize: 24 }} />}
-          title="Retour en haut"
-          onClick={() => { void handleScrollToTop(); }}
-          isActive={scrollY > 300}
         />
       </div>
 
@@ -181,6 +172,8 @@ export default function ActionsBar() {
         isOpen={showFontSize}
         onClose={() => setShowFontSize(false)}
       />
-    </div>
+    </>
   );
-}
+};
+
+export default ActionsBar;

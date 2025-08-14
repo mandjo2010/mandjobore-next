@@ -1,6 +1,8 @@
-import * as React from 'react'
-import { Box, Typography, IconButton, Avatar, Link } from '@mui/material'
 import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
+import { Box, Typography, IconButton, Avatar, Link } from '@mui/material'
+import * as React from 'react'
+
+import { useSeparatorStyles } from '@/components/ui/SeparatorLine'
 import { useNavigatorActions, useNavigatorState } from '@/store/ui'
 
 /**
@@ -10,17 +12,18 @@ import { useNavigatorActions, useNavigatorState } from '@/store/ui'
 export default function InfoBox() {
   const { toggleNavigatorShape } = useNavigatorActions()
   const { isOpen } = useNavigatorState()
+  const separatorStyles = useSeparatorStyles()
 
   const authorInfo = {
-    name: 'Mandjo Boré',
-    role: 'Développeur Full-Stack & Data Analyst',
     avatar: '/images/avatar.svg',
     bio: `Passionné par le développement web moderne et l'analyse de données. 
           Spécialisé en React, Next.js, Python et technologies géospatiales.`,
+    name: 'Mandjo Boré',
+    role: 'Développeur Full-Stack & Data Analyst',
     social: [
-      { name: 'GitHub', url: 'https://github.com/mandjo2010', icon: 'github' },
-      { name: 'LinkedIn', url: 'https://linkedin.com/in/mandjo-bore', icon: 'linkedin' },
-      { name: 'Twitter', url: 'https://twitter.com/mandjo2010', icon: 'twitter' },
+      { icon: 'github', name: 'GitHub', url: 'https://github.com/mandjo2010' },
+      { icon: 'linkedin', name: 'LinkedIn', url: 'https://linkedin.com/in/mandjo-bore' },
+      { icon: 'twitter', name: 'Twitter', url: 'https://twitter.com/mandjo2010' },
     ],
     stack: [
       'JavaScript', 'TypeScript', 'React', 'Next.js', 
@@ -30,40 +33,42 @@ export default function InfoBox() {
   }
 
   const menuItems = [
-    { label: 'About', href: '/about' },
-    { label: 'Cartography', href: '/cartography' },
-    { label: 'Portfolio', href: '/portfolio' },
-    { label: 'Contact', href: '/contact' },
+    { href: '/about', label: 'About' },
+    { href: '/cartography', label: 'Cartography' },
+    { href: '/portfolio', label: 'Portfolio' },
+    { href: '/contact', label: 'Contact' },
   ]
 
   return (
     <Box
       sx={{
-        height: '100vh',
+        bgcolor: '#ffffff',
         display: 'flex',
         flexDirection: 'column',
-        position: 'relative',
-        bgcolor: '#ffffff',
+        height: '100vh',
         overflow: 'hidden',
+        position: 'relative',
+        // Ajouter le séparateur vertical droit avec marges 20px
+        ...separatorStyles.verticalRightSeparator,
       }}
     >
       {/* Header avec avatar et infos auteur */}
       <Box
         sx={{
+          borderBottom: '1px solid #dedede',
           p: 3,
           textAlign: 'center',
-          borderBottom: '1px solid #dedede',
         }}
       >
         <Avatar
           src={authorInfo.avatar}
           alt={authorInfo.name}
           sx={{
-            width: 80,
-            height: 80,
-            mx: 'auto',
-            mb: 2,
             border: '2px solid #709425',
+            height: 80,
+            mb: 2,
+            mx: 'auto',
+            width: 80,
           }}
         />
         
@@ -77,7 +82,7 @@ export default function InfoBox() {
       </Box>
 
       {/* Bio */}
-      <Box sx={{ p: 3, borderBottom: '1px solid #dedede' }}>
+      <Box sx={{ borderBottom: '1px solid #dedede', p: 3 }}>
         <Typography className="bioText">
           {authorInfo.bio}
         </Typography>
@@ -86,11 +91,11 @@ export default function InfoBox() {
       {/* Icônes sociales */}
       <Box
         sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          gap: 2,
-          p: 2,
           borderBottom: '1px solid #dedede',
+          display: 'flex',
+          gap: 2,
+          justifyContent: 'center',
+          p: 2,
         }}
       >
         {authorInfo.social.map((social) => (
@@ -100,20 +105,20 @@ export default function InfoBox() {
             target="_blank"
             rel="noopener noreferrer"
             sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 40,
-              height: 40,
-              borderRadius: '50%',
-              bgcolor: '#f5f5f5',
-              color: '#333',
-              transition: 'all 0.3s ease',
               '&:hover': {
                 bgcolor: '#709425',
                 color: '#fff',
                 transform: 'translateY(-2px)',
               },
+              alignItems: 'center',
+              bgcolor: '#f5f5f5',
+              borderRadius: '50%',
+              color: '#333',
+              display: 'flex',
+              height: 40,
+              justifyContent: 'center',
+              transition: 'all 0.3s ease',
+              width: 40,
             }}
           >
             {/* TODO: Remplacer par les vraies icônes SVG */}
@@ -125,16 +130,16 @@ export default function InfoBox() {
       </Box>
 
       {/* Menu de navigation */}
-      <Box sx={{ p: 2, borderBottom: '1px solid #dedede' }}>
+      <Box sx={{ borderBottom: '1px solid #dedede', p: 2 }}>
         <Typography
           variant="overline"
           sx={{
-            fontWeight: 600,
             color: '#666',
+            display: 'block',
             fontSize: '0.7rem',
+            fontWeight: 600,
             letterSpacing: '1px',
             mb: 1,
-            display: 'block',
           }}
         >
           NAVIGATION
@@ -145,20 +150,20 @@ export default function InfoBox() {
             key={item.label}
             href={item.href}
             sx={{
-              display: 'block',
-              py: 0.75,
-              px: 1,
-              color: '#333',
-              textDecoration: 'none',
-              fontSize: '0.9rem',
-              fontWeight: 400,
-              borderRadius: 1,
-              transition: 'all 0.2s ease',
               '&:hover': {
                 bgcolor: '#f5f5f5',
                 color: '#709425',
                 transform: 'translateX(4px)',
               },
+              borderRadius: 1,
+              color: '#333',
+              display: 'block',
+              fontSize: '0.9rem',
+              fontWeight: 400,
+              px: 1,
+              py: 0.75,
+              textDecoration: 'none',
+              transition: 'all 0.2s ease',
             }}
           >
             {item.label}
@@ -167,16 +172,16 @@ export default function InfoBox() {
       </Box>
 
       {/* Stack technique */}
-      <Box sx={{ p: 2, flex: 1 }}>
+      <Box sx={{ flex: 1, p: 2 }}>
         <Typography
           variant="overline"
           sx={{
-            fontWeight: 600,
             color: '#666',
+            display: 'block',
             fontSize: '0.7rem',
+            fontWeight: 600,
             letterSpacing: '1px',
             mb: 1,
-            display: 'block',
           }}
         >
           STACK TECHNIQUE
@@ -194,13 +199,13 @@ export default function InfoBox() {
               key={tech}
               component="span"
               sx={{
+                bgcolor: '#f0f0f0',
+                borderRadius: '12px',
+                color: '#555',
                 fontSize: '0.75rem',
+                fontWeight: 500,
                 px: 1,
                 py: 0.25,
-                bgcolor: '#f0f0f0',
-                color: '#555',
-                borderRadius: '12px',
-                fontWeight: 500,
               }}
             >
               {tech}
@@ -212,21 +217,21 @@ export default function InfoBox() {
       {/* Bouton "Expand the box" */}
       <Box
         sx={{
+          borderTop: '1px solid #dedede',
           p: 2,
           textAlign: 'center',
-          borderTop: '1px solid #dedede',
         }}
       >
         <IconButton
           onClick={toggleNavigatorShape}
           sx={{
-            color: '#666',
-            transition: 'all 0.3s ease',
-            transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)',
             '&:hover': {
-              color: '#709425',
               bgcolor: 'rgba(112, 148, 37, 0.1)',
+              color: '#709425',
             },
+            color: '#666',
+            transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)',
+            transition: 'all 0.3s ease',
           }}
         >
           <ExpandMoreIcon />
@@ -235,12 +240,12 @@ export default function InfoBox() {
         <Typography
           variant="caption"
           sx={{
-            display: 'block',
-            mt: 0.5,
             color: '#888',
+            display: 'block',
             fontSize: '0.7rem',
-            textTransform: 'uppercase',
             letterSpacing: '0.5px',
+            mt: 0.5,
+            textTransform: 'uppercase',
           }}
         >
           {isOpen ? 'Collapse' : 'Expand'} the box

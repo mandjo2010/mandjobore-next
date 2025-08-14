@@ -71,33 +71,28 @@ export default function PostPage({
 						sx={{
 							'& a': {
 								'&:hover': {
-									color: (t) => t.main.colors.linkHover,
+									color: '#333333', // linkHover
 								},
-								color: (t) => t.main.colors.link,
+								color: '#709425', // link
 							},
 							'& blockquote': {
-								borderLeft: (t) =>
-									`4px solid ${t.main.colors.blockquoteFrame}`,
-								color: (t) => t.main.colors.content,
+								borderLeft: '4px solid #bbbbbb', // blockquoteFrame
+								color: '#333333', // content color
 								pl: 2,
 							},
 							'& h2': {
-								fontSize: (t) =>
-									`${t.main.fonts.contentHeading.h2Size}rem`,
+								fontSize: '1.5rem', // h2Size
 								fontWeight: 600,
 								mt: 3,
 							},
 							'& h3': {
-								fontSize: (t) =>
-									`${t.main.fonts.contentHeading.h3Size}rem`,
+								fontSize: '1.3rem', // h3Size
 								fontWeight: 600,
 								mt: 2,
 							},
 							'& p, & li': {
-								fontSize: (t) =>
-									`${t.main.fonts.content.size}rem`,
-								lineHeight: (t) =>
-									t.main.fonts.content.lineHeight,
+								fontSize: '1rem', // content size
+								lineHeight: 1.6, // content lineHeight
 							},
 							maxWidth: (t) => t.main.sizes.articleMaxWidth,
 						}}

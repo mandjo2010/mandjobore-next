@@ -19,6 +19,11 @@ export default function GlobalCss() {
 					display: 'none', // Chrome, Safari, and Opera
 				},
 
+				// === Actions Bar style "This.png" ===
+				'.actions-container': {
+					// Styles gérés directement en inline dans le composant Material-UI
+				},
+
 				// Nom de l'auteur (grand titre)
 				'.authorName': {
 					color: '#555555',
@@ -50,7 +55,6 @@ export default function GlobalCss() {
 					maxWidth: '320px',
 					textAlign: 'center',
 				},
-
 				// Sous-titre d'article (style exact Gatsby)
 				'.blog-subtitle, .article-subtitle, .post-subtitle': {
 					color: 'rgb(85, 85, 85) !important',
@@ -61,6 +65,7 @@ export default function GlobalCss() {
 					lineHeight: '27px !important',
 					margin: '0 0 1rem 0 !important',
 				},
+
 				// === TYPOGRAPHIE DES ARTICLES - Migration Gatsby ===
 				// Titre principal d'article (style exact Gatsby)
 				'.blog-title, .article-title, .post-title': {
@@ -82,7 +87,6 @@ export default function GlobalCss() {
 					margin: 0,
 					padding: 0,
 				},
-
 				'.builtGrid a': {
 					alignItems: 'center',
 					background: '#fff',
@@ -94,6 +98,7 @@ export default function GlobalCss() {
 					transition: 'all 0.2s ease-in-out',
 					width: '32px',
 				},
+
 				'.builtGrid a:hover': {
 					borderColor: 'var(--c-accent)',
 					transform: 'translateY(-1px)',
@@ -132,7 +137,6 @@ export default function GlobalCss() {
 					minWidth: '260px',
 					padding: '16px 20px',
 				},
-
 				'.catBox button': {
 					background: '#fff',
 					border: '1px solid #e5e8ed',
@@ -142,6 +146,7 @@ export default function GlobalCss() {
 					textAlign: 'left',
 					width: '100%',
 				},
+
 				'.catBox button.isActive': {
 					borderColor: 'var(--c-accent)',
 				},
@@ -149,7 +154,6 @@ export default function GlobalCss() {
 				'.catBox li + li': {
 					marginTop: '8px',
 				},
-
 				'.catBox ul': {
 					listStyle: 'none',
 					margin: 0,
@@ -180,6 +184,7 @@ export default function GlobalCss() {
 					width: '1px',
 					zIndex: 1,
 				},
+
 				'.column-border-right': {
 					background: 'var(--divider)',
 					bottom: '120px', // End above footer margin
@@ -189,13 +194,13 @@ export default function GlobalCss() {
 					width: '1px',
 					zIndex: 1,
 				},
-
 				// Layout container with proper margins for borders
 				'.layout-container': {
 					height: '100vh',
 					overflow: 'hidden',
 					position: 'relative',
 				},
+
 				// Main content with custom scrollbar
 				'.main-content': {
 					height: '100vh',
@@ -205,7 +210,6 @@ export default function GlobalCss() {
 					/* Custom scrollbar for main content */
 					scrollbarWidth: 'thin',
 				},
-
 				'.main-content::-webkit-scrollbar': {
 					display: 'block', // Show scrollbar in main content
 					width: '8px',
@@ -233,6 +237,7 @@ export default function GlobalCss() {
 				'.navMenu a:hover, .nav-item:hover': {
 					color: 'var(--c-accent)',
 				},
+
 				'.postItem': {
 					alignItems: 'flex-start',
 					borderBottom: 'none',
@@ -251,7 +256,6 @@ export default function GlobalCss() {
 					transition: 'all 0.3s ease',
 					width: '100%',
 				},
-
 				'.postItemLink:hover .postThumb': {
 					transform: 'rotate(-12deg)',
 				},
@@ -265,6 +269,7 @@ export default function GlobalCss() {
 					flex: '1 1 auto',
 					minWidth: 0,
 				},
+
 				// === Liens de navigation entre articles ===
 				'.postNavLink, .backToList': {
 					color: '#000000',
@@ -274,7 +279,6 @@ export default function GlobalCss() {
 					lineHeight: '18.4px',
 					textDecoration: 'none',
 				},
-
 				// Sous-titre (excerpt) de l'article dans la liste
 				'.postSubtitle, .postExcerpt': {
 					color: 'rgb(85, 85, 85) !important',
@@ -336,19 +340,20 @@ export default function GlobalCss() {
 					flexDirection: 'column',
 					paddingBottom: '100px',
 				},
+
 				'.profileHeader': {
 					alignItems: 'center',
 					display: 'flex',
 					flexDirection: 'column',
 					gap: '.5rem',
 				},
-
 				'.profileNav': {
 					alignItems: 'center',
 					display: 'flex',
 					flexDirection: 'column',
 					gap: '12px',
 				},
+				// === Profile social icons ===
 				'.profileSocial': {
 					display: 'flex',
 					gap: '12px',
@@ -371,39 +376,6 @@ export default function GlobalCss() {
 					backgroundColor: 'var(--c-accent)',
 					color: '#fff',
 					transform: 'translateY(-2px)',
-				},
-				// === Right rail comme Gatsby (groupe haut/bas) ===
-				'.rightRail': {
-					alignItems: 'center',
-					display: 'flex',
-					flexDirection: 'column',
-					height: 'calc(100vh - 180px)', // Respect top and bottom margins
-					justifyContent: 'space-between',
-					pointerEvents: 'none',
-					position: 'fixed',
-					right: '12px',
-					top: '90px', // Aligned with avatar level
-				},
-				'.rightRail button': {
-					background: '#fff',
-					border: '1px solid #e3e6ea',
-					borderRadius: '10px',
-					cursor: 'pointer',
-					display: 'grid',
-					height: '36px',
-					placeItems: 'center',
-					transition: 'all 0.2s ease-in-out',
-					width: '36px',
-				},
-
-				'.rightRail button:hover': {
-					borderColor: 'var(--c-accent)',
-				},
-				'.rightRailTop, .rightRailBottom': {
-					display: 'flex',
-					flexDirection: 'column',
-					gap: '12px',
-					pointerEvents: 'auto',
 				},
 				// === Search overlay light background ===
 				'.searchOverlay': {

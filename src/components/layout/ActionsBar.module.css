@@ -1,0 +1,199 @@
+/* ActionsBar.module.css - Style selon "This.png" intégré dans la sidebar droite */
+
+.actionsContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between; /* Distribution optimale entre les groupes */
+  height: 100vh; /* Utilise toute la hauteur de la fenêtre */
+  min-height: 100%;
+  padding: 0;
+  position: relative;
+}
+
+.topGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-top: 16px; /* Collé plus près du haut */
+}
+
+.bottomGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px; /* Collé plus près du bas */
+}
+
+.actionButton {
+  background: #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.actionButton:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  transform: translateY(-1px);
+}
+
+.actionButton:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.actionButtonActive {
+  background: #709425;
+  box-shadow: 0 4px 12px rgba(112, 148, 37, 0.3);
+}
+
+.actionButtonActive svg {
+  color: #ffffff !important;
+}
+
+.actionButtonActive:hover {
+  background: #5a7a1e;
+  box-shadow: 0 6px 16px rgba(112, 148, 37, 0.4);
+}
+
+/* L'icône Accueil ne doit jamais avoir de fond vert même en état actif */
+.actionButton[title="Accueil"].actionButtonActive {
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.actionButton[title="Accueil"].actionButtonActive svg {
+  color: #333333 !important;
+}
+
+.actionButton[title="Accueil"].actionButtonActive:hover {
+  background: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Icône Accueil reste toujours avec le style par défaut (noir/blanc) */
+.actionButton[title="Accueil"] {
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.actionButton[title="Accueil"]:hover {
+  background: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.actionButton[title="Accueil"] svg {
+  color: #000000 !important;
+}
+
+/* Animation d'apparition pour le bouton scroll top */
+.actionButton[title="Retour en haut"] {
+  animation: slideInUp 0.3s ease-out;
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design - sur mobile, masquer la sidebar et afficher en overlay */
+@media (max-width: 1023px) {
+  .actionsContainer {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    padding: 12px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    height: auto;
+    justify-content: flex-start;
+  }
+
+  .topGroup,
+  .bottomGroup {
+    gap: 12px;
+  }
+
+  .actionButton {
+    width: 44px;
+    height: 44px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  .actionButton:hover {
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
+    transform: translateY(-1px);
+  }
+}
+
+@media (max-width: 768px) {
+  .actionsContainer {
+    bottom: 16px;
+    right: 16px;
+    padding: 10px;
+  }
+
+  .actionButton {
+    width: 40px;
+    height: 40px;
+  }
+
+  .actionButton svg {
+    font-size: 20px !important;
+  }
+}
+
+/* Amélioration pour l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .actionButton {
+    transition: none;
+  }
+  
+  .actionButton[title="Retour en haut"] {
+    animation: none;
+  }
+}
+
+/* Focus states pour l'accessibilité */
+.actionButton:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(112, 148, 37, 0.3);
+}
+
+.actionButton:focus:not(:focus-visible) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .actionButton {
+    border: 2px solid #000;
+  }
+  
+  .actionButtonActive {
+    border: 2px solid #fff;
+  }
+}
+
+/* Trait de séparation supprimé pour une meilleure lisibilité */

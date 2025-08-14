@@ -1,9 +1,11 @@
-import * as React from 'react'
 import { Box } from '@mui/material'
+import * as React from 'react'
+
 import { useNavigatorState } from '@/store/ui'
+
+import ActionsBar from './ActionsBar'
 import InfoBox from './InfoBox'
 import Navigator from './Navigator'
-import ActionsBar from './ActionsBar'
 
 interface RootLayoutProps {
   children: React.ReactNode
@@ -19,24 +21,23 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <Box
       sx={{
-        display: 'flex',
-        minHeight: '100vh',
-        width: '100%',
-        overflow: 'hidden',
+        '--ease-function': 'cubic-bezier(0.4, 0, 0.2, 1)',
         // Variables CSS pour les transitions
         '--transition-duration': '300ms',
-        '--ease-function': 'cubic-bezier(0.4, 0, 0.2, 1)',
+        display: 'flex',
+        minHeight: '100vh',
+        overflow: 'hidden',
+        width: '100%',
       }}
     >
       {/* InfoBox - Sidebar gauche (320px) */}
       <Box
         component="aside"
         sx={{
-          width: 320,
           flexShrink: 0,
-          borderRight: '1px solid #dedede',
-          transition: 'transform var(--transition-duration) var(--ease-function)',
           transform: shape === 'closed' ? 'translateX(-100%)' : 'translateX(0)',
+          transition: 'transform var(--transition-duration) var(--ease-function)',
+          width: 320,
           zIndex: 1000,
         }}
       >
@@ -49,19 +50,19 @@ export default function RootLayout({ children }: RootLayoutProps) {
         sx={{
           display: 'flex',
           flex: 1,
-          position: 'relative',
           overflow: 'hidden',
+          position: 'relative',
         }}
       >
         {/* Navigator - Liste d'articles */}
         <Box
           sx={{
-            width: position === 'is-featured' ? '100%' : '400px',
+            borderRight: position === 'is-aside' ? '1px solid var(--color-lines)' : 'none',
             flexShrink: 0,
-            borderRight: position === 'is-aside' ? '1px solid #dedede' : 'none',
-            transition: 'all var(--transition-duration) var(--ease-function)',
-            transform: position === 'moving-aside' ? 'translateX(-100%)' : 'translateX(0)',
             opacity: position === 'moving-aside' ? 0.8 : 1,
+            transform: position === 'moving-aside' ? 'translateX(-100%)' : 'translateX(0)',
+            transition: 'all var(--transition-duration) var(--ease-function)',
+            width: position === 'is-featured' ? '100%' : '400px',
             zIndex: position === 'is-featured' ? 999 : 1,
           }}
         >
@@ -71,8 +72,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
         {/* Contenu de l'article */}
         <Box
           sx={{
-            flex: 1,
             display: position === 'is-featured' ? 'none' : 'flex',
+            flex: 1,
             flexDirection: 'column',
             overflow: 'hidden',
             transition: 'all var(--transition-duration) var(--ease-function)',
@@ -86,9 +87,8 @@ export default function RootLayout({ children }: RootLayoutProps) {
       <Box
         component="aside"
         sx={{
-          width: 60,
           flexShrink: 0,
-          borderLeft: '1px solid #dedede',
+          width: 60,
           zIndex: 1001,
         }}
       >

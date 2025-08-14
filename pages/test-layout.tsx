@@ -1,5 +1,6 @@
-import * as React from 'react'
 import { Typography, Box } from '@mui/material'
+import * as React from 'react'
+
 import RootLayout from '@/components/layout/RootLayout'
 
 /**
@@ -10,11 +11,11 @@ export default function TestLayoutPage() {
     <RootLayout>
       <Box
         sx={{
-          p: 4,
+          height: '100vh',
           maxWidth: '50em',
           mx: 'auto',
           overflow: 'auto',
-          height: '100vh',
+          p: 4,
         }}
       >
         <Typography variant="h1" className="blog-title" sx={{ mb: 2 }}>
@@ -51,6 +52,20 @@ export default function TestLayoutPage() {
           <li>✅ Mode plein écran</li>
           <li>✅ Scroll to top</li>
           <li>✅ Persistence des préférences utilisateur</li>
+          <li>✅ Barres de séparation Gatsby-style avec responsive</li>
+        </ul>
+
+        <Typography paragraph>
+          <strong>Barres de séparation reproduites :</strong>
+        </Typography>
+
+        <ul>
+          <li><strong>InfoBox</strong> : Barre verticale droite (20px top/bottom)</li>
+          <li><strong>ActionsBar</strong> : Barre verticale gauche (desktop) / horizontale haut (mobile)</li>
+          <li><strong>Navigator</strong> : Barres horizontales dans header/footer</li>
+          <li><strong>Couleur</strong> : #dedede (variable --color-lines)</li>
+          <li><strong>Marge</strong> : 20px (variable --lines-margin)</li>
+          <li><strong>Responsive</strong> : Adaptation automatique mobile/desktop</li>
         </ul>
 
         <Typography paragraph>
@@ -68,8 +83,8 @@ export default function TestLayoutPage() {
           les transitions et fonctionnalités en action !
         </Typography>
 
-        <Box sx={{ mt: 4, p: 3, bgcolor: '#f5f5f5', borderRadius: 2 }}>
-          <Typography variant="h6" sx={{ mb: 2, color: '#709425' }}>
+        <Box sx={{ bgcolor: '#f5f5f5', borderRadius: 2, mt: 4, p: 3 }}>
+          <Typography variant="h6" sx={{ color: '#709425', mb: 2 }}>
             🎯 Prochaines étapes
           </Typography>
           
@@ -81,6 +96,68 @@ export default function TestLayoutPage() {
             <li>Optimiser les images avec next/image</li>
             <li>Ajouter les métadonnées SEO</li>
           </ol>
+        </Box>
+
+        <Box sx={{ bgcolor: '#f8f9fa', borderRadius: 2, mt: 4, p: 3 }}>
+          <Typography variant="h6" sx={{ color: '#709425', mb: 2 }}>
+            📏 Séparateurs avec Marges (Gatsby Style)
+          </Typography>
+          
+          <Typography paragraph>
+            <strong>Séparateurs verticaux :</strong>
+          </Typography>
+          
+          <ul>
+            <li>✅ <strong>InfoBox :</strong> ligne verticale droite de 20px du haut à 20px du bas</li>
+            <li>✅ <strong>Navigator :</strong> ligne verticale droite quand is-aside (20px marges)</li>
+            <li>✅ <strong>ActionsBar :</strong> ligne verticale gauche de 20px du haut à 20px du bas</li>
+          </ul>
+
+          <Typography paragraph>
+            <strong>Comportement responsive :</strong>
+          </Typography>
+          
+          <ul>
+            <li>📱 <strong>Mobile (&lt;600px) :</strong> séparateurs horizontaux uniquement</li>
+            <li>💻 <strong>Desktop (&gt;1024px) :</strong> séparateurs verticaux avec marges exactes</li>
+            <li>🎯 <strong>Couleur :</strong> #dedede (--color-lines)</li>
+            <li>📐 <strong>Marges :</strong> 20px (--lines-margin)</li>
+          </ul>
+
+          <Box 
+            sx={{ 
+              bgcolor: '#fff', 
+              border: '1px solid #dedede', 
+              borderRadius: 1,
+              mt: 2,
+              p: 2,
+              position: 'relative'
+            }}
+          >
+            <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
+              Exemple de séparateur avec marges :
+            </Typography>
+            <Box
+              sx={{
+                '&::after': {
+                  borderRight: '1px solid #709425',
+                  bottom: '20px',
+                  content: '""',
+                  position: 'absolute',
+                  right: 0, 
+                  top: '20px',
+                  width: '1px',
+                },
+                bgcolor: '#f5f5f5',
+                height: 60,
+                position: 'relative'
+              }}
+            >
+              <Typography variant="caption" sx={{ color: '#666', p: 1 }}>
+                Zone avec séparateur vertical droit (20px du haut et du bas)
+              </Typography>
+            </Box>
+          </Box>
         </Box>
       </Box>
     </RootLayout>

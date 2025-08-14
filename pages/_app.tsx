@@ -5,8 +5,10 @@ import { Open_Sans } from 'next/font/google'
 import Head from 'next/head'
 import * as React from 'react'
 
+import { useFontSizeController } from '../src/hooks/useFontSizeController'
 import GlobalCss from '../src/theme/GlobalCss'
 import '../src/styles/typography.css'
+import '../src/styles/font-size.css'
 
 const openSans = Open_Sans({
 	display: 'swap',
@@ -23,6 +25,14 @@ const theme = createTheme({
 
 const createEmotionCache = () => createCache({ key: 'css', prepend: true })
 const clientSideEmotionCache = createEmotionCache()
+
+// Composant wrapper pour utiliser le hook
+function AppWrapper({ Component, pageProps }: { Component: React.ComponentType<any>; pageProps: Record<string, unknown> }) {
+	// Applique la taille de police au niveau global
+	useFontSizeController();
+	
+	return <Component {...pageProps} />;
+}
 
 export default function MyApp(props: {
 	Component: React.ComponentType<any> // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -46,7 +56,7 @@ export default function MyApp(props: {
 				<CssBaseline />
 				<GlobalCss />
 				<main className={openSans.className}>
-					<Component {...pageProps} />
+					<AppWrapper Component={Component} pageProps={pageProps} />
 				</main>
 			</ThemeProvider>
 		</CacheProvider>

@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, h6 {
   font-family: inherit !important;
 }
 
-/* Variables typographiques - CORRECTION DES TAILLES */
+/* Variables typographiques et structure - CORRECTION DES TAILLES */
 :root {
   --font-open-sans: "Open Sans", Arial, sans-serif;
   
@@ -35,6 +35,20 @@ h1, h2, h3, h4, h5, h6 {
   --subtitle-font-size: 23px;
   --subtitle-line-height: 27px;
   --subtitle-color: rgb(85, 85, 85);
+  
+  /* Variables de séparation - REPRODUCTION GATSBY */
+  --color-lines: #dedede;
+  --lines-margin: 20px; /* Marge de 20px du haut et du bas pour séparateurs verticaux */
+  --separator-transition: all 0.3s ease;
+  
+  /* Couleurs de thème pour les barres d'actions */
+  --bars-background: #ffffff;
+  --bars-icon-color: #666666;
+  --bars-icon-hover: #709425;
+  
+  /* Breakpoints responsive */
+  --breakpoint-mobile: 600px;
+  --breakpoint-desktop: 1024px;
 }
 
 /* ============================================
@@ -140,7 +154,14 @@ h2.gatsby-subtitle,
 }
 
 .post-list-title:hover {
-  color: #709425; /* Couleur accent */
+  color: #709425 !important; /* Couleur accent - force la priorité */
+  text-shadow: 0 1px 2px rgba(112, 148, 37, 0.1);
+}
+
+/* Effet hover pour les liens d'articles complets */
+a:hover .post-list-title {
+  color: #709425 !important;
+  text-shadow: 0 1px 2px rgba(112, 148, 37, 0.1);
 }
 
 /* Sous-titre pour les listes d'articles */
@@ -216,4 +237,173 @@ h2.gatsby-subtitle,
 .typography-preload::before {
   content: '';
   font-weight: 600;
+}
+
+/* ============================================
+   BARRES DE SÉPARATION GATSBY-STYLE
+   ============================================ */
+
+/* Styles globaux pour les séparateurs */
+.separator-line {
+  background-color: var(--color-lines);
+  transition: var(--separator-transition);
+}
+
+.separator-horizontal {
+  height: 1px;
+  width: 100%;
+}
+
+.separator-vertical {
+  width: 1px;
+  height: 100%;
+}
+
+/* Classes utilitaires pour les marges de ligne */
+.separator-margin {
+  margin: var(--lines-margin);
+}
+
+.separator-margin-horizontal {
+  margin: 0 var(--lines-margin);
+}
+
+.separator-margin-vertical {
+  margin: var(--lines-margin) 0;
+}
+
+/* Responsive hiding pour les séparateurs */
+@media (max-width: 600px) {
+  .separator-vertical-desktop {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .separator-horizontal-mobile {
+    display: none;
+  }
+}
+
+/* Pseudo-éléments pour les barres de séparation avancées */
+.gatsby-separator-right::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: var(--lines-margin);
+  bottom: var(--lines-margin);
+  width: 1px;
+  border-right: 1px solid var(--color-lines);
+  transition: var(--separator-transition);
+}
+
+.gatsby-separator-left::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: var(--lines-margin);
+  bottom: var(--lines-margin);
+  width: 1px;
+  border-left: 1px solid var(--color-lines);
+  transition: var(--separator-transition);
+}
+
+.gatsby-separator-bottom::before {
+  content: "";
+  position: absolute;
+  left: var(--lines-margin);
+  right: var(--lines-margin);
+  height: 0;
+  bottom: 0;
+  border-top: 1px solid var(--color-lines);
+  transition: var(--separator-transition);
+}
+
+.gatsby-separator-top::before {
+  content: "";
+  position: absolute;
+  left: var(--lines-margin);
+  right: var(--lines-margin);
+  height: 0;
+  top: 0;
+  border-top: 1px solid var(--color-lines);
+  transition: var(--separator-transition);
+}
+
+/* ============================================
+   EFFETS HOVER - REPRODUCTION GATSBY
+   ============================================ */
+
+/* Titres d'articles cliquables */
+a .blog-title,
+a .article-title,
+a .post-title,
+a .gatsby-title,
+.blog-title a,
+.article-title a,
+.post-title a,
+.gatsby-title a {
+  transition: color 0.3s ease, text-shadow 0.3s ease;
+  text-decoration: none;
+}
+
+a:hover .blog-title,
+a:hover .article-title,
+a:hover .post-title,
+a:hover .gatsby-title,
+.blog-title:hover,
+.article-title:hover,
+.post-title:hover,
+.gatsby-title:hover {
+  color: #709425 !important;
+  text-shadow: 0 1px 3px rgba(112, 148, 37, 0.2);
+}
+
+/* ============================================
+   EFFETS HOVER SPÉCIFIQUES - MAXIMUM PRIORITÉ
+   ============================================ */
+
+/* Styles spécifiques pour les cartes d'articles MUI */
+.MuiCard-root:hover .post-list-title {
+  color: #709425 !important;
+  text-shadow: 0 1px 2px rgba(112, 148, 37, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Style pour les titres d'articles avec classe MUI */
+.MuiTypography-root.post-list-title {
+  transition: color 0.3s ease, text-shadow 0.3s ease !important;
+}
+
+.MuiTypography-root.post-list-title:hover {
+  color: #709425 !important;
+  text-shadow: 0 1px 2px rgba(112, 148, 37, 0.1) !important;
+}
+
+/* Effet hover sur liens contenant des articles */
+a:hover .MuiTypography-root.post-list-title,
+a .MuiTypography-root.post-list-title:hover {
+  color: #709425 !important;
+  text-shadow: 0 1px 2px rgba(112, 148, 37, 0.1) !important;
+}
+
+/* Effet hover pour tous les éléments avec les classes d'articles */
+[class*="post-list-title"]:hover,
+[class*="article-title"]:hover,
+[class*="blog-title"]:hover {
+  color: #709425 !important;
+  text-shadow: 0 1px 2px rgba(112, 148, 37, 0.1) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Style global pour tous les liens vers articles */
+a[href*="/posts/"]:hover * {
+  color: #709425 !important;
+}
+
+/* Style ultra-spécifique pour MUI Typography dans les cartes */
+.MuiCard-root:hover .MuiCardContent-root .MuiTypography-root.post-list-title,
+.MuiCard-root:hover .MuiCardContent-root .MuiTypography-h3 {
+  color: #709425 !important;
+  text-shadow: 0 1px 2px rgba(112, 148, 37, 0.1) !important;
 }

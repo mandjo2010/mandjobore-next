@@ -1,0 +1,45 @@
+/* Global font size styles - Applique la taille de police sélectionnée */
+
+/* Base font size control */
+html {
+  transition: font-size 0.2s ease;
+}
+
+/* Apply font size to main content areas */
+body,
+.main-content,
+.post-content,
+.article-content {
+  font-size: inherit;
+  line-height: 1.6;
+}
+
+/* Preserve specific elements that shouldn't scale */
+.actions-bar,
+.navigation,
+.header-fixed,
+.breadcrumb,
+code,
+pre {
+  font-size: 1rem !important;
+}
+
+/* Responsive font scaling */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px; /* Base mobile size */
+  }
+}
+
+@media (min-width: 769px) {
+  html {
+    font-size: 16px; /* Base desktop size */
+  }
+}
+
+/* High contrast mode adjustments */
+@media (prefers-contrast: high) {
+  body {
+    font-weight: 500;
+  }
+}
