@@ -1,21 +1,22 @@
+import { Button, Box, Typography } from '@mui/material'
+import Head from 'next/head'
 /**
  * Page de test pour vérifier le fonctionnement du store Zustand
  */
 import React from 'react'
-import Head from 'next/head'
-import { Button, Box, Typography } from '@mui/material'
+
 import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 
 export default function TestStore() {
   const { 
-    navigatorPosition, 
-    navigatorShape, 
+    categoryFilter, 
+    featureNavigator, 
     fontSizeIncrease,
-    categoryFilter,
-    featureNavigator,
     moveNavigatorAside,
-    setFontSizeIncrease,
-    setCategoryFilter 
+    navigatorPosition,
+    navigatorShape,
+    setCategoryFilter,
+    setFontSizeIncrease 
   } = useGatsbyUIStore()
 
   return (
@@ -24,7 +25,7 @@ export default function TestStore() {
         <title>Test Store Zustand</title>
       </Head>
 
-      <Box sx={{ padding: '40px', maxWidth: '800px' }}>
+      <Box sx={{ maxWidth: '800px', padding: '40px' }}>
         <Typography variant="h1" sx={{ marginBottom: '30px' }}>
           Test Store Zustand
         </Typography>
@@ -39,19 +40,21 @@ export default function TestStore() {
           <Typography>Category Filter: {categoryFilter}</Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginBottom: '20px' }}>
+        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '20px' }}>
           <Button 
             variant="contained" 
             onClick={featureNavigator}
+            color={navigatorPosition === 'is-featured' ? 'secondary' : 'primary'}
           >
-            Feature Navigator
+            {navigatorPosition === 'is-featured' ? '✓ Article Mode' : 'Feature Navigator (Article)'}
           </Button>
           
           <Button 
             variant="contained" 
             onClick={moveNavigatorAside}
+            color={navigatorPosition === 'is-aside' ? 'secondary' : 'primary'}
           >
-            Move Navigator Aside
+            {navigatorPosition === 'is-aside' ? '✓ Home Mode' : 'Move Navigator Aside (Home)'}
           </Button>
           
           <Button 

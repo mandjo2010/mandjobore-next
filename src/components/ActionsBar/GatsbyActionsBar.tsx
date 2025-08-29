@@ -4,8 +4,6 @@
  */
 'use client'
 
-import React, { useState } from 'react'
-import { Box, IconButton, styled } from '@mui/material'
 import { 
   Home,
   FilterList,
@@ -15,146 +13,157 @@ import {
   FullscreenExit,
   KeyboardArrowUp
 } from '@mui/icons-material'
+import { Box, IconButton, styled } from '@mui/material'
+import React, { useState } from 'react'
+
 import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 
 interface ActionsBarProps {
-  categories: string[]
+  categories?: string[]
   className?: string
+  isArticleView?: boolean // Nouveau prop pour distinguer article vs page d'accueil
 }
 
 // Container principal de l'ActionsBar
 const ActionsBarContainer = styled(Box)({
-  position: 'fixed',
-  top: 0,
-  right: 0,
-  width: '64px',
-  height: '100vh',
+  // Caché sur mobile
+  '@media (max-width: 1023px)': {
+    display: 'none'
+  },
+  alignItems: 'center',
   backgroundColor: '#ffffff',
   borderLeft: '1px solid #eeeeee',
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
   gap: '20px',
-  zIndex: 10,
+  height: '100vh',
+  justifyContent: 'center',
+  position: 'fixed',
+  right: 0,
+  top: 0,
+  width: '64px',
   
-  // Caché sur mobile
-  '@media (max-width: 1023px)': {
-    display: 'none'
-  }
+  zIndex: 10
 })
 
 // Bouton d'action avec style Gatsby
 const ActionButton = styled(IconButton)({
-  width: '44px',
-  height: '44px',
+  '&.active': {
+    backgroundColor: '#709425',
+    borderColor: '#709425',
+    color: '#ffffff'
+  },
+  '&:hover': {
+    backgroundColor: '#ffffff',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+    color: '#709425', // Vert accent Gatsby
+    transform: 'scale(1.1)'
+  },
   backgroundColor: 'rgba(255, 255, 255, 0.9)',
   border: '1px solid #e0e0e0',
   borderRadius: '50%',
   color: '#666666',
+  height: '44px',
+  
   transition: 'all 0.3s ease',
   
-  '&:hover': {
-    backgroundColor: '#ffffff',
-    color: '#709425', // Vert accent Gatsby
-    transform: 'scale(1.1)',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
-  },
-  
-  '&.active': {
-    backgroundColor: '#709425',
-    color: '#ffffff',
-    borderColor: '#709425'
-  }
+  width: '44px'
 })
 
 // Modal simple pour les filtres
 const FilterModal = styled(Box)({
-  position: 'absolute',
-  top: '50%',
-  right: '80px',
-  transform: 'translateY(-50%)',
   backgroundColor: '#ffffff',
   border: '1px solid #e0e0e0',
   borderRadius: '8px',
-  padding: '20px',
-  minWidth: '200px',
   boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+  minWidth: '200px',
+  padding: '20px',
+  position: 'absolute',
+  right: '80px',
+  top: '50%',
+  transform: 'translateY(-50%)',
   zIndex: 1000
 })
 
 const FilterOption = styled(Box)({
-  padding: '8px 12px',
-  cursor: 'pointer',
-  borderRadius: '4px',
-  fontSize: '14px',
-  color: '#666666',
-  transition: 'all 0.2s ease',
-  
+  '&.active': {
+    backgroundColor: '#709425',
+    color: '#ffffff'
+  },
   '&:hover': {
     backgroundColor: '#f5f5f5',
     color: '#333333'
   },
+  borderRadius: '4px',
+  color: '#666666',
+  cursor: 'pointer',
+  fontSize: '14px',
   
-  '&.active': {
-    backgroundColor: '#709425',
-    color: '#ffffff'
-  }
+  padding: '8px 12px',
+  
+  transition: 'all 0.2s ease'
 })
 
 // Modal pour la taille de police
 const FontModal = styled(Box)({
-  position: 'absolute',
-  top: '50%',
-  right: '80px',
-  transform: 'translateY(-50%)',
   backgroundColor: '#ffffff',
   border: '1px solid #e0e0e0',
   borderRadius: '8px',
-  padding: '20px',
-  minWidth: '180px',
   boxShadow: '0 8px 24px rgba(0,0,0,0.15)',
+  minWidth: '180px',
+  padding: '20px',
+  position: 'absolute',
+  right: '80px',
+  top: '50%',
+  transform: 'translateY(-50%)',
   zIndex: 1000
 })
 
 const FontOption = styled(Box)({
-  padding: '8px 12px',
-  cursor: 'pointer',
-  borderRadius: '4px',
-  fontSize: '14px',
-  color: '#666666',
-  transition: 'all 0.2s ease',
-  textAlign: 'center',
-  
+  '&.active': {
+    backgroundColor: '#709425',
+    color: '#ffffff'
+  },
   '&:hover': {
     backgroundColor: '#f5f5f5',
     color: '#333333'
   },
+  borderRadius: '4px',
+  color: '#666666',
+  cursor: 'pointer',
+  fontSize: '14px',
+  padding: '8px 12px',
   
-  '&.active': {
-    backgroundColor: '#709425',
-    color: '#ffffff'
-  }
+  textAlign: 'center',
+  
+  transition: 'all 0.2s ease'
 })
 
-export default function ActionsBar({ categories, className }: ActionsBarProps) {
+export default function ActionsBar({ 
+  categories = [], 
+  className, 
+  isArticleView = false 
+}: ActionsBarProps) {
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showFontModal, setShowFontModal] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
   
   const { 
-    featureNavigator,
     categoryFilter,
-    setCategoryFilter,
     fontSizeIncrease,
+    navigatorPosition,
+    resetToHome,
+    setCategoryFilter,
     setFontSizeIncrease,
     setScrollToTop
   } = useGatsbyUIStore()
   
-  // Action: Home (featureNavigator comme dans Gatsby)
+  // Détermine le contexte d'affichage
+  const isInArticleContext = isArticleView || navigatorPosition === 'is-featured'
+  
+  // Action: Home (resetToHome pour un reset complet)
   const handleHome = () => {
-    featureNavigator()
-    setScrollToTop(true)
+    resetToHome()
   }
   
   // Action: Filter
@@ -224,46 +233,50 @@ export default function ActionsBar({ categories, className }: ActionsBarProps) {
   
   return (
     <ActionsBarContainer className={className}>
-      {/* Home */}
+      {/* Home - toujours visible */}
       <ActionButton onClick={handleHome} aria-label="Home">
         <Home />
       </ActionButton>
       
-      {/* Filter */}
-      <ActionButton 
-        onClick={handleFilter}
-        className={showFilterModal ? 'active' : ''}
-        aria-label="Filter by category"
-      >
-        <FilterList />
-      </ActionButton>
+      {/* Filter - visible uniquement sur la page d'accueil */}
+      {!isInArticleContext && (
+        <ActionButton 
+          onClick={handleFilter}
+          className={showFilterModal ? 'active' : ''}
+          aria-label="Filter by category"
+        >
+          <FilterList />
+        </ActionButton>
+      )}
       
-      {/* Search */}
+      {/* Search - toujours visible */}
       <ActionButton onClick={handleSearch} aria-label="Search">
         <Search />
       </ActionButton>
       
-      {/* Font Size */}
-      <ActionButton 
-        onClick={handleFontSize}
-        className={showFontModal ? 'active' : ''}
-        aria-label="Change font size"
-      >
-        <FormatSize />
-      </ActionButton>
+      {/* Font Size - visible uniquement en mode article */}
+      {isInArticleContext && (
+        <ActionButton 
+          onClick={handleFontSize}
+          className={showFontModal ? 'active' : ''}
+          aria-label="Change font size"
+        >
+          <FormatSize />
+        </ActionButton>
+      )}
       
-      {/* Fullscreen */}
+      {/* Fullscreen - toujours visible */}
       <ActionButton onClick={handleFullscreen} aria-label="Toggle fullscreen">
         {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
       </ActionButton>
       
-      {/* Scroll to Top */}
+      {/* Scroll to Top - toujours visible */}
       <ActionButton onClick={handleScrollTop} aria-label="Scroll to top">
         <KeyboardArrowUp />
       </ActionButton>
       
-      {/* Modal de filtres */}
-      {showFilterModal && (
+      {/* Modal de filtres - visible uniquement sur la page d'accueil */}
+      {!isInArticleContext && showFilterModal && (
         <FilterModal onClick={(e) => e.stopPropagation()}>
           <FilterOption
             className={categoryFilter === 'all posts' ? 'active' : ''}
@@ -284,8 +297,8 @@ export default function ActionsBar({ categories, className }: ActionsBarProps) {
         </FilterModal>
       )}
       
-      {/* Modal de taille de police */}
-      {showFontModal && (
+      {/* Modal de taille de police - visible uniquement en mode article */}
+      {isInArticleContext && showFontModal && (
         <FontModal onClick={(e) => e.stopPropagation()}>
           {fontSizes.map((size) => (
             <FontOption
