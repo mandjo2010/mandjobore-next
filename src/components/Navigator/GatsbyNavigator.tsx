@@ -295,7 +295,6 @@ export default function GatsbyNavigator({ posts, categories, className }: Naviga
     </Box>
   )
 }
-})
 
 // Container d'un article
 const PostCard = styled(Box)({

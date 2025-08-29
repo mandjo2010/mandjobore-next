@@ -83,9 +83,9 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   const { navigatorPosition, navigatorShape } = useGatsbyUIStore()
   
   // Détection responsive isolée (pas connectée au store pour éviter les boucles)
-  const isWide = useResponsiveDetector()
+  const _isWide = useResponsiveDetector()
   
-  // On peut utiliser isWide ici si nécessaire pour la logique locale
+  // On peut utiliser _isWide ici si nécessaire pour la logique locale
   // mais on évite de l'envoyer au store automatiquement
   
   // Classes CSS dynamiques comme dans Gatsby

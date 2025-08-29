@@ -37,10 +37,10 @@ interface Part {
 
 interface InfoBoxProps {
   pages: Page[]
-  parts: Part[]
+  parts: Part[] // eslint-disable-line @typescript-eslint/no-unused-vars
 }
 
-export default function InfoBox({ pages, parts }: InfoBoxProps) {
+export default function InfoBox({ pages, parts: _parts }: InfoBoxProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
   return (
