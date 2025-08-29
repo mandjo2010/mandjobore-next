@@ -1,0 +1,351 @@
+/**
+ * LAYOUT CSS GLOBAL - Selon vos spécifications exactes
+ * Couleurs, typographie et dimensions pixel-perfect pour mandjobore.com
+ */
+
+/* ========================================
+   VARIABLES CSS EXACTES
+======================================== */
+:root {
+  /* COULEURS PRIMAIRES EXACTES */
+  --c-accent: #27ae60;           /* Vert principal */
+  --c-text: #2c3e50;            /* Bleu-gris foncé pour le texte */
+  --c-background: #ffffff;       /* Blanc pur */
+  --c-lines: #e0e0e0;          /* Gris lignes de séparation */
+  
+  /* COULEURS SECONDAIRES */
+  --c-subtitle: #7f8c8d;        /* Gris pour sous-titres */
+  --c-meta: #95a5a6;           /* Gris pour métadonnées */
+  --c-hover: #2ecc71;          /* Vert hover (accent plus clair) */
+  --c-surface: #f8f9fa;        /* Gris très clair pour surfaces */
+  
+  /* COULEURS ACTIONS BAR */
+  --c-actions-bg: #2c3e50;      /* Bleu-gris foncé */
+  --c-actions-border: #34495e;  /* Bleu-gris moyen */
+  --c-actions-text: #ecf0f1;    /* Gris très clair */
+  
+  /* DIMENSIONS FIXES */
+  --layout-infobox-width: 300px;
+  --layout-actionsbar-width: 60px;
+  --layout-infobar-height: 48px;
+  
+  /* TYPOGRAPHIE EXACTE */
+  --font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-weight-light: 300;
+  --font-weight-normal: 400;
+  --font-weight-semibold: 600;
+  
+  /* TRANSITIONS */
+  --transition-standard: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.2s ease;
+}
+
+/* ========================================
+   RESET ET BASE
+======================================== */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  font-weight: var(--font-weight-light);
+  line-height: 1.6;
+  color: var(--c-text);
+  background: var(--c-background);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========================================
+   TYPOGRAPHIE EXACTE
+======================================== */
+h1, h2, h3, h4, h5, h6 {
+  margin: 0;
+  font-weight: var(--font-weight-semibold);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+h1 {
+  font-size: 1.9em;
+  line-height: 1.1;
+  letter-spacing: -0.04em;
+}
+
+h2 {
+  font-size: 1.5em;
+  font-weight: var(--font-weight-light);
+  line-height: 1.1;
+}
+
+h3 {
+  font-size: 1.3em;
+  line-height: 1.3;
+}
+
+p {
+  margin: 0 0 1em 0;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--c-accent);
+  text-decoration: none;
+  transition: var(--transition-fast);
+}
+
+a:hover {
+  color: var(--c-hover);
+}
+
+h2 {
+  font-size: 1.5em;
+  font-weight: 300;
+  line-height: 1.1;
+}
+
+h3 {
+  font-size: 1.3em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+p {
+  margin: 0 0 1em 0;
+  line-height: 1.6;
+}
+
+a {
+  color: var(--c-accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--c-hover);
+}
+
+/* Layout principal - Structure absolue exacte */
+.layout-container {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--c-background);
+}
+
+/* COLONNE 1: InfoBox (300px fixe à gauche) */
+.infobox-column {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 300px;
+  height: 100vh;
+  background: var(--c-background);
+  border-right: 1px solid var(--c-lines);
+  box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+/* COLONNE 2: Navigator/Content (centre flexible) */
+.navigator-column {
+  position: absolute;
+  top: 0;
+  left: 300px;
+  right: 60px;
+  height: 100vh;
+  background: #f8f8f8;
+  overflow: auto;
+  transition: left 0.3s ease, right 0.3s ease;
+  z-index: 100;
+}
+
+/* COLONNE 3: ActionsBar (60px fixe à droite) */
+.actionsbar-column {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60px;
+  height: 100vh;
+  background: var(--c-sidebar);
+  border-left: 1px solid #34495e;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+/* États du Navigator */
+.navigator.is-featured {
+  /* Navigator visible et prend toute la place centrale */
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.navigator.is-aside {
+  /* Navigator en sidebar ou caché */
+  transform: translateX(-100%);
+  opacity: 0.9;
+}
+
+.navigator.moving-aside {
+  /* Animation en cours */
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Footer InfoBar */
+.infobar-footer {
+  position: absolute;
+  bottom: 0;
+  left: 300px;
+  right: 60px;
+  height: auto;
+  background: var(--c-sidebar);
+  color: var(--c-sidebar-light);
+  border-top: 1px solid #2c3e50;
+  z-index: 500;
+  transition: left 0.3s ease, right 0.3s ease;
+}
+
+/* Responsive breakpoints */
+@media (max-width: 900px) {
+  .infobox-column,
+  .actionsbar-column {
+    display: none !important;
+  }
+  
+  .navigator-column {
+    left: 0 !important;
+    right: 0 !important;
+  }
+  
+  .infobar-footer {
+    left: 0 !important;
+    right: 0 !important;
+  }
+  
+  .main-content {
+    padding-bottom: 80px !important; /* Espace pour mobile actions bar */
+  }
+  
+  /* Mobile ActionsBar en bas */
+  .mobile-actionsbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background: var(--c-sidebar);
+    border-top: 1px solid #34495e;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.1);
+    z-index: 1000;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1200px) {
+  /* Tablette - ajustements */
+  .infobox-column {
+    width: 280px;
+  }
+  
+  .navigator-column {
+    left: 280px;
+  }
+  
+  .infobar-footer {
+    left: 280px;
+  }
+}
+
+/* Scrollbar styling */
+.navigator-column::-webkit-scrollbar {
+  width: 6px;
+}
+
+.navigator-column::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+.navigator-column::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.navigator-column::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Animations et transitions */
+.layout-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Utilities */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.no-scroll {
+  overflow: hidden;
+}
+
+/* Focus et accessibilité */
+button:focus,
+a:focus {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+/* Loading states */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border: 2px solid var(--c-lines);
+  border-top: 2px solid var(--c-accent);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Print styles */
+@media print {
+  .infobox-column,
+  .actionsbar-column,
+  .infobar-footer {
+    display: none !important;
+  }
+  
+  .navigator-column {
+    left: 0 !important;
+    right: 0 !important;
+    position: static !important;
+    height: auto !important;
+  }
+}

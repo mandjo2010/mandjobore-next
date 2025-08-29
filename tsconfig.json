@@ -4,6 +4,10 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "@/components/*": [
+        "src/components/*",
+        "components/*"
       ]
     },
     "target": "ES2020",

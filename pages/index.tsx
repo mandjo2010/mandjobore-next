@@ -2,54 +2,30 @@ import { GetStaticProps } from 'next'
 import Head from 'next/head'
 import * as React from 'react'
 
-import ArticleListView from '@/components/blog/ArticleListView'
-import CategoryFilterPanel from '@/components/filters/CategoryFilterPanel'
-import ProfileSidebar from '@/components/layout/ProfileSidebar'
-import RightRail from '@/components/layout/RightRail'
-
-import { getAllPostsForList, adaptPostForGatsbyView } from '../lib/posts'
-import MainLayout from '../src/components/layout/MainLayout'
-
-type Post = {
-  slug: string
-  title: string
-  excerpt: string
-  image: string
-  category?: string
-}
+import GatsbyLayoutNew from '@/components/layout/GatsbyLayoutNew'
+import { getAll } from '@/lib/content'
 
 interface HomeProps {
-	posts: Post[]
-	categories: string[]
+	posts: Array<{
+		slug: string;
+		title: string;
+		excerpt: string;
+		category?: string | null;
+		cover?: string | null;
+		date: string;
+	}>;
+	pages: Array<{
+		slug: string;
+		title: string;
+		menuTitle?: string;
+	}>;
+	parts: Array<{
+		title: string;
+		html: string;
+	}>;
 }
 
-export default function Home({ categories, posts }: HomeProps) {
-	const [selectedCategory, setSelectedCategory] = React.useState<string>('')
-	const [filterOpen, setFilterOpen] = React.useState(false)
-
-	// Filter posts by category if one is selected
-	const visiblePosts = React.useMemo(() => {
-		if (!selectedCategory || selectedCategory === 'all posts') return posts
-		return posts.filter(post => post.category === selectedCategory)
-	}, [posts, selectedCategory])
-
-	const handleCategoryChange = React.useCallback((c?: string) => {
-		setSelectedCategory(c ?? '')
-	}, [])
-
-	const handleCategoryPick = React.useCallback((category: string) => {
-		setSelectedCategory(category === 'all posts' ? '' : category)
-	}, [])
-
-	const handleOpenFilter = React.useCallback(() => {
-		setFilterOpen(true)
-	}, [])
-
-	const handleOpenSearch = React.useCallback(() => {
-		// TODO: Connect to existing search overlay
-		console.log('Open search')
-	}, [])
-
+export default function Home({ posts, pages, parts }: HomeProps) {
 	return (
 		<>
 			<Head>
@@ -57,47 +33,46 @@ export default function Home({ categories, posts }: HomeProps) {
 				<meta name="description" content="Blog personnel de développement et technologies" />
 			</Head>
 
-			<MainLayout
-				left={<ProfileSidebar />}
-				right={<RightRail onOpenSearch={handleOpenSearch} onOpenFilter={handleOpenFilter} />}
-				categories={categories}
-				activeCategory={selectedCategory || undefined}
-				onCategoryChange={handleCategoryChange}
-			>
-				<ArticleListView posts={visiblePosts} />
-			</MainLayout>
-
-			{filterOpen && (
-				<CategoryFilterPanel
-					categories={categories}
-					active={selectedCategory || 'all posts'}
-					onPick={handleCategoryPick}
-					onClose={() => setFilterOpen(false)}
-				/>
-			)}
+			<GatsbyLayoutNew
+				posts={posts}
+				pages={pages}
+				parts={parts}
+				seo={{
+					title: 'Mandjo Béa Boré - Data Analyst & Developer',
+					description: 'Design and build applications to support data including spatial & geospatial ones.',
+					url: 'https://mandjobore.com',
+				}}
+			/>
 		</>
 	)
 }
 
 export const getStaticProps: GetStaticProps<HomeProps> = async () => {
-	const rawPosts = getAllPostsForList()
+	const allPosts = getAll('posts')
+	const allPages = getAll('pages')
 	
-	// Use adapter to ensure consistent data format
-	const posts: Post[] = rawPosts.map(adaptPostForGatsbyView)
+	const posts = allPosts.map(post => ({
+		slug: post.slug,
+		title: post.data?.title || '',
+		excerpt: post.content?.substring(0, 100) + '...' || '',
+		category: post.data?.category || null,
+		cover: post.data?.cover || null,
+		date: post.data?.date || '',
+	}))
 	
-	// Extract unique categories from posts
-	const categorySet = new Set<string>()
-	posts.forEach(post => {
-		if (post.category) {
-			categorySet.add(post.category)
-		}
-	})
-	const categories = Array.from(categorySet).sort()
+	const pages = allPages.map(page => ({
+		slug: page.slug,
+		title: page.data?.title || '',
+		menuTitle: page.data?.menuTitle || page.data?.title || '',
+	}))
 	
-	return { 
-		props: { 
-			categories,
-			posts 
-		} 
+	const parts: Array<{ title: string; html: string }> = []
+	
+	return {
+		props: {
+			posts,
+			pages,
+			parts,
+		},
 	}
 }

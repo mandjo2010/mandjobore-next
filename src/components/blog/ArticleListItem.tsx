@@ -8,7 +8,7 @@ export default function ArticleListItem({ excerpt = '', href, image, title }: Pr
     <li className="postItem">
       <Link href={href} className="postItemLink">
         <div className="postThumb" aria-hidden="true">
-          <Image src={image} alt="" fill sizes="90px" priority={false} />
+          <Image src={image} alt="" fill sizes="75px" priority={false} />
         </div>
         <div className="postMeta">
           <h2 className="postTitle">{title}</h2>

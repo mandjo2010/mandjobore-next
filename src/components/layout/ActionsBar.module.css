@@ -197,3 +197,42 @@
 }
 
 /* Trait de séparation supprimé pour une meilleure lisibilité */
+
+/* Mode horizontal pour mobile/zoom élevé */
+.actionsContainerHorizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around; /* Distribution égale sur la largeur */
+  height: 80px; /* Hauteur fixe pour mode horizontal */
+  width: 100%;
+  padding: 0 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.horizontalGroup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px; /* Espacement réduit pour mode horizontal */
+}
+
+/* Boutons plus petits en mode horizontal */
+.actionsContainerHorizontal .actionButton {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0; /* Empêche la compression */
+}
+
+/* Version compacte pour très petits écrans */
+@media (max-width: 600px) {
+  .actionsContainerHorizontal .actionButton {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .horizontalGroup {
+    gap: 8px;
+  }
+}

@@ -1,15 +1,9 @@
-import { Typography, Box } from '@mui/material'
 import type { GetStaticProps, GetStaticPaths } from 'next'
-import dynamic from 'next/dynamic'
-import Head from 'next/head'
 import * as React from 'react'
 
-import Layout from '@/components/layout/Layout'
-import ProfileSidebar from '@/components/layout/ProfileSidebar'
+import PostTemplate from '@/components/layout/PostTemplate'
 import { getSlugs, getBySlug, getAll, getAllCategories } from '@/lib/content'
 import type { MDEntry } from '@/types'
-
-const ReactMarkdown = dynamic(() => import('react-markdown'))
 
 export default function PostPage({
 	categories,
@@ -18,91 +12,18 @@ export default function PostPage({
 	post: MDEntry
 	categories: string[]
 }) {
-	const [cat, setCat] = React.useState<string | undefined>(undefined)
+	// Adaptation des données pour le template
+	const postData = {
+		slug: post.slug || '',
+		title: post.data?.title || '',
+		content: post.content || '',
+		date: post.data?.date || '',
+		cover: post.data?.cover || undefined,
+		category: post.data?.category || undefined,
+		description: post.data?.subTitle || post.data?.description || undefined,
+	};
 
-	return (
-		<>
-			<Head>
-				<title>{post.data?.title} · mandjobore.com</title>
-			</Head>
-
-			<Layout
-				left={<ProfileSidebar />}
-				categories={categories}
-				activeCategory={cat}
-				onCategoryChange={setCat}
-			>
-				<article>
-					<Typography
-						component='h1'
-						className='blog-title'
-						sx={{
-							color: 'rgb(51, 51, 51) !important',
-							fontFamily: '"Open Sans", sans-serif !important',
-							fontSize: '27px !important',
-							fontStyle: 'normal !important',
-							fontWeight: '600 !important',
-							lineHeight: '31px !important',
-							margin: '0 0 0.5rem 0 !important',
-						}}
-					>
-						{post.data?.title}
-					</Typography>
-
-					{post.data?.subTitle && (
-						<Typography
-							component='h2'
-							className='blog-subtitle'
-							sx={{
-								color: 'rgb(85, 85, 85) !important',
-								fontFamily: '"Open Sans", sans-serif !important',
-								fontSize: '23px !important',
-								fontStyle: 'normal !important',
-								fontWeight: '300 !important',
-								lineHeight: '27px !important',
-								margin: '0 0 1rem 0 !important',
-							}}
-						>
-							{post.data.subTitle}
-						</Typography>
-					)}
-
-					<Box
-						sx={{
-							'& a': {
-								'&:hover': {
-									color: '#333333', // linkHover
-								},
-								color: '#709425', // link
-							},
-							'& blockquote': {
-								borderLeft: '4px solid #bbbbbb', // blockquoteFrame
-								color: '#333333', // content color
-								pl: 2,
-							},
-							'& h2': {
-								fontSize: '1.5rem', // h2Size
-								fontWeight: 600,
-								mt: 3,
-							},
-							'& h3': {
-								fontSize: '1.3rem', // h3Size
-								fontWeight: 600,
-								mt: 2,
-							},
-							'& p, & li': {
-								fontSize: '1rem', // content size
-								lineHeight: 1.6, // content lineHeight
-							},
-							maxWidth: (t) => t.main.sizes.articleMaxWidth,
-						}}
-					>
-						<ReactMarkdown>{post.content}</ReactMarkdown>
-					</Box>
-				</article>
-			</Layout>
-		</>
-	)
+	return <PostTemplate post={postData} categories={categories} />;
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {

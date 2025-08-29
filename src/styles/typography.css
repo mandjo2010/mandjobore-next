@@ -4,9 +4,6 @@
  * CORRECTION DES TAILLES: Titres 27px/31px, Sous-titres 23px/27px
  */
 
-/* Configuration de base pour Open Sans */
-@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap');
-
 /* RESET COMPLET DES TITRES POUR ÉVITER CONFLITS */
 h1, h2, h3, h4, h5, h6 {
   font-size: inherit !important;

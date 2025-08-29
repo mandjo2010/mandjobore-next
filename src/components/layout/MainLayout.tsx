@@ -1,9 +1,11 @@
-import { Box, Drawer, useMediaQuery } from '@mui/material'
+import { Box, Drawer } from '@mui/material'
 import { useTheme } from '@mui/material/styles'
 import type { Theme } from '@mui/material/styles'
 import * as React from 'react'
 
 import CategoryFilter from '../sidebar/CategoryFilter'
+import ScrollProgressIndicator from '../common/ScrollProgressIndicator'
+import { useZoomTolerantBreakpoints } from '@/utils/zoomTolerantBreakpoints'
 
 interface MainLayoutProps {
 	left: React.ReactNode
@@ -27,9 +29,8 @@ export default function MainLayout({
 	// States pour les interactions
 	const [filterOpen, setFilterOpen] = React.useState(false)
 
-	// Media queries
-	const isLargeScreen = useMediaQuery(theme.breakpoints.up('lg'))
-	const isMediumScreen = useMediaQuery(theme.breakpoints.up('md'))
+	// Utilisation de la détection zoom-tolerante
+	const { isWide: isLargeScreen, isMedium: isMediumScreen, isHorizontalMode } = useZoomTolerantBreakpoints()
 
 	const handleCategoryChange = (value: string) => {
 		onCategoryChange?.(value || undefined)
@@ -37,16 +38,40 @@ export default function MainLayout({
 	}
 
 	return (
-		<Box
-			sx={{
-				bgcolor: theme?.base?.colors?.background ?? 'background.default',
-				display: 'flex',
-				height: '100vh',
-				overflow: 'hidden',
-			}}
-		>
-			{/* Colonne gauche: ProfileSidebar - 320px, visible sur md+ */}
-			{isMediumScreen && (
+		<>
+			{/* Indicateur de progression du scroll */}
+			<ScrollProgressIndicator />
+			
+			<Box
+				sx={{
+					bgcolor: theme?.base?.colors?.background ?? 'background.default',
+					display: 'flex',
+					flexDirection: isHorizontalMode ? 'column' : 'row', // Vertical sur très petits écrans ou zoom 200%+
+					height: '100vh',
+					overflow: 'hidden',
+				}}
+			>
+			{/* Mode mobile/zoom élevé : ProfileSidebar horizontal en haut */}
+			{isHorizontalMode && (
+				<Box
+					component="header"
+					sx={{
+						bgcolor: 'transparent', // Transparent car les composants organiques sont positionnés en fixed
+						borderBottom: 'none',
+						flexShrink: 0,
+						height: 80, // Hauteur pour l'espace réservé
+						overflowX: 'hidden',
+						overflowY: 'hidden',
+						width: '100%',
+						position: 'relative',
+					}}
+				>
+					{left}
+				</Box>
+			)}
+
+			{/* Mode desktop : Colonne gauche ProfileSidebar - 320px, visible sur sm+ */}
+			{isMediumScreen && !isHorizontalMode && (
 				<Box
 					component="aside"
 					sx={{
@@ -109,12 +134,12 @@ export default function MainLayout({
 						},
 					},
 					bgcolor: theme?.main?.colors?.background ?? 'background.paper',
-					borderRight: isLargeScreen
+					borderRight: isLargeScreen && !isHorizontalMode
 						? `1px solid ${theme?.base?.colors?.lines ?? '#eee'}`
 						: 'none',
 					color: theme?.main?.colors?.content ?? 'text.primary',
 					flex: 1,
-					height: '100vh',
+					height: isHorizontalMode ? 'calc(100vh - 160px)' : '100vh', // Réduit la hauteur pour les barres horizontales
 					overflowY: 'auto',
 					position: 'relative',
 					px: { md: 3, xs: 2 },
@@ -124,8 +149,8 @@ export default function MainLayout({
 				{children}
 			</Box>
 
-			{/* Colonne droite: Actions Bar - 64px fixe, visible sur lg+ */}
-			{isLargeScreen && (
+			{/* Mode desktop : Colonne droite Actions Bar - 64px fixe, visible sur md+ */}
+			{isLargeScreen && !isHorizontalMode && (
 				<Box
 					component="aside"
 					sx={{
@@ -133,6 +158,25 @@ export default function MainLayout({
 						flexShrink: 0,
 						height: '100vh',
 						width: 64,
+					}}
+				>
+					{right}
+				</Box>
+			)}
+
+			{/* Mode mobile/zoom élevé : ActionsBar horizontal en bas */}
+			{isHorizontalMode && (
+				<Box
+					component="footer"
+					sx={{
+						bgcolor: 'transparent', // Transparent car les composants organiques sont positionnés en fixed
+						borderTop: 'none',
+						flexShrink: 0,
+						height: 80, // Hauteur pour l'espace réservé
+						overflowX: 'hidden',
+						overflowY: 'hidden',
+						width: '100%',
+						position: 'relative',
 					}}
 				>
 					{right}
@@ -160,6 +204,7 @@ export default function MainLayout({
 
 			{/* Search overlay au niveau layout */}
 			{/* <SearchOverlay posts={searchPosts} /> */}
-		</Box>
+			</Box>
+		</>
 	)
 }

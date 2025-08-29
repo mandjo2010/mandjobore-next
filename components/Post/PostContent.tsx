@@ -22,7 +22,7 @@ export default function PostContent({ post }: { post: PostDetail }) {
       </header>
 
       {post.cover && (
-        <img src={post.cover} alt={post.title} className="mb-6 w-full rounded" />
+        <img src={post.cover} alt={post.title} className="mb-6 w-full max-h-80 object-cover rounded" />
       )}
 
       <div style={{ fontSize: `${fontScale}rem` }} className="prose max-w-none">

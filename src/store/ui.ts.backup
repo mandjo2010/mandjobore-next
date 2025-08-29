@@ -1,0 +1,205 @@
+import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
+
+export type NavigatorPosition = 'is-featured' | 'is-aside' | 'moving-aside' | 'moving-featured' | 'resizing-featured' | 'resizing-aside'
+export type NavigatorShape = 'open' | 'closed'
+
+interface UIState {
+  // Navigation et layout (système Gatsby avancé)
+  navigatorPosition: NavigatorPosition
+  navigatorShape: NavigatorShape
+  
+  // Responsive design et viewport
+  isWideScreen: boolean
+  windowWidth: number
+  windowHeight: number
+  
+  // Recherche et filtrage
+  isSearchOpen: boolean
+  showPostsList: boolean
+  categoryFilter: string
+  searchQuery: string
+  searchResults: any[]
+  
+  // Préférences utilisateur
+  fontSize: number // 0.8 = 80%, 1.0 = 100%, 1.5 = 150%
+  darkMode: boolean
+  isFullscreen: boolean
+  
+  // État de l'interface
+  scrollToTop: boolean
+  activePost: string | null
+  selectedCategories: string[]
+  isLoading: boolean
+  
+  // Actions de base
+  toggleSearch: () => void
+  togglePostsList: () => void
+  toggleDarkMode: () => void
+  toggleFullscreen: () => void
+  
+  // Navigation
+  setNavigatorPosition: (position: NavigatorPosition) => void
+  setNavigatorShape: (shape: NavigatorShape) => void
+  moveNavigatorAside: () => void
+  moveNavigatorFeatured: () => void
+  
+  // Filtres et recherche
+  setCategoryFilter: (category: string) => void
+  setSearchQuery: (query: string) => void
+  setSearchResults: (results: any[]) => void
+  toggleCategory: (category: string) => void
+  clearFilters: () => void
+  
+  // Préférences
+  setFontSize: (size: number) => void
+  setWindowSize: (width: number, height: number) => void
+  setIsWideScreen: (isWide: boolean) => void
+  
+  // État interface
+  setScrollToTop: (scroll: boolean) => void
+  setActivePost: (slug: string | null) => void
+  setIsLoading: (loading: boolean) => void
+}
+
+export const useUIStore = create<UIState>()(
+  persist(
+    (set, get) => ({
+      // État initial
+      navigatorPosition: 'is-aside',
+      navigatorShape: 'open',
+      isWideScreen: true,
+      windowWidth: 1920,
+      windowHeight: 1080,
+      isSearchOpen: false,
+      showPostsList: true,
+      categoryFilter: 'all posts',
+      searchQuery: '',
+      searchResults: [],
+      fontSize: 1.0,
+      darkMode: false,
+      isFullscreen: false,
+      scrollToTop: false,
+      activePost: null,
+      selectedCategories: [],
+      isLoading: false,
+      
+      // Actions de base
+      toggleSearch: () => set((state) => ({ isSearchOpen: !state.isSearchOpen })),
+      togglePostsList: () => set((state) => ({ showPostsList: !state.showPostsList })),
+      toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
+      toggleFullscreen: () => set((state) => ({ isFullscreen: !state.isFullscreen })),
+      
+      // Navigation avancée
+      setNavigatorPosition: (position) => set({ navigatorPosition: position }),
+      setNavigatorShape: (shape) => set({ navigatorShape: shape }),
+      
+      moveNavigatorAside: () => {
+        const { navigatorPosition } = get()
+        if (navigatorPosition === 'is-featured') {
+          set({ navigatorPosition: 'moving-aside' })
+          // Animation de 300ms comme dans Gatsby
+          setTimeout(() => {
+            set({ navigatorPosition: 'is-aside' })
+          }, 300)
+        }
+      },
+      
+      moveNavigatorFeatured: () => {
+        const { navigatorPosition } = get()
+        if (navigatorPosition === 'is-aside') {
+          set({ navigatorPosition: 'moving-featured' })
+          setTimeout(() => {
+            set({ navigatorPosition: 'is-featured' })
+          }, 300)
+        }
+      },
+      
+      // Filtres et recherche
+      setCategoryFilter: (category) => set({ categoryFilter: category }),
+      setSearchQuery: (query) => set({ searchQuery: query }),
+      setSearchResults: (results) => set({ searchResults: results }),
+      
+      toggleCategory: (category) => set((state) => {
+        const isSelected = state.selectedCategories.includes(category)
+        return {
+          selectedCategories: isSelected
+            ? state.selectedCategories.filter(c => c !== category)
+            : [...state.selectedCategories, category]
+        }
+      }),
+      
+      clearFilters: () => set({
+        categoryFilter: 'all posts',
+        selectedCategories: [],
+        searchQuery: '',
+        searchResults: []
+      }),
+      
+      // Préférences
+      setFontSize: (size) => set({ fontSize: Math.max(0.8, Math.min(1.5, size)) }),
+      setWindowSize: (width, height) => set({ windowWidth: width, windowHeight: height }),
+      setIsWideScreen: (isWide) => set({ isWideScreen: isWide }),
+      
+      // État interface
+      setScrollToTop: (scroll) => set({ scrollToTop: scroll }),
+      setActivePost: (slug) => set({ activePost: slug }),
+      setIsLoading: (loading) => set({ isLoading: loading }),
+    }),
+    {
+      name: 'mandjobore-ui-storage',
+      partialize: (state) => ({
+        // Ne persister que certaines préférences
+        fontSize: state.fontSize,
+        darkMode: state.darkMode,
+        categoryFilter: state.categoryFilter,
+        navigatorPosition: state.navigatorPosition,
+        navigatorShape: state.navigatorShape,
+      }),
+    }
+  )
+)
+
+// Hooks de convenance pour accéder à des parties spécifiques du store
+export const useNavigatorState = () => useUIStore((state) => ({
+  position: state.navigatorPosition,
+  shape: state.navigatorShape,
+  isFeatured: state.navigatorPosition === 'is-featured',
+  isOpen: state.navigatorShape === 'open',
+}))
+
+export const useNavigatorActions = () => useUIStore((state) => ({
+  moveNavigatorAside: state.moveNavigatorAside,
+  moveNavigatorFeatured: state.moveNavigatorFeatured,
+  setPosition: state.setNavigatorPosition,
+  setShape: state.setNavigatorShape,
+}))
+
+export const useFilters = () => useUIStore((state) => ({
+  categoryFilter: state.categoryFilter,
+  selectedCategories: state.selectedCategories,
+  searchQuery: state.searchQuery,
+  searchResults: state.searchResults,
+  hasActiveFilters: state.categoryFilter !== 'all posts' || state.selectedCategories.length > 0 || state.searchQuery.length > 0,
+  setCategoryFilter: state.setCategoryFilter,
+  setSearchQuery: state.setSearchQuery,
+  toggleCategory: state.toggleCategory,
+  clearFilters: state.clearFilters,
+}))
+
+export const usePreferences = () => useUIStore((state) => ({
+  fontSize: state.fontSize,
+  darkMode: state.darkMode,
+  isFullscreen: state.isFullscreen,
+  setFontSize: state.setFontSize,
+  toggleDarkMode: state.toggleDarkMode,
+  toggleFullscreen: state.toggleFullscreen,
+}))
+
+export const useResponsive = () => useUIStore((state) => ({
+  isWideScreen: state.isWideScreen,
+  windowWidth: state.windowWidth,
+  windowHeight: state.windowHeight,
+  setWindowSize: state.setWindowSize,
+  setIsWideScreen: state.setIsWideScreen,
+}))

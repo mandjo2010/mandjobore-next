@@ -21,6 +21,7 @@ export interface PostCard {
 	excerpt?: string
 	category?: string
 	cover?: string
+	date?: string
 }
 
 export interface PostMatter {

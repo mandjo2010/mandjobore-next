@@ -1,11 +1,9 @@
 import { Box, Drawer, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import type { Theme } from '@mui/material/styles';
-import { useRouter } from 'next/router';
 import * as React from "react";
 
 import SearchOverlay from '@/components/ui/SearchOverlay';
-import { useUIStore } from '@/store/ui';
 import type { Post } from '@/types';
 
 import CategoryFilter from "../sidebar/CategoryFilter";
@@ -30,34 +28,13 @@ export default function Layout({
   searchPosts = [],
 }: Props) {
   const t = useTheme() as Theme & import('@/types/theme').CustomTheme;
-  const router = useRouter();
   const leftW = t?.info?.sizes?.width ?? 320;
-  const toggleSearch = useUIStore((s: { toggleSearch: () => void }) => s.toggleSearch);
   
   // States pour les interactions
   const [filterOpen, setFilterOpen] = React.useState(false);
-  const [expanded, setExpanded] = React.useState(false);
 
   // Media queries
   const isLargeScreen = useMediaQuery(t.breakpoints.up('lg'));
-
-  // Callbacks pour l'ActionsBar
-  const handleHome = () => {
-    router.push('/');
-  };
-
-  const handleToggleFilter = () => {
-    setFilterOpen(prev => !prev);
-  };
-
-  const handleSearch = () => {
-    // Ouvre/ferme la recherche via le store
-    toggleSearch();
-  };
-
-  const handleToggleExpand = () => {
-    setExpanded(prev => !prev);
-  };
 
   const handleCategoryChange = (value: string) => {
     // '' signifie tous
@@ -191,11 +168,7 @@ export default function Layout({
       {/* Colonne droite: ActionsBar - 56px fixe, masquée sur petits écrans */}
       {isLargeScreen && (
         <ActionsBar
-          onHome={handleHome}
-          onToggleFilter={handleToggleFilter}
-          onSearch={handleSearch}
-          onToggleExpand={handleToggleExpand}
-          expanded={expanded}
+          categories={['tech', 'design', 'gis']}
         />
       )}
 

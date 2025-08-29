@@ -3,7 +3,7 @@ import React from 'react';
 
 import ActionsBar from '@/components/layout/ActionsBar';
 import MainLayout from '@/components/layout/MainLayout';
-import LeftSidebar from '@/components/sidebar/LeftSidebar';
+import LeftSidebar from '../components/Sidebar/LeftSidebar';
 
 /**
  * Page de test pour la migration ActionsBar - Style "This.png"
@@ -19,7 +19,7 @@ export default function TestActionsBarMigrationPage() {
       </Head>
 
       <MainLayout
-        left={<LeftSidebar />}
+        left={<LeftSidebar posts={[]} />}
         right={<ActionsBar />}
         categories={['Programming', 'Design', 'AI', 'Data Science', 'GIS']}
         activeCategory="all posts"

@@ -1,0 +1,212 @@
+/**
+ * InfoBox - Reproduction fidèle de la sidebar gauche de Gatsby
+ * Correspondance exacte avec src/components/InfoBox/InfoBox.js
+ */
+
+'use client';
+
+import React, { useState } from 'react';
+import { styled, useTheme } from '@mui/material/styles';
+import { Box, IconButton, Avatar, Typography } from '@mui/material';
+import { ExpandMore, ExpandLess } from '@mui/icons-material';
+import { useNavigatorActions, useNavigatorState } from '@/store/gatsby-ui-store';
+
+// Import des sous-composants
+import InfoHeader from './InfoHeader';
+import InfoText from './InfoText';
+import InfoMenu from './InfoMenu';
+import SocialIcons from './SocialIcons';
+import StackIcons from './StackIcons';
+
+// Configuration de l'auteur (reproduisant config.js de Gatsby)
+const authorConfig = {
+  name: 'Mandjo Béa Boré',
+  tagline: 'Data Analyst & Developer',
+  avatar: '/images/avatar.jpg',
+  bio: 'Design and build applications to support data including spatial & geospatial ones.',
+  social: {
+    github: 'https://github.com/mandjo2010',
+    linkedin: 'https://linkedin.com/in/mandjobore',
+    twitter: 'https://twitter.com/mandjobore',
+    email: 'contact@mandjobore.com'
+  }
+}
+
+interface Page {
+  slug: string
+  title: string
+  menuTitle?: string
+}
+
+interface Part {
+  title: string
+  html: string
+}
+
+interface InfoBoxProps {
+  pages: Page[]
+  parts: Part[]
+  className?: string
+}
+
+// Container principal de la InfoBox
+const InfoBoxContainer = styled(Box)(({ theme }) => ({
+  display: 'none',
+  
+  // Affiché uniquement sur grand écran (L breakpoint)
+  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
+    display: 'block',
+    color: theme.info?.colors?.text || '#555',
+    background: theme.info?.colors?.background || '#ffffff',
+    position: 'absolute',
+    left: 0,
+    top: 0,
+    width: `${theme.info?.sizes?.width || 320}px`,
+    height: '100%',
+    padding: '20px 40px',
+    
+    // Bordure droite
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      right: 0,
+      top: '20px',
+      bottom: '20px',
+      width: '1px',
+      borderRight: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
+    },
+  },
+  
+  // States dynamiques pour les classes CSS
+  '&.is-aside': {
+    // Styles when navigator is aside
+  },
+  '&.is-featured': {
+    // Styles when navigator is featured
+  },
+  '&.open': {
+    // Styles when expanded
+  },
+  '&.closed': {
+    // Styles when collapsed
+  },
+}));
+
+// Wrapper pour le contenu scrollable
+const ContentWrapper = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  top: `${theme.info?.sizes?.headerHeight || 170}px`,
+  bottom: 0,
+  left: 0,
+  width: '100%',
+  padding: '0 40px 0',
+  willChange: 'opacity, bottom',
+  transition: 'bottom .5s 0s',
+  opacity: 1,
+  transitionTimingFunction: 'ease',
+  
+  // States pour l'animation du Navigator
+  '.is-aside.closed &': {
+    bottom: `${theme.navigator?.sizes?.closedHeight || 80}px`,
+  },
+  '.moving-featured &': {
+    bottom: 0,
+  },
+}));
+
+// Bouton d'expansion (quand la sidebar est réduite)
+const ExpandButton = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  top: '30px',
+  right: '-25px',
+  display: 'none',
+  color: theme.info?.colors?.text || '#555',
+  
+  '.is-aside.open &': {
+    display: 'block',
+  },
+}));
+
+const InfoBox: React.FC<InfoBoxProps> = ({
+  pages = [],
+  navigatorPosition = '',
+  navigatorShape = '',
+  isWideScreen = false,
+}) => {
+  const theme = useTheme();
+  const [isExpanded, setIsExpanded] = useState(false);
+  
+  // Classes CSS selon l'état
+  const containerClasses = [
+    navigatorPosition,
+    navigatorShape,
+    isWideScreen ? 'wide-screen' : '',
+  ].filter(Boolean).join(' ');
+  
+  // Handlers pour les actions
+  const handleAvatarClick = () => {
+    // TODO: Implémenter featureNavigator logic
+    console.log('Avatar clicked - should feature navigator');
+  };
+  
+  const handleMenuLinkClick = () => {
+    // TODO: Implémenter moveNavigatorAside logic  
+    console.log('Menu link clicked - should move navigator aside');
+  };
+  
+  const handleExpandClick = () => {
+    setIsExpanded(!isExpanded);
+    // TODO: Intégrer avec le store pour setNavigatorShape("closed")
+  };
+  
+  // Mock data pour l'info de l'auteur (sera remplacé par de vraies données)
+  const mockAuthorInfo = {
+    title: 'info',
+    html: `
+      <p>I am a front-end web developer. I used to be a web designer also, 
+      but now I concentrate on the code.</p>
+    `,
+  };
+  
+  return (
+    <InfoBoxContainer className={containerClasses}>
+      {/* Header avec avatar et titre */}
+      <InfoHeader
+        info={mockAuthorInfo}
+        onAvatarClick={handleAvatarClick}
+        onExpandClick={handleExpandClick}
+      />
+      
+      {/* Contenu scrollable */}
+      <ContentWrapper>
+        {/* Texte de description */}
+        <InfoText info={mockAuthorInfo} />
+        
+        {/* Icônes des réseaux sociaux */}
+        <SocialIcons />
+        
+        {/* Menu de navigation */}
+        {pages && pages.length > 0 && (
+          <InfoMenu 
+            pages={pages} 
+            onLinkClick={handleMenuLinkClick}
+          />
+        )}
+        
+        {/* Icônes des technologies (en bas) */}
+        <StackIcons />
+      </ContentWrapper>
+      
+      {/* Bouton d'expansion (visible quand sidebar réduite) */}
+      <ExpandButton
+        aria-label="Expand the box"
+        onClick={handleExpandClick}
+        title="Expand the box"
+      >
+        <ExpandMoreIcon />
+      </ExpandButton>
+    </InfoBoxContainer>
+  );
+};
+
+export default InfoBox; 

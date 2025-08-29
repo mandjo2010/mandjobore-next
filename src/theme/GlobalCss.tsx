@@ -5,6 +5,28 @@ export default function GlobalCss() {
 	return (
 		<GlobalStyles
 			styles={{
+				// === VARIABLES CSS GLOBALES POUR ANIMATIONS ===
+				':root': {
+					'--transition-smooth': 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+					'--transition-bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+					'--organic-red': '#dc3545',
+					'--organic-red-hover': '#c82333',
+					'--shadow-elegant': '0 8px 25px rgba(0, 0, 0, 0.15)',
+					'--shadow-strong': '0 10px 30px rgba(0, 0, 0, 0.1)',
+					// Variables CSS supplémentaires - FUSION
+					'--c-accent': '#709425',
+					'--c-subtitle': 'rgb(85, 85, 85)',
+					'--c-text': '#555555',
+					'--c-title': 'rgb(51, 51, 51)',
+					'--divider': '#eceff1',
+					'--font-body': '"Open Sans", Arial, sans-serif',
+					'--font-styled': '"Open Sans", sans-serif',
+					'--subtitle-line-height': '27px',
+					'--subtitle-size': '23px',
+					'--title-line-height': '31px',
+					'--title-size': '27px',
+				},
+
 				// === LAYOUT ET STRUCTURE ===
 				// Hide scrollbars but keep functionality
 				'*': {
@@ -294,13 +316,13 @@ export default function GlobalCss() {
 					background: '#eee',
 					border: 'none',
 					borderRadius: '45px / 55px',
-					flex: '0 0 90px',
-					height: '100px',
+					flex: '0 0 75px',
+					height: '85px',
 					overflow: 'hidden',
 					position: 'relative',
 					transform: 'rotate(8deg)',
 					transition: 'transform 0.4s ease-in-out',
-					width: '90px',
+					width: '75px',
 				},
 				'.postThumb img': {
 					height: '100%',
@@ -401,21 +423,7 @@ export default function GlobalCss() {
 					padding: '1px 5px',
 					textShadow: 'none',
 				},
-				// Variables CSS - CORRECTION TAILLES EXACTES
-				':root': {
-					'--c-accent': '#709425',
-					'--c-subtitle': 'rgb(85, 85, 85)',
-					'--c-text': '#555555',
-					'--c-title': 'rgb(51, 51, 51)',
-					'--divider': '#eceff1',
-					'--font-body': '"Open Sans", Arial, sans-serif',
-					'--font-styled': '"Open Sans", sans-serif',
-					'--subtitle-line-height': '27px',
-					'--subtitle-size': '23px',
-					'--title-line-height': '31px',
-					// Tailles typographiques exactes - CORRECTION
-					'--title-size': '27px',
-				},
+				// Variables CSS - CORRECTION TAILLES EXACTES - SUPPRIMÉ (FUSIONNÉ AVEC LE PREMIER BLOC)
 
 				// Responsive: layout fluide
 				'@media (max-width: 640px)': {
@@ -425,9 +433,9 @@ export default function GlobalCss() {
 					},
 					'.postThumb': {
 						borderRadius: '35px / 45px',
-						flex: '0 0 70px',
-						height: '80px',
-						width: '70px',
+						flex: '0 0 60px',
+						height: '70px',
+						width: '60px',
 					},
 				},
 

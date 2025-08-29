@@ -99,14 +99,15 @@ export function getGatsbyStyleArticles() {
   ]
 }
 
-// Adapter to ensure we always have image and excerpt for Gatsby-style rendering
+// Adapter to ensure we always have the right format for Gatsby-style rendering
 export function adaptPostForGatsbyView(post: PostCard): { 
-  slug: string; title: string; excerpt: string; image: string; category?: string; 
+  slug: string; title: string; excerpt: string; category?: string; cover?: string; date: string;
 } {
   return {
     category: post.category,
+    cover: post.cover || '/images/placeholder.png',
+    date: post.date || '2024-01-01',
     excerpt: post.excerpt || 'Découvrez cet article sur les technologies modernes et leurs applications.',
-    image: post.cover || '/images/placeholder.png',
     slug: post.slug,
     title: post.title,
   }

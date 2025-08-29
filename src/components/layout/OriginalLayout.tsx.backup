@@ -1,0 +1,277 @@
+'use client';
+
+import Head from 'next/head';
+import React from 'react';
+
+import ActionsBarAdvanced from './ActionsBarAdvanced';
+import InfoBar from './InfoBar';
+import InfoBoxAdvanced from './InfoBoxAdvanced';
+import NavigatorSimple from './NavigatorSimple';
+
+// import { useResponsiveLayout } from '../../hooks/useResponsive'; // Temporairement désactivé
+import { useNavigatorState } from '../../store/ui';
+import ActionsBarAdvanced from './ActionsBarAdvanced';
+import InfoBar from './InfoBar';
+import InfoBoxAdvanced from './InfoBoxAdvanced';
+import MobileNavigation from './MobileNavigation';
+import NavigatorSimple from './NavigatorSimple';
+
+interface LayoutProps {
+  children: React.ReactNode;
+  posts?: Array<{
+    slug: string;
+    title: string;
+    excerpt: string;
+    category?: string | null;
+    cover?: string | null;
+    date: string;
+  }>;
+  pages?: Array<{
+    slug: string;
+    title: string;
+    menuTitle?: string;
+  }>;
+  parts?: Array<{
+    title: string;
+    html: string;
+  }>;
+  seo?: {
+    title?: string;
+    description?: string;
+    image?: string;
+    url?: string;
+  };
+}
+
+/**
+ * Layout ORIGINAL - Reproduction EXACTE de mandjobore.com
+ * DIMENSIONS ABSOLUES STRICTES - PAS DE RESPONSIVE
+ * POSITIONNEMENT FIXE - PAS DE FLEXBOX
+ */
+export default function OriginalLayout({
+  children,
+  posts = [],
+  pages = [],
+  parts = [],
+  seo,
+}: LayoutProps) {
+  
+  // Version simplifiée pour éviter les boucles
+  console.log('🎯 OriginalLayout - posts reçus:', posts.length);
+  
+  // SEO meta tags
+  const seoTitle = seo?.title || 'Mandjo Béa Boré - Data Analyst & Developer';
+  const seoDescription = seo?.description || 'Design and build applications to support data including spatial & geospatial ones.';
+  const seoImage = seo?.image || '/images/avatar.svg';
+  const seoUrl = seo?.url || 'https://mandjobore.com';
+
+  // Extraction des catégories
+  const categories = React.useMemo(() => {
+    return posts.reduce((list: string[], post) => {
+      const category = post.category;
+      if (category && !list.includes(category)) {
+        return list.concat(category);
+      }
+      return list;
+    }, []);
+  }, [posts]);
+
+  return (
+    <>
+      <Head>
+        <title>{seoTitle}</title>
+        <meta name="description" content={seoDescription} />
+        <meta property="og:title" content={seoTitle} />
+        <meta property="og:description" content={seoDescription} />
+        <meta property="og:image" content={seoImage} />
+        <meta property="og:url" content={seoUrl} />
+        <meta property="og:type" content="website" />
+        <link rel="canonical" href={seoUrl} />
+      </Head>
+
+      {/* CONTAINER ABSOLU EXACT */}
+      <div
+        id="original-layout"
+        style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          width: '100vw',
+          height: '100vh',
+          overflow: 'hidden',
+          fontFamily: "'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          fontSize: '16px',
+          fontWeight: '300',
+          lineHeight: '1.6',
+          color: '#555555',
+          background: '#ffffff'
+        }}
+      >
+        {/* COLONNE 1: InfoBox - 320px FIXE */}
+        <div
+          id="infobox-column"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '320px',
+            height: '100vh',
+            background: '#ffffff',
+            borderRight: '1px solid #dedede',
+            zIndex: 100,
+            overflow: 'hidden'
+          }}
+        >
+          <InfoBoxAdvanced />
+        </div>
+
+        {/* COLONNE 2: Navigator - Centre adaptatif */}
+        <div
+          id="navigator-column"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: '320px',
+            width: 'calc(100vw - 320px - 60px)',
+            height: '100vh',
+            background: '#f8f8f8',
+            overflow: 'auto',
+            zIndex: 50
+          }}
+        >
+          <NavigatorSimple posts={posts} />
+          
+          {/* Main Content OVERLAY sur le Navigator */}
+          <div
+            id="main-content"
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              background: '#ffffff',
+              padding: '40px',
+              overflow: 'auto',
+              display: 'none' // Masqué par défaut, visible quand nécessaire
+            }}
+          >
+            {children}
+          </div>
+        </div>
+
+        {/* COLONNE 3: ActionsBar - 60px FIXE */}
+        <div
+          id="actionsbar-column"
+          style={{
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            width: '60px',
+            height: '100vh',
+            background: '#ffffff',
+            borderLeft: '1px solid #dedede',
+            zIndex: 100
+          }}
+        >
+          <ActionsBarAdvanced categories={categories} />
+        </div>
+
+        {/* InfoBar - Pied de page */}
+        <div
+          id="infobar-footer"
+          style={{
+            position: 'absolute',
+            bottom: 0,
+            left: '320px',
+            width: 'calc(100vw - 320px - 60px)',
+            height: 'auto',
+            background: 'rgba(85, 85, 85, 0.95)',
+            color: '#ffffff',
+            borderTop: '1px solid #dedede',
+            zIndex: 75
+          }}
+        >
+          <InfoBar pages={pages} parts={parts} />
+        </div>
+
+        {/* Navigation mobile temporairement désactivée */}
+      </div>
+
+      {/* CSS GLOBAL INJECTÉ */}
+      <style jsx global>{`
+        /* Reset pour forcer le layout original */
+        * {
+          box-sizing: border-box;
+        }
+        
+        html, body {
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        /* Couleurs exactes du site original */
+        a {
+          color: #709425;
+          text-decoration: none;
+        }
+        
+        a:hover {
+          color: #85b02d;
+        }
+        
+        /* Typographie exacte */
+        h1, h2, h3, h4, h5, h6 {
+          font-weight: 600;
+          letter-spacing: -0.02em;
+          line-height: 1.2;
+          margin: 0;
+        }
+        
+        h1 {
+          font-size: 1.9em;
+          font-weight: 600;
+          line-height: 1.1;
+          letter-spacing: -0.04em;
+        }
+        
+        h2 {
+          font-size: 1.5em;
+          font-weight: 300;
+          line-height: 1.1;
+        }
+        
+        h3 {
+          font-size: 1.3em;
+          font-weight: 600;
+          line-height: 1.3;
+        }
+        
+        /* Scrollbars personnalisées */
+        #navigator-column::-webkit-scrollbar {
+          width: 6px;
+        }
+        
+        #navigator-column::-webkit-scrollbar-track {
+          background: #f1f1f1;
+        }
+        
+        #navigator-column::-webkit-scrollbar-thumb {
+          background: #c1c1c1;
+          border-radius: 3px;
+        }
+        
+        #navigator-column::-webkit-scrollbar-thumb:hover {
+          background: #a8a8a8;
+        }
+        
+        /* Désactiver sélection sur les colonnes fixes */
+        #infobox-column, #actionsbar-column {
+          user-select: none;
+        }
+      `}</style>
+    </>
+  );
+}

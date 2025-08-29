@@ -5,15 +5,21 @@ import * as React from 'react'
 import ActionsBar from './ActionsBar'
 
 export default function RightRail({
-  onOpenFilter, // eslint-disable-line @typescript-eslint/no-unused-vars
-  onOpenSearch, // eslint-disable-line @typescript-eslint/no-unused-vars
+  categories = [],
+  onOpenFilter: _onOpenFilter, // Préfixe _ pour indiquer que le paramètre n'est pas utilisé
+  onOpenSearch: _onOpenSearch, // Préfixe _ pour indiquer que le paramètre n'est pas utilisé
 }: {
   onOpenSearch: () => void
   onOpenFilter: () => void
+  categories?: string[]
 }) {
+  // Suppression de la référence inutilisée pour éviter l'erreur TypeScript
+  void _onOpenFilter
+  void _onOpenSearch
+  
   return (
     <aside className="rightRail" aria-label="Quick actions">
-      <ActionsBar />
+      <ActionsBar categories={categories} />
     </aside>
   )
 }

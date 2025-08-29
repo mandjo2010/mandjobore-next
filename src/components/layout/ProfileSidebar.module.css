@@ -1,0 +1,384 @@
+/* ProfileSidebar.module.css - Style pour le profil sidebar avec mode responsive */
+
+/* Mode vertical (desktop) - par défaut */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.profileContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.profileHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.profileAvatar {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.authorName {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 27px;
+  line-height: 27px;
+  color: rgb(85, 85, 85);
+  margin: 0;
+}
+
+.authorRole {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 16px;
+  color: rgb(85, 85, 85);
+  margin: 0;
+}
+
+.bioText {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: #555;
+  margin: 0;
+  text-align: center;
+}
+
+.profileSocial {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.profileSocial a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  color: #333;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.profileSocial a:hover {
+  background: #e0e0e0;
+  color: #333;
+  transform: translateY(-1px);
+}
+
+.profileNav {
+  /* Le style est maintenant géré par InfoMenu.module.css */
+  width: 100%;
+}
+
+.builtWith {
+  margin-top: auto;
+  padding-top: 24px;
+  border-top: 1px solid #eee;
+}
+
+.builtTitle {
+  font-size: 0.85rem;
+  color: #666;
+  margin: 0 0 12px 0;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.builtGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.builtGrid li {
+  display: flex;
+  justify-content: center;
+}
+
+.builtGrid a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: #f8f9fa;
+  transition: all 0.2s ease;
+}
+
+.builtGrid a:hover {
+  background: #e9ecef;
+  transform: translateY(-2px);
+}
+
+.builtGrid img {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+/* Mode horizontal pour mobile/zoom élevé (200%+) */
+.sidebarHorizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 80px;
+  width: 100%;
+  padding: 0 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: 16px;
+}
+
+.profileContentHorizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0; /* Permet au contenu de se compresser */
+}
+
+.profileHeaderHorizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.profileAvatarHorizontal {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.authorNameHorizontal {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 22px;
+  line-height: 22px;
+  color: rgb(85, 85, 85);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.authorRoleHorizontal {
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 14px;
+  color: rgb(85, 85, 85);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.profileSocialHorizontal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.profileSocialHorizontal a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f5f5f5;
+  color: #333;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.profileSocialHorizontal a:hover {
+  background: #e0e0e0;
+  color: #333;
+}
+
+.profileNavHorizontal {
+  /* Le style horizontal est maintenant géré par InfoMenu.module.css */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.builtWithHorizontal {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-left: 16px;
+  border-left: 1px solid #eee;
+}
+
+.builtTitleHorizontal {
+  font-size: 0.75rem;
+  color: #666;
+  margin: 0;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.builtGridHorizontal {
+  display: flex;
+  gap: 0px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.builtGridHorizontal li {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.builtGridHorizontal a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  background: #f8f9fa;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.builtGridHorizontal a:hover {
+  background: #e9ecef;
+  transform: translateY(-1px);
+}
+
+.builtGridHorizontal img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+/* Version très compacte pour écrans extra petits */
+@media (max-width: 600px) {
+  .sidebarHorizontal {
+    padding: 0 12px;
+    gap: 12px;
+  }
+  
+  .profileContentHorizontal {
+    gap: 12px;
+  }
+  
+  .profileHeaderHorizontal {
+    gap: 8px;
+  }
+  
+  .profileAvatarHorizontal {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .authorNameHorizontal {
+    font-size: 18px;
+    line-height: 18px;
+  }
+  
+  .authorRoleHorizontal {
+    font-size: 12px;
+    line-height: 12px;
+  }
+  
+  .profileSocialHorizontal {
+    gap: 6px;
+  }
+  
+  .profileSocialHorizontal a {
+    width: 28px;
+    height: 28px;
+  }
+  
+  /* profileNavHorizontal géré par InfoMenu.module.css */
+  
+  .builtWithHorizontal {
+    gap: 6px;
+    padding-left: 12px;
+  }
+  
+  .builtGridHorizontal {
+    gap: 0px;
+  }
+  
+  .builtGridHorizontal a {
+    width: 28px;
+    height: 28px;
+  }
+  
+  .builtGridHorizontal img {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Cache les éléments non essentiels sur très petits écrans */
+@media (max-width: 480px) {
+  .builtWithHorizontal {
+    display: none;
+  }
+  
+  .authorRoleHorizontal {
+    display: none;
+  }
+}
+
+/* Amélioration pour l'accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .profileSocial a,
+  .builtGrid a,
+  .profileSocialHorizontal a,
+  .builtGridHorizontal a {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .profileSocial a,
+  .builtGrid a,
+  .profileSocialHorizontal a,
+  .builtGridHorizontal a {
+    border: 1px solid #000;
+  }
+}

@@ -1,0 +1,131 @@
+/* InfoMenu.module.css - Style inspiré de l'ancien InfoMenu Gatsby */
+
+.infoMenu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  gap: 4px;
+}
+
+.link {
+  display: block;
+  padding: 8px 16px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 18px;
+  text-transform: lowercase;
+  color: rgb(85, 85, 85);
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.link:hover {
+  font-weight: 400;
+  color: rgb(85, 85, 85);
+  background: #f5f5f5;
+}
+
+/* Mode horizontal pour mobile/zoom */
+.infoMenuHorizontal {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.linkHorizontal {
+  display: block;
+  padding: 6px 12px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 18px;
+  text-transform: lowercase;
+  color: rgb(85, 85, 85);
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.linkHorizontal:hover {
+  font-weight: 400;
+  color: rgb(85, 85, 85);
+  background: #f5f5f5;
+}
+
+/* Style pour les formes organiques (OrganicProfileBar) */
+.organicNav {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.organicLink {
+  display: block;
+  padding: 4px 8px;
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 14px;
+  line-height: 16px;
+  text-transform: lowercase;
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.1);
+  width: 100%;
+  text-align: left;
+}
+
+.organicLink:hover {
+  font-weight: 400;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+  .linkHorizontal {
+    padding: 4px 8px;
+    font-size: 14px;
+    line-height: 16px;
+  }
+}
+
+/* Accessibilité */
+@media (prefers-reduced-motion: reduce) {
+  .link,
+  .linkHorizontal {
+    transition: none;
+  }
+}
+
+@media (prefers-contrast: high) {
+  .link,
+  .linkHorizontal {
+    border: 1px solid #666;
+  }
+}

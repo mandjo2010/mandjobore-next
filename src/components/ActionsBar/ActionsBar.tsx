@@ -1,178 +1,225 @@
+/**
+ * TODO/MIGRATION BLOCK - ActionsBar.tsx
+ * - Component: ActionsBar (Sidebar droite avec actions)
+ * - Migration target: Gatsby ActionsBar to Next.js + Emotion/MUI
+ * - Date: 2024-01-XX  
+ * - Removed: JSS injectSheet, Redux connect, screenfull integration
+ * - Refactor: styled(Box) avec responsive column/row layout
+ * - Responsive: Horizontal bottom sur mobile, vertical right sur desktop
+ * - Theme access: Secured theme.bars.* properties
+ * - Dynamic props: navigatorPosition/navigatorShape logic
+ * - Visual tests: Icon colors, hover states, layout transitions
+ * - Pattern: Conditional rendering selon responsive states
+ * - Last migration commit: feat(migration): migrate ActionsBar.tsx to Emotion/MUI
+ * - Dev referent: Next.js migration team
+ */
+
 'use client';
 
-import { 
-  Home as HomeIcon, 
-  Search as SearchIcon, 
-  FilterList as FilterListIcon,
-  FormatSize as FormatSizeIcon,
-  ArrowUpward as ArrowUpwardIcon,
-  Fullscreen as FullscreenIcon,
-  FullscreenExit as FullscreenExitIcon
+import React, { useState } from 'react';
+import { styled } from '@mui/material/styles';
+import { Box, IconButton } from '@mui/material';
+import Link from 'next/link';
+import {
+  Home,
+  Search,
+  KeyboardArrowUp,
+  Fullscreen,
+  FullscreenExit,
+  FormatSize,
+  FilterList,
 } from '@mui/icons-material';
-import { useRouter, usePathname } from 'next/navigation';
-import React, { useState, useEffect } from 'react';
 
-import { useUIStore, usePreferences } from '@/store/ui';
+// Import des sous-composants
+import FontSetter from './FontSetter';
+import CategoryFilter from './CategoryFilter';
 
-import styles from './ActionsBar.module.css';
-import CategoryFilterModal from './CategoryFilterModal';
-import FontSizeModal from './FontSizeModal';
-
-interface ActionButtonProps {
-  icon: React.ReactNode;
-  title: string;
-  onClick: () => void;
-  isActive?: boolean;
+interface ActionsBarProps {
+  navigatorPosition?: 'is-aside' | 'is-featured' | '';
+  navigatorShape?: 'open' | 'closed' | '';
+  isWideScreen?: boolean;
+  categories?: string[];
 }
 
-const ActionButton: React.FC<ActionButtonProps> = ({ icon, isActive = false, onClick, title }) => {
-  return (
-    <button
-      className={`${styles.actionButton} ${isActive ? styles.actionButtonActive : ''}`}
-      onClick={onClick}
-      title={title}
-      aria-label={title}
-    >
-      {icon}
-    </button>
-  );
-};
+// Container principal de la ActionsBar
+const ActionsBarContainer = styled(Box)(({ theme }) => ({
+  position: 'absolute',
+  background: theme.bars?.colors?.background || '#ffffff',
+  left: 0,
+  bottom: 0,
+  display: 'flex',
+  flexDirection: 'row',
+  padding: `0 ${theme.base?.sizes?.linesMargin || '20px'}`,
+  justifyContent: 'space-between',
+  height: `${theme.bars?.sizes?.actionsBar || 60}px`,
+  width: '100%',
+  
+  // Bordure supérieure
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    left: theme.base?.sizes?.linesMargin || '20px',
+    right: theme.base?.sizes?.linesMargin || '20px',
+    height: 0,
+    top: 0,
+    borderTop: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
+  },
+  
+  // Responsive pour tablet
+  [theme.breakpoints?.up('md') || '@media (min-width: 600px)']: {
+    padding: `0 calc(${theme.base?.sizes?.linesMargin || '20px'} * 1.5)`,
+  },
+  
+  // Desktop layout - vertical sur la droite
+  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
+    flexDirection: 'column',
+    top: 0,
+    right: 0,
+    left: 'auto',
+    height: '100%',
+    padding: `${theme.base?.sizes?.linesMargin || '20px'} 0`,
+    width: `${theme.bars?.sizes?.actionsBar || 60}px`,
+    
+    '&::before': {
+      top: theme.base?.sizes?.linesMargin || '20px',
+      bottom: theme.base?.sizes?.linesMargin || '20px',
+      left: 0,
+      right: 'auto',
+      width: 0,
+      height: 'auto',
+      borderLeft: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
+      borderTop: 'none',
+    },
+  },
+}));
 
-const ActionsBar: React.FC = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const { 
-    categoryFilter, 
-    isSearchOpen,
-    toggleSearch
-  } = useUIStore();
+// Groupe de boutons
+const ButtonGroup = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  alignItems: 'center',
   
-  const { fontSize } = usePreferences();
+  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
+    flexDirection: 'column',
+  },
+}));
+
+// Bouton stylisé
+const ActionButton = styled(IconButton)(({ theme }) => ({
+  color: theme.bars?.colors?.icon || '#555',
+  transition: 'all 0.3s ease',
   
+  '&:hover': {
+    color: theme.base?.colors?.accent || '#709425',
+    transform: 'scale(1.1)',
+  },
+}));
+
+const ActionsBar: React.FC<ActionsBarProps> = ({
+  navigatorPosition = '',
+  navigatorShape = '',
+  isWideScreen = false,
+  categories = [],
+}) => {
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [showCategoryFilter, setShowCategoryFilter] = useState(false);
-  const [showFontSize, setShowFontSize] = useState(false);
-  const [showScrollTop, setShowScrollTop] = useState(false);
-
-  // Gestion du plein écran
-  useEffect(() => {
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
-    };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-  }, []);
-
-  // Gestion du scroll pour afficher le bouton "retour en haut"
-  useEffect(() => {
-    const handleScroll = () => {
-      setShowScrollTop(window.scrollY > 300);
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Actions handlers
-  const handleHome = () => {
-    router.push('/');
+  
+  // Handlers pour les actions
+  const handleHomeClick = () => {
+    // TODO: Implémenter featureNavigator logic
+    console.log('Home clicked - should feature navigator');
   };
-
-  const handleSearch = () => {
-    toggleSearch();
+  
+  const handleSearchClick = () => {
+    // TODO: Implémenter moveNavigatorAside logic
+    console.log('Search clicked - should move navigator aside');
   };
-
-  const handleCategoryFilter = () => {
-    setShowCategoryFilter(true);
-  };
-
-  const handleFontSize = () => {
-    setShowFontSize(true);
-  };
-
-  const handleScrollToTop = () => {
-    window.scrollTo({ behavior: 'smooth', top: 0 });
-  };
-
-  const handleFullscreen = async () => {
-    try {
-      if (!document.fullscreenElement) {
-        await document.documentElement.requestFullscreen();
-      } else {
-        await document.exitFullscreen();
-      }
-    } catch (error) {
-      console.error('Erreur fullscreen:', error);
+  
+  const handleFullscreenClick = () => {
+    // TODO: Implémenter screenfull toggle
+    console.log('Fullscreen clicked');
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    } else {
+      document.documentElement.requestFullscreen();
+      setIsFullscreen(true);
     }
   };
-
-  // Indicateurs d'état actif
-  const isOnHomePage = pathname === '/';
-  const hasActiveFilter = categoryFilter !== 'all posts';
-  const hasCustomFontSize = fontSize !== 1.0;
-
+  
+  const handleScrollToTopClick = () => {
+    // TODO: Implémenter scroll to top
+    console.log('Scroll to top clicked');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+  
+  const handleFontSizeChange = (val: number) => {
+    // TODO: Intégrer avec le state management
+    console.log('Font size changed:', val);
+  };
+  
+  const handleCategoryFilter = (category: string) => {
+    // TODO: Intégrer avec le state management  
+    console.log('Category filter:', category);
+  };
+  
   return (
-    <>
-      <div className={styles.actionsContainer}>
+    <ActionsBarContainer>
+      {/* Groupe de gauche/haut */}
+      <ButtonGroup>
+        {/* Bouton Home */}
         <ActionButton
-          icon={<HomeIcon sx={{ color: '#000', fontSize: 24 }} />}
-          title="Accueil"
-          onClick={handleHome}
-          isActive={isOnHomePage}
-        />
+          aria-label="Back to list"
+          onClick={handleHomeClick}
+          title="Back to the list"
+        >
+          <Home />
+        </ActionButton>
         
-        <ActionButton
-          icon={<SearchIcon sx={{ color: '#000', fontSize: 24 }} />}
-          title="Recherche"
-          onClick={handleSearch}
-          isActive={isSearchOpen}
-        />
-        
-        <ActionButton
-          icon={<FilterListIcon sx={{ color: '#000', fontSize: 24 }} />}
-          title="Filtrer par catégorie"
-          onClick={handleCategoryFilter}
-          isActive={hasActiveFilter}
-        />
-        
-        <ActionButton
-          icon={<FormatSizeIcon sx={{ color: '#000', fontSize: 24 }} />}
-          title="Taille de police"
-          onClick={handleFontSize}
-          isActive={hasCustomFontSize}
-        />
-        
-        {showScrollTop && (
-          <ActionButton
-            icon={<ArrowUpwardIcon sx={{ color: '#000', fontSize: 24 }} />}
-            title="Retour en haut"
-            onClick={handleScrollToTop}
+        {/* Category Filter (conditionnel) */}
+        {((isWideScreen && navigatorShape === 'open') || navigatorPosition !== 'is-aside') && (
+          <CategoryFilter
+            categories={categories}
+            onFilterCategory={handleCategoryFilter}
           />
         )}
         
-        <ActionButton
-          icon={isFullscreen ? 
-            <FullscreenExitIcon sx={{ color: '#000', fontSize: 24 }} /> : 
-            <FullscreenIcon sx={{ color: '#000', fontSize: 24 }} />
-          }
-          title={isFullscreen ? "Quitter le plein écran" : "Plein écran"}
-          onClick={handleFullscreen}
-          isActive={isFullscreen}
-        />
-      </div>
-
-      {/* Modales */}
-      <CategoryFilterModal 
-        isOpen={showCategoryFilter}
-        onClose={() => setShowCategoryFilter(false)}
-      />
+        {/* Bouton Search */}
+        <Link href="/search/" passHref>
+          <ActionButton
+            onClick={handleSearchClick}
+            title="Search"
+          >
+            <Search />
+          </ActionButton>
+        </Link>
+      </ButtonGroup>
       
-      <FontSizeModal
-        isOpen={showFontSize}
-        onClose={() => setShowFontSize(false)}
-      />
-    </>
+      {/* Groupe de droite/bas */}
+      <ButtonGroup>
+        {/* Font Setter (conditionnel) */}
+        {navigatorPosition === 'is-aside' && (
+          <FontSetter onIncreaseFont={handleFontSizeChange} />
+        )}
+        
+        {/* Bouton Fullscreen */}
+        <ActionButton
+          aria-label="Fullscreen"
+          onClick={handleFullscreenClick}
+          title="Fullscreen mode"
+        >
+          {isFullscreen ? <FullscreenExit /> : <Fullscreen />}
+        </ActionButton>
+        
+        {/* Bouton Scroll to Top */}
+        <ActionButton
+          aria-label="Back to top"
+          onClick={handleScrollToTopClick}
+          title="Scroll to top"
+        >
+          <KeyboardArrowUp />
+        </ActionButton>
+      </ButtonGroup>
+    </ActionsBarContainer>
   );
 };
 

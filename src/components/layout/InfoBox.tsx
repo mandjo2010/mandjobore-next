@@ -1,256 +1,397 @@
-import { ExpandMore as ExpandMoreIcon } from '@mui/icons-material'
-import { Box, Typography, IconButton, Avatar, Link } from '@mui/material'
-import * as React from 'react'
+'use client';
 
-import { useSeparatorStyles } from '@/components/ui/SeparatorLine'
-import { useNavigatorActions, useNavigatorState } from '@/store/ui'
+import Link from 'next/link';
+import * as React from 'react';
+
+import { useMinimalNavigatorActions, useMinimalNavigatorState } from '@/store/ui-minimal';
+import { useStaticResponsive } from '../../hooks/useStaticResponsive';
 
 /**
- * InfoBox - Sidebar gauche reproduisant exactement la structure Gatsby
- * Largeur: 320px, contient: Avatar, Bio, Menu, Stack, Bouton expand
+ * InfoBox - Version TEST avec store minimal
+ * - Header avec avatar et expand button
+ * - Version ultra-simplifiée pour éliminer les boucles
  */
 export default function InfoBox() {
-  const { toggleNavigatorShape } = useNavigatorActions()
-  const { isOpen } = useNavigatorState()
-  const separatorStyles = useSeparatorStyles()
+  const { setNavigatorShape, moveNavigatorFeatured } = useMinimalNavigatorActions();
+  const { navigatorPosition, navigatorShape } = useMinimalNavigatorState();
+  const { isWideScreen } = useStaticResponsive();
 
-  const authorInfo = {
-    avatar: '/images/avatar.svg',
-    bio: `Passionné par le développement web moderne et l'analyse de données. 
-          Spécialisé en React, Next.js, Python et technologies géospatiales.`,
-    name: 'Mandjo Boré',
-    role: 'Développeur Full-Stack & Data Analyst',
-    social: [
-      { icon: 'github', name: 'GitHub', url: 'https://github.com/mandjo2010' },
-      { icon: 'linkedin', name: 'LinkedIn', url: 'https://linkedin.com/in/mandjo-bore' },
-      { icon: 'twitter', name: 'Twitter', url: 'https://twitter.com/mandjo2010' },
+  const expandOnClick = () => {
+    setNavigatorShape('closed');
+  };
+
+  const avatarOnClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    moveNavigatorFeatured();
+  };
+
+  const menulinkOnClick = (e: React.MouseEvent) => {
+    const target = e.currentTarget as HTMLElement;
+    const dataShape = target.getAttribute('data-shape') || 'open';
+    // Pour l'instant on utilise moveNavigatorFeatured, moveNavigatorAside sera implémenté plus tard
+    if (dataShape === 'closed') {
+      setNavigatorShape('closed');
+    }
+    moveNavigatorFeatured();
+  };
+
+  // Configuration de l'auteur (du fichier config original)
+  const config = {
+    infoTitle: 'Mandjo Béa Boré',
+    infoTitleNote: 'Data analyst - Developer',
+    authorSocialLinks: [
+      { name: 'github', url: 'https://github.com/mandjo2010' },
+      { name: 'linkedin', url: 'https://linkedin.com/in/mandjo-bore' },
+      { name: 'twitter', url: 'https://twitter.com/mandjo2010' },
+      { name: 'email', url: 'mailto:boremandjo@gmail.com' },
     ],
-    stack: [
-      'JavaScript', 'TypeScript', 'React', 'Next.js', 
-      'Python', 'Django', 'PostgreSQL', 'PostGIS',
-      'QGIS', 'Leaflet', 'D3.js'
-    ]
+  };
+
+  const menuPages = [
+    { slug: '/pages/about', title: 'About' },
+    { slug: '/pages/cartography', title: 'Cartography' }, 
+    { slug: '/pages/portfolio', title: 'Portfolio' },
+  ];
+
+  const stackItems = [
+    { name: 'nextjs', url: 'https://nextjs.org/' },
+    { name: 'react', url: 'https://reactjs.org/' },
+    { name: 'typescript', url: 'https://www.typescriptlang.org/' },
+    { name: 'emotion', url: 'https://emotion.sh/' },
+    { name: 'material-ui', url: 'https://mui.com/' },
+    { name: 'zustand', url: 'https://zustand-demo.pmnd.rs/' },
+    { name: 'nodejs', url: 'https://nodejs.org/' },
+    { name: 'postgres', url: 'https://postgresql.org/' },
+    { name: 'python', url: 'https://python.org/' },
+    { name: 'vercel', url: 'https://vercel.com/' },
+  ];
+
+  // Styles reproduisant exactement le thème Gatsby original
+  const theme = {
+    info: {
+      colors: {
+        text: '#555555',
+        background: '#ffffff',
+        socialIcons: '#bbbbbb',
+        socialIconsHover: '#709425',
+        menuLink: '#555555',
+        menuLinkHover: '#709425',
+      },
+      sizes: {
+        width: 320,
+        headerHeight: 170,
+      },
+      fonts: {
+        boxTitleSize: 1.3,
+      }
+    },
+    base: {
+      colors: {
+        lines: '#dedede',
+      },
+      sizes: {
+        linesMargin: '20px',
+      }
+    },
+    mediaQueryTresholds: {
+      L: 1024,
+    }
+  };
+
+  if (!isWideScreen) {
+    return null; // InfoBox ne s'affiche qu'en desktop comme dans Gatsby
   }
 
-  const menuItems = [
-    { href: '/about', label: 'About' },
-    { href: '/cartography', label: 'Cartography' },
-    { href: '/portfolio', label: 'Portfolio' },
-    { href: '/contact', label: 'Contact' },
-  ]
-
   return (
-    <Box
-      sx={{
-        bgcolor: '#ffffff',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        overflow: 'hidden',
-        position: 'relative',
-        // Ajouter le séparateur vertical droit avec marges 20px
-        ...separatorStyles.verticalRightSeparator,
+    <aside 
+      style={{
+        display: 'block',
+        color: theme.info.colors.text,
+        background: theme.info.colors.background,
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width: `${theme.info.sizes.width}px`,
+        height: '100%',
+        padding: '20px 40px',
+        ...{
+          '&::after': {
+            content: '""',
+            position: 'absolute',
+            right: 0,
+            top: '20px',
+            bottom: '20px',
+            width: '1px',
+            borderRight: `1px solid ${theme.base.colors.lines}`,
+          }
+        }
       }}
+      className={`infobox ${navigatorPosition} ${navigatorShape}`}
     >
-      {/* Header avec avatar et infos auteur */}
-      <Box
-        sx={{
-          borderBottom: '1px solid #dedede',
-          p: 3,
-          textAlign: 'center',
-        }}
-      >
-        <Avatar
-          src={authorInfo.avatar}
-          alt={authorInfo.name}
-          sx={{
-            border: '2px solid #709425',
-            height: 80,
-            mb: 2,
-            mx: 'auto',
-            width: 80,
-          }}
-        />
-        
-        <Typography className="authorName" component="h1">
-          {authorInfo.name}
-        </Typography>
-        
-        <Typography className="authorRole" component="h2">
-          {authorInfo.role}
-        </Typography>
-      </Box>
-
-      {/* Bio */}
-      <Box sx={{ borderBottom: '1px solid #dedede', p: 3 }}>
-        <Typography className="bioText">
-          {authorInfo.bio}
-        </Typography>
-      </Box>
-
-      {/* Icônes sociales */}
-      <Box
-        sx={{
-          borderBottom: '1px solid #dedede',
-          display: 'flex',
-          gap: 2,
-          justifyContent: 'center',
-          p: 2,
-        }}
-      >
-        {authorInfo.social.map((social) => (
-          <Link
-            key={social.name}
-            href={social.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{
-              '&:hover': {
-                bgcolor: '#709425',
-                color: '#fff',
-                transform: 'translateY(-2px)',
-              },
-              alignItems: 'center',
-              bgcolor: '#f5f5f5',
-              borderRadius: '50%',
-              color: '#333',
-              display: 'flex',
-              height: 40,
-              justifyContent: 'center',
-              transition: 'all 0.3s ease',
-              width: 40,
-            }}
-          >
-            {/* TODO: Remplacer par les vraies icônes SVG */}
-            <Typography variant="caption" sx={{ fontWeight: 600 }}>
-              {social.icon.charAt(0).toUpperCase()}
-            </Typography>
-          </Link>
-        ))}
-      </Box>
-
-      {/* Menu de navigation */}
-      <Box sx={{ borderBottom: '1px solid #dedede', p: 2 }}>
-        <Typography
-          variant="overline"
-          sx={{
-            color: '#666',
+      {/* HEADER avec Avatar et Expand Button */}
+      <header style={{ lineHeight: 1, position: 'relative' }}>
+        <Link 
+          href="/" 
+          onClick={avatarOnClick}
+          title="back to Home page"
+          style={{
+            willChange: 'left, top',
+            float: 'left',
             display: 'block',
-            fontSize: '0.7rem',
-            fontWeight: 600,
-            letterSpacing: '1px',
-            mb: 1,
+            ...(isWideScreen ? {
+              position: 'absolute',
+              top: '10px',
+              left: '50%',
+              marginLeft: '-30px',
+              margin: '0 20px 0 0',
+              transition: 'all .5s ease',
+              ...(navigatorShape === 'open' && {
+                left: '8%',
+                top: '0',
+              })
+            } : {
+              position: 'relative',
+              margin: '0 20px 0 0',
+            }),
+            textDecoration: 'none',
           }}
         >
-          NAVIGATION
-        </Typography>
-        
-        {menuItems.map((item) => (
-          <Link
-            key={item.label}
-            href={item.href}
-            sx={{
-              '&:hover': {
-                bgcolor: '#f5f5f5',
-                color: '#709425',
-                transform: 'translateX(4px)',
-              },
-              borderRadius: 1,
-              color: '#333',
-              display: 'block',
-              fontSize: '0.9rem',
-              fontWeight: 400,
-              px: 1,
-              py: 0.75,
-              textDecoration: 'none',
-              transition: 'all 0.2s ease',
-            }}
-          >
-            {item.label}
-          </Link>
-        ))}
-      </Box>
+          <div style={{
+            width: '60px',
+            height: '60px',
+            borderRadius: '65% 75%',
+            border: '1px solid #ddd',
+            transition: 'all .3s ease',
+            display: 'inline-block',
+            overflow: 'hidden',
+            backgroundImage: 'url(/images/avatar.svg)',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }} />
+        </Link>
 
-      {/* Stack technique */}
-      <Box sx={{ flex: 1, p: 2 }}>
-        <Typography
-          variant="overline"
-          sx={{
-            color: '#666',
-            display: 'block',
-            fontSize: '0.7rem',
-            fontWeight: 600,
-            letterSpacing: '1px',
-            mb: 1,
-          }}
-        >
-          STACK TECHNIQUE
-        </Typography>
-        
-        <Box
-          sx={{
-            display: 'flex',
-            flexWrap: 'wrap',
-            gap: 0.5,
-          }}
-        >
-          {authorInfo.stack.map((tech) => (
-            <Typography
-              key={tech}
-              component="span"
-              sx={{
-                bgcolor: '#f0f0f0',
-                borderRadius: '12px',
-                color: '#555',
-                fontSize: '0.75rem',
-                fontWeight: 500,
-                px: 1,
-                py: 0.25,
-              }}
-            >
-              {tech}
-            </Typography>
-          ))}
-        </Box>
-      </Box>
+        <h1 style={{
+          willChange: 'transform, left, top',
+          fontSize: `${theme.info.fonts.boxTitleSize}em`,
+          margin: 0,
+          float: 'left',
+          transition: 'all .5s ease',
+          ...(isWideScreen && {
+            position: 'absolute',
+            top: '85px',
+            textAlign: 'center',
+            left: '50%',
+            transform: 'translate(-50%)',
+            ...(navigatorShape === 'open' && {
+              left: '60%',
+              top: `${1.9 - theme.info.fonts.boxTitleSize}em`,
+              textAlign: 'left',
+            })
+          })
+        }}>
+          {config.infoTitle.replace(/ /g, '\u00a0')}
+          <small style={{ display: 'block', fontSize: '.6em', marginTop: '.3em' }}>
+            {config.infoTitleNote}
+          </small>
+        </h1>
 
-      {/* Bouton "Expand the box" */}
-      <Box
-        sx={{
-          borderTop: '1px solid #dedede',
-          p: 2,
-          textAlign: 'center',
-        }}
-      >
-        <IconButton
-          onClick={toggleNavigatorShape}
-          sx={{
-            '&:hover': {
-              bgcolor: 'rgba(112, 148, 37, 0.1)',
-              color: '#709425',
-            },
-            color: '#666',
-            transform: isOpen ? 'rotate(0deg)' : 'rotate(180deg)',
+        <button
+          onClick={expandOnClick}
+          title="Expand the box"
+          style={{
+            position: 'absolute',
+            top: '30px',
+            right: '-25px',
+            display: navigatorShape === 'open' ? 'block' : 'none',
+            background: 'none',
+            border: 'none',
+            color: theme.info.colors.text,
+            fontSize: '20px',
+            cursor: 'pointer',
+            padding: '8px',
+            borderRadius: '50%',
             transition: 'all 0.3s ease',
           }}
         >
-          <ExpandMoreIcon />
-        </IconButton>
+          ⌄
+        </button>
+      </header>
+
+      {/* WRAPPER - Contenu qui apparaît/disparaît */}
+      <div style={{
+        position: 'absolute',
+        top: `${theme.info.sizes.headerHeight}px`,
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        padding: '0 40px 0',
+        willChange: 'opacity, bottom',
+        transition: 'bottom .5s 0s ease',
+        opacity: 1,
+        ...(navigatorShape === 'closed' && {
+          bottom: '80px', // Équivalent de closedHeight
+        })
+      }}>
         
-        <Typography
-          variant="caption"
-          sx={{
-            color: '#888',
-            display: 'block',
-            fontSize: '0.7rem',
-            letterSpacing: '0.5px',
-            mt: 0.5,
-            textTransform: 'uppercase',
-          }}
-        >
-          {isOpen ? 'Collapse' : 'Expand'} the box
-        </Typography>
-      </Box>
-    </Box>
-  )
+        {/* BIO TEXT */}
+        <div style={{
+          display: 'block',
+          fontWeight: 300,
+          lineHeight: 1.5,
+          fontSize: '.95em',
+          textAlign: 'left',
+          marginBottom: '.8em',
+        }}>
+          <p style={{ marginTop: 0 }}>
+            Passionné par le développement web moderne et l'analyse de données géospatiales. 
+            Spécialisé en React, Next.js, Python et technologies SIG.
+          </p>
+        </div>
+
+        {/* SOCIAL ICONS */}
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+          margin: '1.5em 0',
+        }}>
+          {config.authorSocialLinks.map((item) => (
+            <a
+              key={item.name}
+              href={item.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={item.name}
+              style={{
+                display: 'block',
+                padding: '5px',
+                fontSize: '24px',
+                color: theme.info.colors.socialIcons,
+                transition: 'all .5s',
+                textDecoration: 'none',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = theme.info.colors.socialIconsHover;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = theme.info.colors.socialIcons;
+              }}
+            >
+              {item.name === 'github' && '🐙'}
+              {item.name === 'linkedin' && '💼'}
+              {item.name === 'twitter' && '🐦'}
+              {item.name === 'email' && '📧'}
+            </a>
+          ))}
+        </div>
+
+        {/* INFO MENU */}
+        <nav style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          listStyle: 'none',
+          margin: 0,
+          width: '100%',
+        }}>
+          {menuPages.map((page) => (
+            <Link
+              key={page.slug}
+              href={page.slug}
+              onClick={menulinkOnClick}
+              data-shape="closed"
+              style={{
+                padding: '.5em',
+                fontWeight: 300,
+                textTransform: 'lowercase',
+                color: theme.info.colors.menuLink,
+                textDecoration: 'none',
+                transition: 'color .3s',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = theme.info.colors.menuLinkHover;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = theme.info.colors.menuLink;
+              }}
+            >
+              {page.title}
+            </Link>
+          ))}
+          <Link
+            href="/contact/"
+            onClick={menulinkOnClick}
+            data-shape="closed"
+            style={{
+              padding: '.5em',
+              fontWeight: 300,
+              textTransform: 'lowercase',
+              color: theme.info.colors.menuLink,
+              textDecoration: 'none',
+              transition: 'color .3s',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = theme.info.colors.menuLinkHover;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = theme.info.colors.menuLink;
+            }}
+          >
+            Contact
+          </Link>
+        </nav>
+
+        {/* STACK ICONS - En bas */}
+        <div style={{
+          position: 'absolute',
+          left: 0,
+          bottom: 0,
+          width: '100%',
+          padding: '1em 2em',
+        }}>
+          <h5 style={{
+            textAlign: 'center',
+            fontSize: '.85em',
+            letterSpacing: '.3em',
+            width: '100%',
+            margin: '0 0 .8em 0',
+            fontWeight: 300,
+          }}>
+            BUILT WITH:
+          </h5>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            flexWrap: 'wrap',
+          }}>
+            {stackItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                title={item.name}
+                style={{
+                  display: 'inline-block',
+                  padding: '8px',
+                  fontSize: '12px',
+                  color: theme.info.colors.socialIcons,
+                  textDecoration: 'none',
+                  transition: 'color .3s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.color = theme.info.colors.socialIconsHover;
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.color = theme.info.colors.socialIcons;
+                }}
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </aside>
+  );
 }

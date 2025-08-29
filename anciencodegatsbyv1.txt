@@ -1,0 +1,5121 @@
+
+📋 Informations complémentaires nécessaires
+1. Code source actuel
+
+ a - Fichiers de configuration : gatsby-config.js, 
+ 
+//gatsby-config.js
+
+require("dotenv").config();
+const config = require("./content/meta/config");
+
+const query = `{
+  allMarkdownRemark(filter: { id: { regex: "//posts|pages//" } }) {
+    edges {
+      node {
+        objectID: id
+        fields {
+          slug
+        }
+        internal {
+          content
+        }
+        frontmatter {
+          title
+          subTitle
+        }
+      }
+    }
+  }
+}`;
+
+const queries = [
+  {
+    query,
+    transformer: ({ data }) => data.allMarkdownRemark.edges.map(({ node }) => node)
+  }
+];
+
+module.exports = {
+  siteMetadata: {
+    title: config.siteTitle,
+    description: config.siteDescription,
+    siteUrl: config.siteUrl,
+    pathPrefix: config.pathPrefix,
+    algolia: {
+      appId: process.env.ALGOLIA_APP_ID ? process.env.ALGOLIA_APP_ID : "",
+      searchOnlyApiKey: process.env.ALGOLIA_SEARCH_ONLY_API_KEY
+        ? process.env.ALGOLIA_SEARCH_ONLY_API_KEY
+        : "",
+      indexName: process.env.ALGOLIA_INDEX_NAME ? process.env.ALGOLIA_INDEX_NAME : ""
+    },
+    facebook: {
+      appId: process.env.FB_APP_ID ? process.env.FB_APP_ID : ""
+    }
+  },
+  plugins: [
+    `gatsby-plugin-react-next`,
+    // {
+    //   resolve: `gatsby-plugin-algolia`,
+    //   options: {
+    //     appId: process.env.ALGOLIA_APP_ID ? process.env.ALGOLIA_APP_ID : "",
+    //     apiKey: process.env.ALGOLIA_ADMIN_API_KEY ? process.env.ALGOLIA_ADMIN_API_KEY : "",
+    //     indexName: process.env.ALGOLIA_INDEX_NAME ? process.env.ALGOLIA_INDEX_NAME : "",
+    //     queries,
+    //     chunkSize: 10000 // default: 1000
+    //   }
+    // },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/content/posts/`,
+        name: "posts"
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        path: `${__dirname}/content/pages/`,
+        name: "pages"
+      }
+    },
+    {
+      resolve: `gatsby-source-filesystem`,
+      options: {
+        name: `parts`,
+        path: `${__dirname}/content/parts/`
+      }
+    },
+    {
+      resolve: `gatsby-transformer-remark`,
+      options: {
+        plugins: [
+          `gatsby-plugin-sharp`,
+          {
+            resolve: `gatsby-remark-images`,
+            options: {
+              maxWidth: 800,
+              backgroundColor: "#FFFFFF"
+            }
+          },
+          {
+            resolve: `gatsby-remark-responsive-iframe`,
+            options: {
+              wrapperStyle: `margin-bottom: 2em`
+            }
+          },
+          `gatsby-remark-prismjs`,
+          `gatsby-remark-copy-linked-files`,
+          `gatsby-remark-smartypants`
+        ]
+      }
+    },
+    `gatsby-plugin-sharp`,
+    `gatsby-transformer-sharp`,
+    `gatsby-plugin-react-helmet`,
+    `gatsby-plugin-catch-links`,
+    {
+      resolve: `gatsby-plugin-manifest`,
+      options: {
+        name: config.manifestName,
+        short_name: config.manifestShortName,
+        start_url: config.manifestStartUrl,
+        background_color: config.manifestBackgroundColor,
+        theme_color: config.manifestThemeColor,
+        display: config.manifestDisplay,
+        icons: [
+          {
+            src: "/icons/icon-48x48.png",
+            sizes: "48x48",
+            type: "image/png"
+          },
+          {
+            src: "/icons/icon-96x96.png",
+            sizes: "96x96",
+            type: "image/png"
+          },
+          {
+            src: "/icons/icon-144x144.png",
+            sizes: "144x144",
+            type: "image/png"
+          },
+          {
+            src: "/icons/icon-192x192.png",
+            sizes: "192x192",
+            type: "image/png"
+          },
+          {
+            src: "/icons/icon-256x256.png",
+            sizes: "256x256",
+            type: "image/png"
+          },
+          {
+            src: "/icons/icon-384x384.png",
+            sizes: "384x384",
+            type: "image/png"
+          },
+          {
+            src: "/icons/icon-512x512.png",
+            sizes: "512x512",
+            type: "image/png"
+          }
+        ]
+      }
+    },
+    `gatsby-plugin-offline`,
+    {
+      resolve: `gatsby-plugin-google-analytics`,
+      options: {
+        trackingId: process.env.GOOGLE_ANALYTICS_ID,
+        head: true,
+        anonymize: true
+      }
+    },
+    {
+      resolve: `gatsby-plugin-feed`,
+      options: {
+        query: `
+          {
+            site {
+              siteMetadata {
+                title
+                description
+                siteUrl
+                site_url: siteUrl
+              }
+            }
+          }
+        `,
+        feeds: [
+          {
+            title: "RSS Feed Title", // Add a valid title here
+            serialize: ({ query: { site, allMarkdownRemark } }) => {
+              return allMarkdownRemark.edges.map(edge => {
+                return Object.assign({}, edge.node.frontmatter, {
+                  description: edge.node.excerpt,
+                  url: site.siteMetadata.siteUrl + edge.node.fields.slug,
+                  guid: site.siteMetadata.siteUrl + edge.node.fields.slug,
+                  custom_elements: [{ "content:encoded": edge.node.html }]
+                });
+              });
+            },
+            query: `
+              {
+                allMarkdownRemark(
+                  limit: 1000,
+                  sort: { order: DESC, fields: [fields___prefix] },
+                  filter: { id: { regex: "//posts//" } }
+                ) {
+                  edges {
+                    node {
+                      excerpt
+                      html
+                      fields {
+                        slug
+                        prefix
+                      }
+                      frontmatter {
+                        title
+                      }
+                    }
+                  }
+                }
+              }
+            `,
+            output: "/rss.xml"
+          }
+        ]
+      }
+    },
+    {
+      resolve: `gatsby-plugin-sitemap`
+    },
+    {
+      resolve: `gatsby-plugin-netlify`,
+      options: {
+        headers: {}, // option to add more headers. `Link` headers are transformed by the below criteria
+        allPageHeaders: [], // option to add headers for all pages. `Link` headers are transformed by the below criteria
+        mergeSecurityHeaders: true, // boolean to turn off the default security headers
+        mergeCachingHeaders: true, // boolean to turn off the default caching headers
+        transformHeaders: (headers, path) => headers, // optional transform for manipulating headers under each path (e.g.sorting), etc.
+        generateMatchPathRewrites: true // boolean to turn off automatic creation of redirect rules for client only paths
+      }
+    },
+    {
+      resolve: "gatsby-plugin-react-svg",
+      options: {
+        include: /svg-icons/
+      }
+    }
+  ]
+};
+
+
+
+
+
+//gatsby-node.js
+const webpack = require("webpack");
+//const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
+const _ = require("lodash");
+const Promise = require("bluebird");
+const path = require("path");
+const { createFilePath } = require(`gatsby-source-filesystem`);
+const { store } = require(`./node_modules/gatsby/dist/redux`);
+
+exports.onCreateNode = ({ node, getNode, boundActionCreators }) => {
+  const { createNodeField } = boundActionCreators;
+  if (node.internal.type === `MarkdownRemark`) {
+    const slug = createFilePath({ node, getNode, basePath: `pages` });
+    const separtorIndex = ~slug.indexOf("--") ? slug.indexOf("--") : 0;
+    const shortSlugStart = separtorIndex ? separtorIndex + 2 : 0;
+    createNodeField({
+      node,
+      name: `slug`,
+      value: `${separtorIndex ? "/" : ""}${slug.substring(shortSlugStart)}`
+    });
+    createNodeField({
+      node,
+      name: `prefix`,
+      value: separtorIndex ? slug.substring(1, separtorIndex) : ""
+    });
+  }
+};
+
+exports.createPages = ({ graphql, boundActionCreators }) => {
+  const { createPage } = boundActionCreators;
+
+  return new Promise((resolve, reject) => {
+    const postTemplate = path.resolve("./src/templates/PostTemplate.js");
+    const pageTemplate = path.resolve("./src/templates/PageTemplate.js");
+    resolve(
+      graphql(
+        `
+          {
+            allMarkdownRemark(filter: { id: { regex: "//posts|pages//" } }, limit: 1000) {
+              edges {
+                node {
+                  id
+                  fields {
+                    slug
+                    prefix
+                  }
+                }
+              }
+            }
+          }
+        `
+      ).then(result => {
+        if (result.errors) {
+          console.log(result.errors);
+          reject(result.errors);
+        }
+
+        // Create posts and pages.
+        _.each(result.data.allMarkdownRemark.edges, edge => {
+          const slug = edge.node.fields.slug;
+          const isPost = /posts/.test(edge.node.id);
+
+          createPage({
+            path: slug,
+            component: isPost ? postTemplate : pageTemplate,
+            context: {
+              slug: slug
+            }
+          });
+        });
+      })
+    );
+  });
+};
+
+exports.modifyWebpackConfig = ({ config, stage }) => {
+  switch (stage) {
+    case "build-javascript":
+      {
+        let components = store.getState().pages.map(page => page.componentChunkName);
+        components = _.uniq(components);
+        config.plugin("CommonsChunkPlugin", webpack.optimize.CommonsChunkPlugin, [
+          {
+            name: `commons`,
+            chunks: [`app`, ...components],
+            minChunks: (module, count) => {
+              const vendorModuleList = []; // [`material-ui`, `lodash`];
+              const isFramework = _.some(
+                vendorModuleList.map(vendor => {
+                  const regex = new RegExp(`[\\\\/]node_modules[\\\\/]${vendor}[\\\\/].*`, `i`);
+                  return regex.test(module.resource);
+                })
+              );
+              return isFramework || count > 1;
+            }
+          }
+        ]);
+        // config.plugin("BundleAnalyzerPlugin", BundleAnalyzerPlugin, [
+        //   {
+        //     analyzerMode: "static",
+        //     reportFilename: "./report/treemap.html",
+        //     openAnalyzer: true,
+        //     logLevel: "error",
+        //     defaultSizes: "gzip"
+        //   }
+        // ]);
+      }
+      break;
+  }
+  return config;
+};
+
+exports.modifyBabelrc = ({ babelrc }) => {
+  return {
+    ...babelrc,
+    plugins: babelrc.plugins.concat([`syntax-dynamic-import`, `dynamic-import-webpack`])
+  };
+};
+
+
+
+b - Templates : src/templates/PostTemplate.js, PageTemplate.js
+
+//src/templates/PostTemplate.js
+import React from "react";
+import PropTypes from "prop-types";
+import Main from "../components/Main/";
+import { connect } from "react-redux";
+require("core-js/fn/array/find");
+require("prismjs/themes/prism-okaidia.css");
+
+import { setNavigatorPosition, setNavigatorShape } from "../state/store";
+import { moveNavigatorAside } from "../utils/shared";
+import Post from "../components/Post/";
+import Footer from "../components/Footer/";
+import Seo from "../components/Seo";
+
+class PostTemplate extends React.Component {
+  moveNavigatorAside = moveNavigatorAside.bind(this);
+
+  componentDidMount() {
+    if (this.props.navigatorPosition === "is-featured") {
+      this.moveNavigatorAside();
+    }
+  }
+
+  render() {
+    const { data, pathContext } = this.props;
+    const facebook = (((data || {}).site || {}).siteMetadata || {}).facebook;
+
+    return (
+      <Main>
+        <Post post={data.post} slug={pathContext.slug} author={data.author} facebook={facebook} />
+        <Footer footnote={data.footnote} />
+        <Seo data={data.post} facebook={facebook} />
+      </Main>
+    );
+  }
+}
+
+PostTemplate.propTypes = {
+  data: PropTypes.object.isRequired,
+  pathContext: PropTypes.object.isRequired,
+  navigatorPosition: PropTypes.string.isRequired,
+  setNavigatorPosition: PropTypes.func.isRequired,
+  isWideScreen: PropTypes.bool.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    navigatorPosition: state.navigatorPosition,
+    isWideScreen: state.isWideScreen
+  };
+};
+
+const mapDispatchToProps = {
+  setNavigatorPosition,
+  setNavigatorShape
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostTemplate);
+
+//eslint-disable-next-line no-undef
+export const postQuery = graphql`
+  query PostBySlug($slug: String!) {
+    post: markdownRemark(fields: { slug: { eq: $slug } }) {
+      id
+      html
+      htmlAst
+      fields {
+        slug
+        prefix
+      }
+      frontmatter {
+        title
+        subTitle
+        cover {
+          childImageSharp {
+            resize(width: 300) {
+              src
+            }
+          }
+        }
+      }
+    }
+    author: markdownRemark(id: { regex: "/author/" }) {
+      id
+      html
+    }
+    footnote: markdownRemark(id: { regex: "/footnote/" }) {
+      id
+      html
+    }
+    site {
+      siteMetadata {
+        facebook {
+          appId
+        }
+      }
+    }
+  }
+`;
+
+
+
+//src/templates/PageTemplate.js
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+
+import { setNavigatorPosition, setNavigatorShape } from "../state/store";
+import { moveNavigatorAside } from "../utils/shared";
+import Main from "../components/Main/";
+import Page from "../components/Page/";
+import Footer from "../components/Footer/";
+import Seo from "../components/Seo";
+
+class PageTemplate extends React.Component {
+  moveNavigatorAside = moveNavigatorAside.bind(this);
+
+  componentDidMount() {
+    if (this.props.navigatorPosition === "is-featured") {
+      this.moveNavigatorAside();
+    }
+  }
+
+  render() {
+    const { data } = this.props;
+    const facebook = (((data || {}).site || {}).siteMetadata || {}).facebook;
+
+    return (
+      <Main>
+        <Page page={data.page} />
+        <Footer footnote={data.footnote} />
+        <Seo data={data.post} facebook={facebook} />
+      </Main>
+    );
+  }
+}
+
+PageTemplate.propTypes = {
+  data: PropTypes.object.isRequired,
+  navigatorPosition: PropTypes.string.isRequired,
+  setNavigatorPosition: PropTypes.func.isRequired,
+  isWideScreen: PropTypes.bool.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    navigatorPosition: state.navigatorPosition,
+    isWideScreen: state.isWideScreen
+  };
+};
+
+const mapDispatchToProps = {
+  setNavigatorPosition,
+  setNavigatorShape
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PageTemplate);
+
+//eslint-disable-next-line no-undef
+export const pageQuery = graphql`
+  query PageByPath($slug: String!) {
+    page: markdownRemark(fields: { slug: { eq: $slug } }) {
+      id
+      html
+      frontmatter {
+        title
+      }
+    }
+    footnote: markdownRemark(id: { regex: "/footnote/" }) {
+      id
+      html
+    }
+    site {
+      siteMetadata {
+        facebook {
+          appId
+        }
+      }
+    }
+  }
+`;
+
+
+
+
+
+c- Composants principaux 
+
+src/components/SpringScrollbars/springScrollbars.js: import React, { Component } from "react";
+import { Scrollbars } from "react-custom-scrollbars";
+import PropTypes from "prop-types";
+import { SpringSystem, MathUtil } from "rebound";
+import { forceCheck } from "react-lazyload";
+import { connect } from "react-redux";
+
+import { setScrollToTop } from "../../state/store";
+
+class SpringScrollbars extends Component {
+  constructor(props, ...rest) {
+    super(props, ...rest);
+    this.handleSpringUpdate = this.handleSpringUpdate.bind(this);
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.isNavigator && this.props.navigatorPosition !== "is-featured") {
+      return;
+    }
+
+    if (this.props.scrollToTop && this.props.scrollToTop !== prevProps.scrollToTop) {
+      this.scrollTop(0);
+      this.props.setScrollToTop(false);
+    }
+  }
+  componentDidMount() {
+    this.springSystem = new SpringSystem();
+    this.spring = this.springSystem.createSpring();
+    this.spring.addListener({ onSpringUpdate: this.handleSpringUpdate });
+  }
+
+  componentWillUnmount() {
+    this.springSystem.deregisterSpring(this.spring);
+    this.springSystem.removeAllListeners();
+    this.springSystem = undefined;
+    this.spring.destroy();
+    this.spring = undefined;
+  }
+
+  getScrollTop() {
+    return this.scrollbars.getScrollTop();
+  }
+
+  getScrollHeight() {
+    return this.scrollbars.getScrollHeight();
+  }
+
+  getHeight() {
+    return this.scrollbars.getHeight();
+  }
+
+  scrollTop(top) {
+    const scrollTop = this.scrollbars.getScrollTop();
+    const scrollHeight = this.scrollbars.getScrollHeight();
+    const val = MathUtil.mapValueInRange(
+      top,
+      0,
+      scrollHeight,
+      scrollHeight * 0.01,
+      scrollHeight * 0.99
+    );
+    this.spring.setCurrentValue(scrollTop).setAtRest();
+    this.spring.setEndValue(val);
+  }
+
+  handleSpringUpdate(spring) {
+    window.requestAnimationFrame(() => {
+      const val = spring.getCurrentValue();
+      this.scrollbars.scrollTop(val);
+    });
+  }
+
+  render() {
+    const { children, forceCheckOnScroll } = this.props;
+
+    return (
+      <Scrollbars
+        autoHide
+        universal={true}
+        onScroll={forceCheckOnScroll && forceCheck}
+        ref={comp => {
+          this.scrollbars = comp;
+        }}
+      >
+        {children}
+      </Scrollbars>
+    );
+  }
+}
+
+SpringScrollbars.propTypes = {
+  children: PropTypes.node.isRequired,
+  scrollToTop: PropTypes.bool.isRequired,
+  setScrollToTop: PropTypes.func.isRequired,
+  forceCheckOnScroll: PropTypes.bool,
+  navigatorPosition: PropTypes.string.isRequired,
+  isNavigator: PropTypes.bool
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    scrollToTop: state.scrollToTop,
+    navigatorPosition: state.navigatorPosition
+  };
+};
+
+const mapDispatchToProps = {
+  setScrollToTop
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SpringScrollbars);
+
+
+2-1: InfoBar: 
+
+//src/components/InforBar/index.js
+export { default } from "./InfoBar";
+
+
+//src/components/InforBar/infoBar.js
+import React from "react";
+import injectSheet from "react-jss";
+import PropTypes from "prop-types";
+import Avatar from "@material-ui/core/Avatar";
+import Link from "gatsby-link";
+import { connect } from "react-redux";
+
+import { setNavigatorPosition } from "../../state/store";
+import { featureNavigator, moveNavigatorAside } from "./../../utils/shared";
+
+import config from "../../../content/meta/config";
+import avatar from "../../images/jpg/avatar.jpg";
+import TopMenu from "./TopMenu";
+
+const styles = theme => ({
+  infoBar: {
+    position: "absolute",
+    background: theme.bars.colors.background,
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: `${theme.bars.sizes.infoBar}px`,
+    "&::before": {
+      content: `""`,
+      position: "absolute",
+      left: theme.base.sizes.linesMargin,
+      right: theme.base.sizes.linesMargin,
+      height: 0,
+      bottom: 0,
+      borderTop: `1px solid ${theme.base.colors.lines}`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      display: "none"
+    }
+  },
+  title: {
+    float: "left",
+    margin: "10px 0 0 15px",
+    color: theme.bars.colors.text,
+    "& small": {
+      display: "block",
+      fontSize: ".65em",
+      margin: "2px 0 0 0"
+    }
+  },
+  avatarLink: {
+    display: "block",
+    float: "left",
+    margin: "13px 0 0 30px"
+  },
+  avatar: {
+    width: "36px",
+    borderRadius: "65% 75%",
+    border: "1px solid #ddd",
+    height: "36px"
+  }
+});
+
+class InfoBar extends React.Component {
+  homeLinkOnClick = featureNavigator.bind(this);
+  pageLinkOnClick = moveNavigatorAside.bind(this);
+
+  render() {
+    const { classes, pages } = this.props;
+
+    return (
+      <aside className={classes.infoBar}>
+        <Link to="/" className={classes.avatarLink} onClick={this.homeLinkOnClick}>
+          <Avatar alt={config.infoTitle} src={avatar} className={classes.avatar} />
+        </Link>
+        <h3 className={classes.title}>
+          {config.infoTitle}
+          <small>{config.infoTitleNote}</small>
+        </h3>
+        <TopMenu
+          pages={pages}
+          homeLinkOnClick={this.homeLinkOnClick}
+          pageLinkOnClick={this.pageLinkOnClick}
+        />
+      </aside>
+    );
+  }
+}
+
+InfoBar.propTypes = {
+  classes: PropTypes.object.isRequired,
+  pages: PropTypes.array.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    navigatorPosition: state.navigatorPosition,
+    navigatorShape: state.navigatorShape
+  };
+};
+
+const mapDispatchToProps = {
+  setNavigatorPosition
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectSheet(styles)(InfoBar));
+
+
+
+
+//src/components/InforBar/TopMenu.js
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Grow from '@material-ui/core/Grow';
+import IconButton from '@material-ui/core/IconButton';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
+import Paper from '@material-ui/core/Paper';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import classNames from 'classnames';
+import Link from 'gatsby-link';
+import PropTypes from 'prop-types';
+import React from 'react';
+import injectSheet from 'react-jss';
+import {Manager, Popper, Target} from 'react-popper';
+
+const styles = theme => ({
+  topMenu: {
+    float: "right",
+    margin: "5px 10px 0 0",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {}
+  },
+  open: {
+    color: theme.bars.colors.icon
+  },
+  popperClose: {
+    pointerEvents: "none"
+  }
+});
+
+class TopMenu extends React.Component {
+  state = {
+    anchorEl: null,
+    open: false
+  };
+
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
+  }
+
+  handleClick = () => {
+    this.setState({ open: !this.state.open });
+  };
+
+  handleClose = () => {
+    if (!this.state.open) {
+      return;
+    }
+
+    this.timeout = setTimeout(() => {
+      this.setState({ open: false });
+    });
+  };
+
+  render() {
+    const { classes, pages } = this.props;
+    const { anchorEl, open } = this.state;
+
+    return (
+      <nav className={classes.topMenu}>
+        <Manager>
+          <Target>
+            <IconButton
+              aria-label="More"
+              aria-owns={anchorEl ? "long-menu" : null}
+              aria-haspopup="true"
+              onClick={this.handleClick}
+              className={classes.open}
+            >
+              <MoreVertIcon />
+            </IconButton>
+          </Target>
+          <Popper
+            placement="bottom-end"
+            eventsEnabled={open}
+            className={classNames({ [classes.popperClose]: !open })}
+          >
+            <ClickAwayListener onClickAway={this.handleClose}>
+              <Grow in={open} id="menu-list" style={{ transformOrigin: "0 0 0" }}>
+                <Paper>
+                  <MenuList role="menu">
+                    <MenuItem
+                      onClick={e => {
+                        this.props.homeLinkOnClick(e);
+                        this.handleClose();
+                      }}
+                    >
+                      Home
+                    </MenuItem>
+                    {pages.map((page, i) => {
+                      const { fields, frontmatter } = page.node;
+
+                      return (
+                        <Link key={fields.slug} to={fields.slug} style={{ display: "block" }}>
+                          <MenuItem
+                            onClick={e => {
+                              this.props.pageLinkOnClick(e);
+                              this.handleClose();
+                            }}
+                          >
+                            {frontmatter.menuTitle ? frontmatter.menuTitle : frontmatter.title}
+                          </MenuItem>
+                        </Link>
+                      );
+                    })}
+                    <Link to="/contact/" style={{ display: "block" }}>
+                      <MenuItem
+                        onClick={e => {
+                          this.props.pageLinkOnClick(e);
+                          this.handleClose();
+                        }}
+                      >
+                        Contact
+                      </MenuItem>
+                    </Link>
+                  </MenuList>
+                </Paper>
+              </Grow>
+            </ClickAwayListener>
+          </Popper>
+        </Manager>
+      </nav>
+    );
+  }
+}
+
+TopMenu.propTypes = {
+  pages: PropTypes.array.isRequired,
+  classes: PropTypes.object.isRequired,
+  pageLinkOnClick: PropTypes.func.isRequired,
+  homeLinkOnClick: PropTypes.func.isRequired
+};
+
+export default injectSheet(styles)(TopMenu);
+
+
+
+
+2-2: InfoBox: 
+
+//src/components/InforBox/index.js
+
+export { default } from "./InfoBox";
+
+//src/components/InforBox/infoBox.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import { connect } from "react-redux";
+require("core-js/fn/array/find");
+
+import SocialIcons from "./SocialIcons";
+import InfoMenu from "./InfoMenu";
+import InfoHeader from "./InfoHeader";
+import InfoText from "./InfoText";
+import StackIcons from "./StackIcons";
+
+import { featureNavigator, moveNavigatorAside } from "./../../utils/shared";
+import { setNavigatorPosition, setNavigatorShape } from "../../state/store";
+
+const styles = theme => ({
+  infoBox: {
+    display: "none",
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      display: "block",
+      color: theme.info.colors.text,
+      background: theme.info.colors.background,
+      position: "absolute",
+      left: 0,
+      top: 0,
+      width: `${theme.info.sizes.width}px`,
+      height: "100%",
+      padding: "20px 40px",
+      "&::after": {
+        content: `""`,
+        position: "absolute",
+        right: 0,
+        top: "20px",
+        bottom: "20px",
+        width: "1px",
+        borderRight: `1px solid ${theme.base.colors.lines}`
+      }
+    }
+  },
+  wrapper: {
+    position: "absolute",
+    top: `${theme.info.sizes.headerHeight}px`,
+    bottom: 0,
+    left: 0,
+    width: "100%",
+    padding: "0 40px 0",
+    willChange: "opacity, bottom",
+    transition: "bottom .5s 0s",
+    opacity: 1,
+    transitionTimingFunction: "ease",
+    ".is-aside.closed &": {
+      bottom: `${theme.navigator.sizes.closedHeight}px`
+    },
+    ".moving-featured &": {
+      bottom: 0
+    }
+  }
+});
+
+class InfoBox extends React.Component {
+  avatarOnClick = featureNavigator.bind(this);
+  menulinkOnClick = moveNavigatorAside.bind(this);
+
+  expandOnClick = e => {
+    this.props.setNavigatorShape("closed");
+  };
+
+  render() {
+    const { classes, parts, pages, navigatorPosition, navigatorShape } = this.props;
+    const info = parts.find(el => el.node.frontmatter.title === "info");
+
+    return (
+      <aside
+        className={`${classes.infoBox} ${navigatorPosition ? navigatorPosition : ""} 
+        ${navigatorShape ? navigatorShape : ""}`}
+      >
+        {info && (
+          <InfoHeader
+            info={info}
+            avatarOnClick={this.avatarOnClick}
+            expandOnClick={this.expandOnClick}
+          />
+        )}
+        <div className={classes.wrapper}>
+          {info && <InfoText info={info} />}
+          <SocialIcons />
+          {pages && <InfoMenu pages={pages} linkOnClick={this.menulinkOnClick} />}
+          <StackIcons />
+        </div>
+      </aside>
+    );
+  }
+}
+
+InfoBox.propTypes = {
+  classes: PropTypes.object.isRequired,
+  parts: PropTypes.array.isRequired,
+  pages: PropTypes.array.isRequired,
+  navigatorPosition: PropTypes.string.isRequired,
+  navigatorShape: PropTypes.string.isRequired,
+  isWideScreen: PropTypes.bool.isRequired,
+  setNavigatorShape: PropTypes.func.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    navigatorPosition: state.navigatorPosition,
+    navigatorShape: state.navigatorShape,
+    isWideScreen: state.isWideScreen
+  };
+};
+
+const mapDispatchToProps = {
+  setNavigatorPosition,
+  setNavigatorShape
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(injectSheet(styles)(InfoBox));
+
+
+
+//src/components/InforBox/infoHeader.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import Link from "gatsby-link";
+import IconButton from "@material-ui/core/IconButton";
+
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+
+import avatar from "../../images/jpg/avatar.jpg";
+import config from "../../../content/meta/config";
+
+const styles = theme => ({
+  header: {
+    lineHeight: 1,
+    position: "relative"
+  },
+  avatarLink: {
+    willChange: "left, top",
+    float: "left",
+    display: "block",
+    position: "relative",
+    margin: "0 12px 0 0",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      margin: "0 20px 0 0"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      position: "absolute",
+      top: "10px",
+      left: "50%",
+      marginLeft: "-30px",
+      transition: "all .5s",
+      transitionTimingFunction: "ease",
+      ".navigator-in-transition-from.navigator-is-opened &": {
+        left: "50%"
+      },
+      ".is-aside.open &": {
+        left: "8%",
+        top: "0"
+      }
+    }
+  },
+  avatar: {
+    width: "36px",
+    height: "36px",
+    borderRadius: "65% 75%",
+    border: "1px solid #ddd",
+    transition: "all .3s",
+    transitionTimingFunction: "ease",
+    display: "inline-block",
+    overflow: "hidden",
+    "& img": {
+      maxWidth: "100%"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      width: "44px",
+      height: "44px"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      width: "60px",
+      height: "60px"
+    },
+    "@media (hover: hover)": {
+      "&:hover": {
+        borderRadius: "75% 65%"
+      }
+    }
+  },
+  title: {
+    willChange: "transform, left, top",
+    fontSize: `${theme.info.fonts.boxTitleSize}em`,
+    margin: 0,
+    float: "left",
+    transitionTimingFunction: "ease",
+    "& small": {
+      display: "block",
+      fontSize: ".6em",
+      marginTop: ".3em"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      fontSize: `${theme.info.fonts.boxTitleSizeM}em`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      fontSize: `${theme.info.fonts.boxTitleSizeL}em`,
+      position: "absolute",
+      top: "85px",
+      textAlign: "center",
+      left: "50%",
+      transform: "translate(-50%)",
+      transition: "all .5s",
+      ".is-aside.open &": {
+        left: "60%",
+        top: `${1.9 - theme.info.fonts.boxTitleSizeL}em`,
+        textAlign: "left"
+      }
+    }
+  },
+  expand: {
+    position: "absolute",
+    top: "30px",
+    right: "-25px",
+    display: "none",
+    color: theme.info.colors.text,
+    ".is-aside.open &": {
+      display: "block"
+    }
+  }
+});
+
+const InfoHeader = props => {
+  const { classes, avatarOnClick, expandOnClick } = props;
+
+  return (
+    <header className={classes.header}>
+      <Link className={classes.avatarLink} onClick={avatarOnClick} to="/" title="back to Home page">
+        <div className={classes.avatar}>
+          <img src={avatar} alt="" />
+        </div>
+      </Link>
+      <h1 className={classes.title}>
+        {config.infoTitle.replace(/ /g, "\u00a0")}
+        <small>{config.infoTitleNote}</small>
+      </h1>
+      <IconButton
+        aria-label="Expand the box"
+        className={classes.expand}
+        onClick={expandOnClick}
+        title="Expand the box"
+      >
+        <ExpandMoreIcon />
+      </IconButton>
+    </header>
+  );
+};
+
+InfoHeader.propTypes = {
+  classes: PropTypes.object.isRequired,
+  avatarOnClick: PropTypes.func.isRequired,
+  expandOnClick: PropTypes.func.isRequired
+};
+
+export default injectSheet(styles)(InfoHeader);
+
+
+//src/components/InforBox/infoMenu.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import Link from "gatsby-link";
+
+const styles = theme => ({
+  infoMenu: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    listStyle: "none",
+    margin: 0,
+    width: "100%"
+  },
+  link: {
+    padding: ".5em",
+    fontWeight: 300,
+    textTransform: "lowercase",
+    color: theme.info.colors.menuLink,
+    "&:hover": {
+      color: theme.info.colors.menuLinkHover
+    }
+  }
+});
+
+const InfoMenu = props => {
+  const { classes, pages, linkOnClick } = props;
+
+  return (
+    <nav className={classes.infoMenu}>
+      {pages.map((page, i) => {
+        const { fields, frontmatter } = page.node;
+        return (
+          <Link
+            key={fields.slug}
+            to={fields.slug}
+            onClick={linkOnClick}
+            className={classes.link}
+            data-shape="closed"
+          >
+            {frontmatter.menuTitle ? frontmatter.menuTitle : frontmatter.title}
+          </Link>
+        );
+      })}
+      <Link to="/contact/" onClick={linkOnClick} className={classes.link} data-shape="closed">
+        Contact
+      </Link>
+    </nav>
+  );
+};
+
+InfoMenu.propTypes = {
+  pages: PropTypes.array.isRequired,
+  classes: PropTypes.object.isRequired,
+  linkOnClick: PropTypes.func.isRequired
+};
+
+export default injectSheet(styles)(InfoMenu);
+
+
+//src/components/InforBox/infoText.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+const styles = theme => ({
+  text: {
+    display: "block",
+    fontWeight: 300,
+    lineHeight: 1.5,
+    fontSize: ".95em",
+    textAlign: "left",
+    marginBottom: ".8em",
+    "& p:first-child": {
+      marginTop: 0
+    },
+    "& p:last-child": {
+      marginBottom: 0
+    }
+  }
+});
+
+const InfoText = props => {
+  const { classes, info } = props;
+  const text = info.node.html;
+
+  return <div className={classes.text} dangerouslySetInnerHTML={{ __html: text }} />;
+};
+
+InfoText.propTypes = {
+  classes: PropTypes.object.isRequired,
+  info: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(InfoText);
+
+
+//src/components/InforBox/SocialIcons.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+import config from "../../../content/meta/config";
+
+import GithubIcon from "!svg-react-loader!../../images/svg-icons/github.svg?name=GithubIcon";
+import FacebookIcon from "!svg-react-loader!../../images/svg-icons/facebook.svg?name=FacebookIcon";
+import TwitterIcon from "!svg-react-loader!../../images/svg-icons/twitter.svg?name=TwitterIcon";
+import LinkedinIcon from "!svg-react-loader!../../images/svg-icons/linkedin.svg?name=LinkedinIcon";
+import EmailIcon from "!svg-react-loader!../../images/svg-icons/email.svg?name=EmailIcon";
+// import MediumIcon from "!svg-react-loader!../../images/svg-icons/medium.svg?name=MediumIcon";
+// import QuoraIcon from "!svg-react-loader!../../images/svg-icons/quora.svg?name=QuoraIcon";
+
+const styles = theme => ({
+  social: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap"
+  },
+  svg: {
+    width: "32px",
+    height: "32px",
+    fill: theme.info.colors.socialIcons,
+    transition: "all .5s"
+  },
+
+  // link: {
+  //   display: "inline-block",
+  //   padding: "5px",
+  //   "&:hover": {
+  //     "& svg": {
+  //       fill: theme.info.colors.socialIconsHover
+  //     }
+  //   }
+  // }
+
+  link: {
+    display: "block",
+    padding: "5px",
+    "&[title='github']": {
+      "& svg": {
+        fill: "#966588"
+      }
+    },
+
+    "&[title='twitter']": {
+      "& svg": {
+        fill: "#01acee"
+      }
+    },
+    "&[title='facebook']:hover": {
+      "& svg": {
+        fill: "#3c5898"
+      }
+    },
+    "&[title='linkedin']": {
+      "& svg": {
+        fill: "#a19b9a"
+      }
+    },
+    "&[title='email']": {
+      "& svg": {
+        fill: "#dc4e41"
+      }
+    },
+    "&[title='medium']:hover": {
+      "& svg": {
+        fill: "#000000"
+      }
+    },
+    "&[title='quora']:hover": {
+      "& svg": {
+        fill: "#b92b27"
+      }
+    }
+  }
+});
+
+const Socialcons = props => {
+  const { classes } = props;
+  const items = config.authorSocialLinks;
+  const icons = {
+    twitter: TwitterIcon,
+    facebook: FacebookIcon,
+    github: GithubIcon,
+    email: EmailIcon,
+    // medium: MediumIcon,
+    linkedin: LinkedinIcon
+    // quora: QuoraIcon
+  };
+
+  return (
+    <div className={classes.social}>
+      {items.map(item => {
+        const Icon = icons[item.name];
+        return (
+          <a
+            href={item.url}
+            key={item.name}
+            className={classes.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={item.name}
+          >
+            <Icon className={classes.svg} />
+          </a>
+        );
+      })}
+    </div>
+  );
+};
+
+Socialcons.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(Socialcons);
+
+//src/components/InforBox/StackIcons.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+import AlgoliaIcon from "!svg-react-loader!../../images/svg-icons/algolia.svg?name=AlgoliaIcon";
+import ReactIcon from "!svg-react-loader!../../images/svg-icons/react.svg?name=ReactIcon";
+import GraphqlIcon from "!svg-react-loader!../../images/svg-icons/graphql.svg?name=GraphqlIcon";
+import JssIcon from "!svg-react-loader!../../images/svg-icons/jss.svg?name=JssIcon";
+import MaterialUiIcon from "!svg-react-loader!../../images/svg-icons/material-ui.svg?name=MaterialUiIcon";
+import ReduxIcon from "!svg-react-loader!../../images/svg-icons/redux.svg?name=ReduxIcon";
+import GatsbyIcon from "!svg-react-loader!../../images/svg-icons/gatsby.svg?name=GatsbyIcon";
+import WebpackIcon from "!svg-react-loader!../../images/svg-icons/webpack.svg?name=WebpackIcon";
+import BabelIcon from "!svg-react-loader!../../images/svg-icons/babel.svg?name=BabelIcon";
+import NetlifyIcon from "!svg-react-loader!../../images/svg-icons/netlify.svg?name=NetlifyIcon";
+
+const styles = theme => ({
+  stack: {
+    display: "none",
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      display: "block",
+      position: "absolute",
+      left: 0,
+      bottom: 0,
+      width: "100%",
+      padding: "1em 2em"
+    }
+  },
+  box: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap"
+  },
+  link: {
+    display: "inline-block",
+    padding: "8px"
+  },
+  svg: {
+    width: "22px",
+    height: "22px"
+  },
+  header: {
+    textAlign: "center",
+    fontSize: ".85em",
+    letterSpacing: ".3em",
+    width: "100%",
+    margin: "0 0 .8em 0",
+    fontWeight: 300
+  }
+});
+
+const StackIcons = props => {
+  const { classes } = props;
+
+  const items = [
+    { name: "gatsby", url: "https://www.gatsbyjs.org/", comp: GatsbyIcon },
+    { name: "react", url: "https://reactjs.org/", comp: ReactIcon },
+    { name: "graphql", url: "http://graphql.org/", comp: GraphqlIcon },
+    { name: "jss", url: "http://cssinjs.org/", comp: JssIcon },
+    { name: "material-ui", url: "https://material-ui-next.com/", comp: MaterialUiIcon },
+    { name: "redux", url: "https://redux.js.org/", comp: ReduxIcon },
+    { name: "algolia", url: "https://www.algolia.com/", comp: AlgoliaIcon },
+    { name: "webpack", url: "https://webpack.js.org/", comp: WebpackIcon },
+    { name: "babel", url: "https://babeljs.io/", comp: BabelIcon },
+    { name: "netlify", url: "https://www.netlify.com/", comp: NetlifyIcon }
+  ];
+
+  return (
+    <div className={classes.stack}>
+      <h5 className={classes.header}>built with:</h5>
+      <div className={classes.box}>
+        {items.map(item => {
+          const Icon = item.comp;
+          return (
+            <a
+              href={item.url}
+              key={item.name}
+              className={classes.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={item.name}
+            >
+              <Icon className={classes.svg} />
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+StackIcons.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(StackIcons);
+
+
+
+
+                                                                                                                                                                                 
+2-3 Navigator: 
+
+
+//src/components/Navigator/index.js
+export { default } from "./Navigator";
+
+//src/components/Navigator/List.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import { forceCheck } from "react-lazyload";
+
+import ListHeader from "./ListHeader";
+import SpringScrollbars from "../SpringScrollbars";
+import ListItem from "./ListItem";
+
+const styles = theme => ({
+  posts: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: "100%"
+  },
+  inner: {
+    padding: `calc(${theme.bars.sizes.infoBar}px + 1.3rem) 1.3rem calc(${
+      theme.bars.sizes.actionsBar
+    }px + 1.3rem) 1.3rem`,
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      padding: `calc(${theme.bars.sizes.infoBar}px + 2rem) 2rem calc(${
+        theme.bars.sizes.actionsBar
+      }px + 2rem) 2rem`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      padding: `2rem  calc(1rem + 17px) calc(2rem + 17px) 2rem`,
+      left: `${theme.info.sizes.width}px`,
+      ".moving-featured &, .is-aside &": {
+        padding: "1rem .5rem 1rem .5rem"
+      }
+    }
+  },
+  list: {
+    listStyle: "none",
+    margin: 0,
+    padding: 0,
+    ".is-aside.closed &, .moving-featured.closed &": {
+      display: "none"
+    }
+  }
+});
+
+class List extends React.Component {
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.categoryFilter !== this.props.categoryFilter) {
+      setTimeout(forceCheck, 300);
+    }
+  }
+
+  render() {
+    const {
+      classes,
+      posts,
+      linkOnClick,
+      expandOnClick,
+      categoryFilter,
+      navigatorShape,
+      removeFilter
+    } = this.props;
+
+    return (
+      <div className={classes.posts}>
+        <SpringScrollbars forceCheckOnScroll={true} isNavigator={true}>
+          <div className={classes.inner}>
+            <ListHeader
+              expandOnClick={expandOnClick}
+              categoryFilter={categoryFilter}
+              navigatorShape={navigatorShape}
+              removeFilter={removeFilter}
+            />
+            <ul className={classes.list}>
+              {posts &&
+                posts.map((post, i) => (
+                  <ListItem
+                    key={i}
+                    post={post}
+                    linkOnClick={linkOnClick}
+                    categoryFilter={categoryFilter}
+                  />
+                ))}
+            </ul>
+          </div>
+        </SpringScrollbars>
+      </div>
+    );
+  }
+}
+
+List.propTypes = {
+  classes: PropTypes.object.isRequired,
+  posts: PropTypes.array.isRequired,
+  linkOnClick: PropTypes.func.isRequired,
+  expandOnClick: PropTypes.func.isRequired,
+  navigatorPosition: PropTypes.string.isRequired,
+  navigatorShape: PropTypes.string.isRequired,
+  categoryFilter: PropTypes.string.isRequired,
+  removeFilter: PropTypes.func.isRequired
+};
+
+export default injectSheet(styles)(List);
+
+//src/components/Navigator/ListHeader.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import IconButton from "@material-ui/core/IconButton";
+
+import CloseIcon from "@material-ui/icons/Close";
+import ExpandLessIcon from "@material-ui/icons/ExpandLess";
+
+const styles = theme => ({
+  closed: {
+    display: "none",
+    ".is-aside.closed &, .moving-featured.closed &": {
+      display: "flex",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      alignItems: "center",
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      margin: 0,
+      height: `${theme.navigator.sizes.closedHeight}px`,
+      padding: "0 30px 0 40px"
+    },
+    "& h3": {
+      fontSize: "1.1em",
+      color: theme.navigator.colors.postsHeader,
+      fontWeight: 600,
+      margin: "-.2em 0 0 0",
+      textTransform: "uppercase",
+      "& small": {
+        fontSize: ".6em",
+        display: "block",
+        margin: "0 0 .1em",
+        fontWeight: 300,
+        letterSpacing: ".2em"
+      }
+    }
+  },
+  expand: {
+    color: theme.navigator.colors.postsHeader
+  },
+  filter: {
+    margin: `0 calc(-.5rem + ${theme.base.sizes.linesMargin}) 1em calc(-.5rem + ${
+      theme.base.sizes.linesMargin
+    })`,
+    position: "relative",
+    fontSize: "1.2em",
+    lineHeight: 1,
+    color: theme.base.colors.accent,
+    borderBottom: `1px solid ${theme.base.colors.lines}`,
+    padding: "0 1em 1em",
+    fontWeight: 300,
+    "& strong": {
+      fontWeight: 600,
+      display: "block"
+    },
+    "& small": {
+      display: "block",
+      margin: "0 0 .3em 0"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      margin: "0 0 1em 0",
+      padding: "0 1em 1.5em",
+      ".is-aside &": {
+        padding: "0 0 1em .5em",
+        margin: `0 calc(-.5rem + ${theme.base.sizes.linesMargin}) 1em calc(-.5rem + ${
+          theme.base.sizes.linesMargin
+        })`
+      }
+    }
+  },
+  clear: {
+    position: "absolute",
+    top: 0,
+    right: 0
+  }
+});
+
+const ListHeader = props => {
+  const { classes, expandOnClick, categoryFilter, navigatorShape, removeFilter } = props;
+
+  return (
+    <header>
+      {navigatorShape === "closed" && (
+        <div className={classes.closed}>
+          <h3>List of posts</h3>
+          <IconButton
+            aria-label="Expand the list"
+            className={classes.expand}
+            onClick={expandOnClick}
+            title="Expand the list"
+          >
+            <ExpandLessIcon />
+          </IconButton>
+        </div>
+      )}
+      {navigatorShape === "open" &&
+        categoryFilter !== "all posts" && (
+          <div className={classes.filter}>
+            <small>Active category filter:</small> <strong>{categoryFilter}</strong>
+            <IconButton
+              aria-label="Remove filtering"
+              className={classes.clear}
+              onClick={removeFilter}
+              title="Clear filtering"
+            >
+              <CloseIcon />
+            </IconButton>
+          </div>
+        )}
+    </header>
+  );
+};
+
+ListHeader.propTypes = {
+  classes: PropTypes.object.isRequired,
+  expandOnClick: PropTypes.func.isRequired,
+  categoryFilter: PropTypes.string.isRequired,
+  navigatorShape: PropTypes.string.isRequired,
+  removeFilter: PropTypes.func.isRequired
+};
+
+export default injectSheet(styles)(ListHeader);
+
+//src/components/Navigator/ListItem.js
+import React from "react";
+import Link from "gatsby-link";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import LazyLoad from "react-lazyload";
+
+const styles = theme => ({
+  listItem: {
+    margin: "0 0 .7em 0",
+    transition: "height 1s",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      margin: "0 0 1.5rem 0"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      ".moving-featured &, .is-aside &": {
+        margin: "0 0 0 0"
+      }
+    }
+  },
+  listLink: {
+    display: "flex",
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    flexDirection: "row",
+    padding: ".7em 1em .7em 1em",
+    color: theme.navigator.colors.postsListItemLink,
+    "@media (hover: hover)": {
+      "&:hover": {
+        color: theme.navigator.colors.postsListItemLinkHover,
+        "& .pointer": {
+          borderRadius: "65% 75%"
+        }
+      }
+    }
+  },
+  listItemPointer: {
+    position: "relative",
+    flexShrink: 0,
+    overflow: "hidden",
+    borderRadius: "75% 65%",
+    width: "60px",
+    height: "60px",
+    margin: "0",
+    transition: "all .5s",
+    "& img": {
+      width: "100%",
+      height: "100%"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      marginRight: ".5em",
+      width: "80px",
+      height: "80px"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      marginRight: ".8em",
+      width: "90px",
+      height: "90px",
+      transition: "all .3s",
+      transitionTimingFunction: "ease",
+      ".moving-featured &, .is-aside &": {
+        width: "30px",
+        height: "30px"
+      }
+    }
+  },
+  listItemText: {
+    margin: "0 0 0 1.5em",
+    flexGrow: 1,
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+    "& h1": {
+      lineHeight: 1.15,
+      fontWeight: 600,
+      letterSpacing: "-0.03em",
+      margin: 0,
+      fontSize: `${theme.navigator.sizes.postsListItemH1Font}em`,
+      [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+        fontSize: `${theme.navigator.sizes.postsListItemH1Font *
+          theme.navigator.sizes.fontIncraseForM}em`
+      },
+      [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+        fontSize: `${theme.navigator.sizes.postsListItemH1Font *
+          theme.navigator.sizes.fontIncraseForL}em`,
+        ".moving-featured &, .is-aside &": {
+          fontSize: "1em",
+          fontWeight: 400
+        }
+      }
+    },
+    "& h2": {
+      lineHeight: 1.2,
+      display: "block",
+      fontSize: `${theme.navigator.sizes.postsListItemH2Font}em`,
+      margin: ".3em 0 0 0",
+      [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+        fontSize: `${theme.navigator.sizes.postsListItemH2Font *
+          theme.navigator.sizes.fontIncraseForM}em`
+      },
+      [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+        fontSize: `${theme.navigator.sizes.postsListItemH2Font *
+          theme.navigator.sizes.fontIncraseForL}em`,
+        ".moving-featured &, .is-aside &": {
+          display: "none"
+        }
+      }
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      ".moving-featured &, .is-aside &": {
+        margin: "0 0 0 .5em"
+      }
+    }
+  }
+});
+
+class ListItem extends React.Component {
+  state = {
+    hidden: false
+  };
+
+  componentDidUpdate(prevProps, prevState) {
+    if (prevProps.categoryFilter !== this.props.categoryFilter) {
+      const category = this.props.post.node.frontmatter.category;
+      const categoryFilter = this.props.categoryFilter;
+
+      if (categoryFilter === "all posts") {
+        this.setState({ hidden: false });
+      } else if (category !== categoryFilter) {
+        this.setState({ hidden: true });
+      } else if (category === categoryFilter) {
+        this.setState({ hidden: false });
+      }
+    }
+  }
+
+  render() {
+    const { classes, post, linkOnClick } = this.props;
+
+    return (
+      <li
+        className={`${classes.listItem} ${post.node.frontmatter.category}`}
+        style={{ display: `${this.state.hidden ? "none" : "block"}` }}
+        key={post.node.fields.slug}
+      >
+        <Link
+          activeClassName="active"
+          className={classes.listLink}
+          to={post.node.fields.slug}
+          onClick={linkOnClick}
+        >
+          {post.node.frontmatter.cover &&
+            post.node.frontmatter.cover.children[0] && (
+              <div className={`${classes.listItemPointer} pointer`}>
+                <LazyLoad height={60} overflow={true} throttle={300} once={true} offset={100}>
+                  <picture>
+                    <source
+                      type="image/webp"
+                      srcSet={post.node.frontmatter.cover.children[0].resolutions.srcSetWebp}
+                    />
+                    <source srcSet={post.node.frontmatter.cover.children[0].resolutions.srcSet} />
+                    <img src={post.node.frontmatter.cover.children[0].resolutions.src} alt="" />
+                  </picture>
+                </LazyLoad>
+              </div>
+            )}
+          
+          <div className={classes.listItemText}>
+            <h1>{post.node.frontmatter.title}</h1>
+            {post.node.frontmatter.subTitle && <h2>{post.node.frontmatter.subTitle}</h2>}
+          </div>
+        </Link>
+      </li>
+    );
+  }
+}
+
+ListItem.propTypes = {
+  classes: PropTypes.object.isRequired,
+  post: PropTypes.object.isRequired,
+  linkOnClick: PropTypes.func.isRequired,
+  categoryFilter: PropTypes.string.isRequired
+};
+
+export default injectSheet(styles)(ListItem);
+
+//src/components/Navigator/Navigator.js
+import React from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import { forceCheck } from "react-lazyload";
+
+import { setNavigatorPosition, setNavigatorShape, setCategoryFilter } from "../../state/store";
+import { moveNavigatorAside } from "./../../utils/shared";
+import List from "./List";
+
+const styles = theme => ({
+  navigator: {
+    transform: "translate3d(0, 0, 0)",
+    willChange: "left, top, bottom, width",
+    background: theme.navigator.colors.background,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    height: "100vh",
+    transitionTimingFunction: "ease",
+    transition: "left .9s",
+    width: "100%",
+    [`@media (max-width: ${theme.mediaQueryTresholds.L - 1}px)`]: {
+      "&.is-aside": {
+        left: "-100%"
+      },
+      "&.is-featured": {
+        left: 0
+      }
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      "&.is-featured": {
+        transition: "left .9s",
+        width: `calc(100vw - ${theme.info.sizes.width}px - ${theme.bars.sizes.actionsBar}px)`,
+        left: `${theme.info.sizes.width}px`,
+        top: 0
+      },
+      "&.is-aside": {
+        transition: "none, bottom 0.5s",
+        left: 0,
+        width: `${theme.info.sizes.width - 1}px`,
+        zIndex: 1,
+        top: "auto",
+        "&.closed": {
+          bottom: `calc(-100% + 100px + ${theme.navigator.sizes.closedHeight}px)`,
+          height: `calc(100% - 100px)`
+        },
+        "&.open": {
+          bottom: 0,
+          height: `calc(100% - 100px)`
+        },
+        "&::after": {
+          content: `""`,
+          position: "absolute",
+          top: 0,
+          left: theme.base.sizes.linesMargin,
+          right: theme.base.sizes.linesMargin,
+          height: 0,
+          borderTop: `1px solid ${theme.base.colors.lines}`
+        }
+      },
+      "&.moving-aside": {
+        transition: "left 0.9s",
+        left: `calc(-100vw + ${2 * theme.info.sizes.width + 60}px)`,
+        width: `calc(100vw - ${theme.info.sizes.width}px - 60px)`,
+        top: 0
+      },
+      "&.resizing-aside": {
+        transition: "none",
+        width: `${theme.info.sizes.width - 1}px`,
+        top: "auto",
+        left: 0,
+        "&.closed": {
+          bottom: `calc(-100% + 100px)`,
+          height: `calc(100% - 100px)`
+        },
+        "&.open": {
+          bottom: `calc(-100% + 100px)`,
+          height: `calc(100% - 100px)`
+        }
+      },
+      "&.moving-featured": {
+        transition: "bottom .3s",
+
+        bottom: "-100%",
+        top: "auto",
+        left: 0,
+        zIndex: 1,
+        width: `${theme.info.sizes.width - 1}px`
+      },
+      "&.resizing-featured": {
+        transition: "none",
+        top: 0,
+        bottom: "auto",
+        left: `calc(-100vw + ${2 * theme.info.sizes.width + 60}px)`,
+        width: `calc(100vw - ${theme.info.sizes.width}px - 60px)`
+      }
+    }
+  }
+});
+
+class Navigator extends React.Component {
+  linkOnClick = moveNavigatorAside.bind(this);
+
+  expandOnClick = e => {
+    this.props.setNavigatorShape("open");
+    setTimeout(forceCheck, 600);
+  };
+
+  removefilterOnClick = e => {
+    this.props.setCategoryFilter("all posts");
+  };
+
+  render() {
+    const { classes, posts, navigatorPosition, navigatorShape, categoryFilter } = this.props;
+
+    return (
+      <nav
+        className={`${classes.navigator} ${navigatorPosition ? navigatorPosition : ""} ${
+          navigatorShape ? navigatorShape : ""
+        } `}
+      >
+        {this.props.posts.length && (
+          <List
+            posts={posts}
+            navigatorPosition={navigatorPosition}
+            navigatorShape={navigatorShape}
+            linkOnClick={this.linkOnClick}
+            expandOnClick={this.expandOnClick}
+            categoryFilter={categoryFilter}
+            removeFilter={this.removefilterOnClick}
+          />
+        )}
+      </nav>
+    );
+  }
+}
+
+Navigator.propTypes = {
+  posts: PropTypes.array.isRequired,
+  classes: PropTypes.object.isRequired,
+  navigatorPosition: PropTypes.string.isRequired,
+  navigatorShape: PropTypes.string.isRequired,
+  setNavigatorPosition: PropTypes.func.isRequired,
+  setNavigatorShape: PropTypes.func.isRequired,
+  isWideScreen: PropTypes.bool.isRequired,
+  categoryFilter: PropTypes.string.isRequired,
+  setCategoryFilter: PropTypes.func.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    navigatorPosition: state.navigatorPosition,
+    navigatorShape: state.navigatorShape,
+    isWideScreen: state.isWideScreen,
+    categoryFilter: state.categoryFilter
+  };
+};
+
+const mapDispatchToProps = {
+  setNavigatorPosition,
+  setNavigatorShape,
+  setCategoryFilter
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(injectSheet(styles)(Navigator));
+Tout en haut à cote de l'avatar, dans l'infoBox,  un button Expand the box(étendre la box) permet, une fois cliqué d'afficher les info de l'auteur(nom, bio, titre, SocialIcons). Tout en bas, dans l'infoBox de notre Sidebar toujours, se trouve comme tu as du le remarqué dans ListHeader.js list of posts (qui s'affiche en Majuscule) et à coté, un button Expand the list (étendre la liste). Cela permet faire revenir dans notre SideBar, à la place des infos de l'auteur, des SocialIcons..., la liste des articles comme ils sont lister dans la colonne centrale mais en plus petit. On remarque également le menu de navitation (About, Cartography, Portfolio, Contact ) sous les logos des réseaux sociaux, toujours dans la sidebar d'à gauche. Les codes contenu dans src/components/Navigator ci-haut, pourront mieux t'aiguiser dans tes recommandations à Copilote sur cette section.   les codes de l'ancien Main Section  sous Gatsby où se trouve les articles est   proposé ci-dessous:                                                                                   
+
+//src/components/Main/Article.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+const styles = theme => ({
+  article: {
+    background: theme.main.colors.background,
+    maxWidth: theme.main.sizes.articleMaxWidth,
+    margin: "0 auto",
+    padding: `calc(${theme.bars.sizes.infoBar}px + 1.5rem) 1.5rem  1.5rem 1.5rem`,
+    "& strong, & b": {
+      letterSpacing: "-.02em"
+    },
+    "& a": {
+      fontWeight: "bold",
+      letterSpacing: "-.02em",
+      textDecoration: "underline",
+      transition: "0.3s",
+      "&:hover": {
+        color: theme.base.colors.linkHover
+      }
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      padding: `calc(2.5rem + ${theme.bars.sizes.infoBar}px) 3.5rem 2.5rem`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      padding: "3.5rem"
+    }
+  }
+});
+
+const Article = props => {
+  const { children, classes } = props;
+
+  return <article className={classes.article}>{children}</article>;
+};
+
+Article.propTypes = {
+  classes: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired
+};
+
+export default injectSheet(styles)(Article);
+
+//src/components/Main/Content.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import { connect } from "react-redux";
+
+import { setFontSizeIncrease } from "../../state/store";
+
+const styles = theme => ({
+  content: {
+    color: theme.main.colors.content,
+    fontSize: props => `calc(${theme.main.fonts.content.size}em * ${props.fontSizeIncrease})`,
+    lineHeight: theme.main.fonts.content.lineHeight,
+    "& a": {
+      color: theme.base.colors.link
+    },
+    "& .gatsby-highlight": {
+      margin: "2em 0"
+    },
+    "& .gatsby-resp-iframe-wrapper": {
+      margin: "2em 0"
+    },
+    "& .gatsby-resp-image-link": {
+      margin: "2em -1.5rem",
+      border: "none",
+      [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+        margin: "2.5em -3.5rem"
+      }
+    },
+    "& h2, & h3": {
+      color: theme.main.colors.contentHeading,
+      fontSize: `${theme.main.fonts.contentHeading.h2Size}em`,
+      fontWeight: theme.main.fonts.contentHeading.weight,
+      lineHeight: theme.main.fonts.contentHeading.lineHeight,
+      margin: "2em 0 1em",
+      letterSpacing: "-0.02em"
+    },
+    "& h3": {
+      fontSize: `${theme.main.fonts.contentHeading.h3Size}em`
+    },
+    "& p": {
+      margin: "0 0 1.5em 0",
+      fontWeight: 400
+    },
+    "& ul": {
+      listStyle: "circle",
+      padding: "0 0 0 1.3em",
+      [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+        padding: "0 0 0 2em"
+      }
+    },
+    "& li": {
+      margin: "0 0 .5em 0"
+    },
+    "& blockquote": {
+      border: `5px solid ${theme.main.colors.blockquoteFrame}`,
+      fontStyle: "italic",
+      margin: "2.5em 0",
+      padding: "1em 1.1em 1em 1.3em",
+      position: "relative",
+      "& p": {
+        margin: 0
+      },
+      "&::before, &::after": {
+        background: theme.main.colors.background,
+        content: `""`,
+        height: "5px",
+        left: "50%",
+        marginLeft: "-47%",
+        position: "absolute",
+        top: "-5px",
+        width: "94%"
+      },
+      "&::after": {
+        top: "auto",
+        bottom: "-5px"
+      }
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      fontSize: `${theme.main.fonts.content.sizeM}em`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      fontSize: `${theme.main.fonts.content.sizeL}em`
+    }
+  }
+});
+
+const Content = props => {
+  const { classes, html, children } = props;
+
+  if (html) {
+    return <div className={classes.content} dangerouslySetInnerHTML={{ __html: html }} />;
+  } else {
+    return <div className={classes.content}>{children}</div>;
+  }
+};
+
+Content.propTypes = {
+  classes: PropTypes.object.isRequired,
+  html: PropTypes.string,
+  children: PropTypes.node,
+  setFontSizeIncrease: PropTypes.func.isRequired,
+  fontSizeIncrease: PropTypes.number.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    fontSizeIncrease: state.fontSizeIncrease
+  };
+};
+
+const mapDispatchToProps = {
+  setFontSizeIncrease
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectSheet(styles)(Content));
+
+
+//src/components/Main/index.js
+export { default } from "./Main";
+
+
+//src/components/Main/Main.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import SpringScrollbars from "../SpringScrollbars";
+
+const styles = theme => ({
+  main: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: "100%",
+    animationName: "main-entry",
+    animationDuration: ".5s",
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      width: `calc(100vw - ${theme.info.sizes.width}px - ${theme.bars.sizes.actionsBar}px)`,
+      left: `${theme.info.sizes.width}px`
+    },
+    "@media print": {
+      position: "relative",
+      "& > div": {
+        overflow: "visible!important"
+      },
+      "& > div > div": {
+        position: "relative!important"
+      }
+    }
+  },
+  article: {
+    maxWidth: theme.main.sizes.maxWidth,
+    margin: "0 auto",
+    padding: `calc(1.5rem + ${theme.info.sizes.height}px) 1.8rem 1.5rem 1.5rem`,
+    "& strong, & b": {
+      letterSpacing: "-.02em",
+      fontWeight: 600
+    },
+    "& a": {
+      fontWeight: 600,
+      letterSpacing: "-.02em",
+      textShadow: `
+         2px  2px ${theme.main.colors.background},
+        -2px  2px ${theme.main.colors.background},
+        -2px -2px ${theme.main.colors.background},
+        -2px  2px ${theme.main.colors.background},
+        -2px  0   ${theme.main.colors.background},
+         2px  0   ${theme.main.colors.background}
+      `,
+      display: "inline-block",
+      textDecoration: "none",
+      transition: "0.3s",
+      "&:hover": {
+        color: theme.base.colors.linkHover
+      }
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      padding: `calc(2.5rem + ${theme.info.sizes.height}px) 3.5rem 2.5rem`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      padding: "3.5rem"
+    }
+  },
+  "@keyframes main-entry": {
+    "0%": {
+      opacity: 0,
+      transform: "translateY(20px)"
+    },
+    "100%": {
+      opacity: 1,
+      transform: "translateY(0)"
+    }
+  }
+});
+
+const Main = props => {
+  const { classes, children } = props;
+
+  return (
+    <main className={classes.main}>
+      <SpringScrollbars>{children}</SpringScrollbars>
+    </main>
+  );
+};
+
+Main.propTypes = {
+  classes: PropTypes.object.isRequired,
+  children: PropTypes.any.isRequired
+};
+
+export default injectSheet(styles)(Main);
+                                                                                                                                      : Dans notre développement actuel sous Next.js, le texte Retour aux articles mentionné tout en haut des articles est une fonction qui revient à Home, Back to the listB(logo Home dans le petit sidebar de droite). Pour plus d'informations sur les actions de ces éléments, je te mets ci-dessous l'ancien code sous gatsby src/components/ActionsBar:                                                                                                             
+
+//src/components/ActionBar/ActionsBar.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import IconButton from "@material-ui/core/IconButton";
+
+import Link from "gatsby-link";
+import { connect } from "react-redux";
+import screenfull from "screenfull";
+
+import HomeIcon from "@material-ui/icons/Home";
+import SearchIcon from "@material-ui/icons/Search";
+import ArrowUpwardIcon from "@material-ui/icons/ArrowUpward";
+import FullscreenIcon from "@material-ui/icons/Fullscreen";
+import FullscreenExitIcon from "@material-ui/icons/FullscreenExit";
+
+import {
+  setNavigatorPosition,
+  setNavigatorShape,
+  setScrollToTop,
+  setFontSizeIncrease,
+  setCategoryFilter
+} from "../../state/store";
+import { featureNavigator, moveNavigatorAside } from "./../../utils/shared";
+import FontSetter from "./FontSetter";
+import CategoryFilter from "./CategoryFilter";
+
+const styles = theme => ({
+  actionsBar: {
+    position: "absolute",
+    background: theme.bars.colors.background,
+    left: 0,
+    // top: `calc(100vh - ${theme.bars.sizes.actionsBar}px)`,
+    bottom: 0,
+    display: "flex",
+    flexDirection: "row",
+    padding: `0 ${theme.base.sizes.linesMargin}`,
+    justifyContent: "space-between",
+    height: `${theme.bars.sizes.actionsBar}px`,
+    width: "100%",
+    "&::before": {
+      content: `""`,
+      position: "absolute",
+      left: theme.base.sizes.linesMargin,
+      right: theme.base.sizes.linesMargin,
+      height: 0,
+      top: 0,
+      borderTop: `1px solid ${theme.base.colors.lines}`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      padding: `0 calc(${theme.base.sizes.linesMargin} * 1.5)`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      flexDirection: "column",
+      top: 0,
+      right: 0,
+      left: "auto",
+      height: "100%",
+      padding: `${theme.base.sizes.linesMargin} 0`,
+      width: `${theme.bars.sizes.actionsBar}px`,
+      "&::before": {
+        top: theme.base.sizes.linesMargin,
+        bottom: theme.base.sizes.linesMargin,
+        left: 0,
+        right: "auto",
+        width: 0,
+        height: "auto",
+        borderLeft: `1px solid ${theme.base.colors.lines}`
+      }
+    }
+  },
+  group: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      flexDirection: "column"
+    }
+  },
+  button: {
+    color: theme.bars.colors.icon
+  }
+});
+
+class ActionsBar extends React.Component {
+  state = {
+    fullscreen: false
+  };
+
+  componentDidMount() {
+    if (screenfull.enabled) {
+      screenfull.on("change", () => {
+        this.setState({
+          fullscreen: screenfull.isFullscreen
+        });
+      });
+    }
+  }
+
+  homeOnClick = featureNavigator.bind(this);
+  searchOnClick = moveNavigatorAside.bind(this);
+
+  fullscreenOnClick = () => {
+    if (screenfull.enabled) {
+      screenfull.toggle();
+    }
+  };
+
+  arrowUpOnClick = () => {
+    this.props.setScrollToTop(true);
+  };
+
+  fontSetterOnClick = val => {
+    this.props.setFontSizeIncrease(val);
+
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem("font-size-increase", val);
+    }
+  };
+
+  categoryFilterOnClick = val => {
+    this.props.setCategoryFilter(val);
+  };
+
+  render() {
+    const { classes, navigatorPosition, navigatorShape, isWideScreen, categories } = this.props;
+
+    return (
+      <div className={classes.actionsBar}>
+        <div className={classes.group}>
+          <IconButton
+            aria-label="Back to list"
+            onClick={this.homeOnClick}
+            title="Back to the list"
+            className={classes.button}
+          >
+            <HomeIcon />
+          </IconButton>
+          {((isWideScreen && navigatorShape === "open") || navigatorPosition !== "is-aside") && (
+            <CategoryFilter categories={categories} filterCategory={this.categoryFilterOnClick} />
+          )}
+          <IconButton
+            aria-label="Search"
+            onClick={this.searchOnClick}
+            component={Link}
+            data-shape="closed"
+            to="/search/"
+            title="Search"
+            className={classes.button}
+          >
+            <SearchIcon className={classes.button} />
+          </IconButton>
+        </div>
+        <div className={classes.group}>
+          {navigatorPosition === "is-aside" && <FontSetter increaseFont={this.fontSetterOnClick} />}
+          {screenfull.enabled && (
+            <IconButton
+              aria-label="Fullscreen"
+              onClick={this.fullscreenOnClick}
+              title="Fullscreen mode"
+              className={classes.button}
+            >
+              {this.state.fullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
+            </IconButton>
+          )}
+          <IconButton aria-label="Back to top" onClick={this.arrowUpOnClick} title="Scroll to top">
+            <ArrowUpwardIcon className={classes.button} />
+          </IconButton>
+        </div>
+      </div>
+    );
+  }
+}
+
+ActionsBar.propTypes = {
+  classes: PropTypes.object.isRequired,
+  navigatorPosition: PropTypes.string.isRequired,
+  navigatorShape: PropTypes.string.isRequired,
+  isWideScreen: PropTypes.bool.isRequired,
+  setScrollToTop: PropTypes.func.isRequired,
+  setFontSizeIncrease: PropTypes.func.isRequired,
+  categories: PropTypes.array.isRequired,
+  setCategoryFilter: PropTypes.func.isRequired,
+  categoryFilter: PropTypes.string.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    navigatorPosition: state.navigatorPosition,
+    navigatorShape: state.navigatorShape,
+    isWideScreen: state.isWideScreen,
+    categoryFilter: state.categoryFilter
+  };
+};
+
+const mapDispatchToProps = {
+  setNavigatorPosition,
+  setNavigatorShape,
+  setScrollToTop,
+  setFontSizeIncrease,
+  setCategoryFilter
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(injectSheet(styles)(ActionsBar));
+
+//src/components/ActionBar/CategroryFilter.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuList from "@material-ui/core/MenuList";
+import IconButton from "@material-ui/core/IconButton";
+import { Manager, Target, Popper } from "react-popper";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Grow from "@material-ui/core/Grow";
+import Paper from "@material-ui/core/Paper";
+import classNames from "classnames";
+import FilterListIcon from "@material-ui/icons/FilterList";
+
+const styles = theme => ({
+  fontSizeSetter: {
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {}
+  },
+  open: {
+    color: theme.bars.colors.icon
+  },
+  popperClose: {
+    pointerEvents: "none"
+  },
+  popper: {
+    zIndex: 1
+  }
+});
+
+class CategoryFilter extends React.Component {
+  state = {
+    open: false
+  };
+
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
+  }
+
+  handleClick = () => {
+    this.setState({ open: !this.state.open });
+  };
+
+  handleClose = () => {
+    if (!this.state.open) {
+      return;
+    }
+
+    this.timeout = setTimeout(() => {
+      this.setState({ open: false });
+    });
+  };
+
+  handleFiltering = e => {
+    const category = e.target.innerText.trim();
+    this.props.filterCategory(category);
+    this.handleClose();
+  };
+
+  render() {
+    const { classes, categories } = this.props;
+    const { open } = this.state;
+
+    return (
+      <nav className={classes.fontSizeSetter}>
+        <Manager>
+          <Target>
+            <IconButton
+              aria-label="Filter by category"
+              aria-haspopup="true"
+              onClick={this.handleClick}
+              title="Filter the list by category"
+              className={classes.open}
+            >
+              <FilterListIcon />
+            </IconButton>
+          </Target>
+          <Popper
+            placement="bottom-end"
+            eventsEnabled={open}
+            className={`${classNames({ [classes.popperClose]: !open })} ${classes.popper}`}
+          >
+            <ClickAwayListener onClickAway={this.handleClose}>
+              <Grow in={open} id="cat-menu-list" style={{ transformOrigin: "0 0 0" }}>
+                <Paper>
+                  <MenuList role="menu">
+                    <MenuItem key="all" onClick={this.handleFiltering}>
+                      all posts
+                    </MenuItem>
+                    {categories.map(category => (
+                      <MenuItem key={category} onClick={this.handleFiltering}>
+                        {category}
+                      </MenuItem>
+                    ))}
+                  </MenuList>
+                </Paper>
+              </Grow>
+            </ClickAwayListener>
+          </Popper>
+        </Manager>
+      </nav>
+    );
+  }
+}
+
+CategoryFilter.propTypes = {
+  classes: PropTypes.object.isRequired,
+  categories: PropTypes.array.isRequired,
+  filterCategory: PropTypes.func.isRequired
+};
+
+export default injectSheet(styles)(CategoryFilter);
+
+//src/components/ActionBar/FontSetter.js
+import injectSheet from "react-jss";
+import PropTypes from "prop-types";
+import React from "react";
+
+//import { MenuItem, MenuList } from "@material-ui/core/Menu";
+import { Manager, Target, Popper } from "react-popper";
+import ClickAwayListener from "@material-ui/core/ClickAwayListener";
+import Grow from "@material-ui/core/Grow";
+import Paper from "@material-ui/core/Paper";
+import classNames from "classnames";
+import MenuItem from "@material-ui/core/MenuItem";
+import MenuList from "@material-ui/core/MenuList";
+import IconButton from "@material-ui/core/IconButton";
+import FormatSizeIcon from "@material-ui/icons/FormatSize";
+
+const styles = theme => ({
+  fontSizeSetter: {
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {}
+  },
+  open: {
+    color: theme.bars.colors.icon
+  },
+  popperClose: {
+    pointerEvents: "none"
+  }
+});
+
+class FontSetter extends React.Component {
+  state = {
+    anchorEl: null,
+    open: false
+  };
+
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
+  }
+
+  handleClick = () => {
+    this.setState({ open: !this.state.open });
+  };
+
+  handleClose = () => {
+    if (!this.state.open) {
+      return;
+    }
+
+    this.timeout = setTimeout(() => {
+      this.setState({ open: false });
+    });
+  };
+
+  handleSetting = e => {
+    const val = e.target.innerText.replace("%", "");
+    const factor = +val / 100;
+    this.props.increaseFont(factor);
+    this.handleClose();
+  };
+
+  render() {
+    const { classes } = this.props;
+    const { anchorEl, open } = this.state;
+
+    return (
+      <nav className={classes.fontSizeSetter}>
+        <Manager>
+          <Target>
+            <IconButton
+              aria-label="Increase font size"
+              aria-owns={anchorEl ? "long-menu" : null}
+              aria-haspopup="true"
+              onClick={this.handleClick}
+              title="Change font size"
+              className={classes.open}
+            >
+              <FormatSizeIcon />
+            </IconButton>
+          </Target>
+          <Popper
+            placement="bottom-end"
+            eventsEnabled={open}
+            className={classNames({ [classes.popperClose]: !open })}
+          >
+            <ClickAwayListener onClickAway={this.handleClose}>
+              <Grow in={open} id="font-menu-list" style={{ transformOrigin: "0 0 0" }}>
+                <Paper>
+                  <MenuList role="menu">
+                    <MenuItem onClick={this.handleSetting}>150%</MenuItem>
+                    <MenuItem onClick={this.handleSetting}>125%</MenuItem>
+                    <MenuItem onClick={this.handleSetting}>100%</MenuItem>
+                  </MenuList>
+                </Paper>
+              </Grow>
+            </ClickAwayListener>
+          </Popper>
+        </Manager>
+      </nav>
+    );
+  }
+}
+
+FontSetter.propTypes = {
+  classes: PropTypes.object.isRequired,
+  increaseFont: PropTypes.func.isRequired
+};
+
+export default injectSheet(styles)(FontSetter);
+
+//src/components/ActionBar/index.js
+export { default } from "./ActionsBar";
+                                                                                                                                          Remarque: dans notre développement actuel, Scroll to top ne fonctionne pas.                     Le Button Search m'a l'air très bien développé sous Next.js. C'est juste la couleur de fond black de l'alentour qui n'est pas conforme à celui de la page d'accueil c'est à dire le thème blanc. Quant au Button Filter the list by category, il doit afficher que les catégories d'articles pour permettre aux utilisateurs de choisir la catégorie qui les intéresse(voir FilterbyCategories.png).                                                              Ensuite, la fin de chaque détail d'article (blog post detail) est signé par deux éléments importants: - la possibilité de partager sur les réseaux sociaux l'article lu et - une petite présentation de l'auteur ayant écrit l'article. Pour plus d'information sur ces éléments dans l'ancien code, voir (finArticledetail.png) et code ci-dessous:                                                                                                  
+
+//src/components/Post/index.js
+export { default } from "./ActionsBar";
+
+
+//src/components/Post/Post.js
+import React from "react";
+import PropTypes from "prop-types";
+
+import Article from "../Main/Article";
+import PostHeader from "./PostHeader";
+import Content from "../Main/Content";
+import PostFooter from "./PostFooter";
+
+const Post = props => {
+  const { post, author, slug, facebook } = props;
+  const frontmatter = (post || {}).frontmatter;
+  const title = ((post || {}).frontmatter || {}).title;
+  const subTitle = ((post || {}).frontmatter || {}).subTitle;
+  const date = ((post || {}).fields || {}).prefix;
+  const html = (post || {}).html;
+  const htmlAst = (post || {}).htmlAst;
+
+  //console.log(htmlAst);
+
+  return (
+    <Article>
+      <PostHeader title={title} subTitle={subTitle} date={date} />
+      <Content html={html} />
+      <PostFooter author={author} post={post} slug={slug} facebook={facebook} />
+    </Article>
+  );
+};
+
+Post.propTypes = {
+  post: PropTypes.object.isRequired,
+  author: PropTypes.object.isRequired,
+  slug: PropTypes.string.isRequired,
+  facebook: PropTypes.object.isRequired
+};
+
+export default Post;
+
+//src/components/Post/PostAuthor.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import Avatar from "@material-ui/core/Avatar";
+
+import config from "../../../content/meta/config";
+import avatar from "../../images/jpg/avatar.jpg";
+
+const styles = theme => ({
+  author: {
+    margin: "3em 0 0",
+    padding: "3em 0 0",
+    borderTop: "1px solid #ddd",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    "& a": {
+      color: theme.base.colors.link
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      flexDirection: "row",
+      justifyContent: "center"
+    }
+  },
+  avatar: {
+    margin: "0 1em 1em",
+    borderRadius: "75% 65%",
+    width: "60px",
+    height: "60px",
+    border: "1px solid #ddd",
+    flexShrink: 0,
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      margin: "0 1em 0"
+    }
+  },
+  box: {
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "50px",
+    alignItems: "center"
+  }
+});
+
+const PostAuthor = props => {
+  const { classes, author } = props;
+
+  return (
+    <div className={classes.author}>
+      <Avatar src={avatar} className={classes.avatar} alt={config.authorName} />
+      <div className={classes.box} dangerouslySetInnerHTML={{ __html: author.html }} />
+    </div>
+  );
+};
+
+PostAuthor.propTypes = {
+  classes: PropTypes.object.isRequired,
+  author: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(PostAuthor);
+
+//src/components/Post/PostComments.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import FacebookProvider, { Comments } from "react-facebook";
+require("core-js/fn/array/find");
+
+import config from "../../../content/meta/config";
+
+const styles = theme => ({
+  postComments: {
+    margin: "3em 0 0",
+    padding: "3em 0 0",
+    borderTop: "1px solid #ddd"
+  }
+});
+
+const PostComments = props => {
+  const { classes, slug, facebook } = props;
+
+  return (
+    <div id="post-comments" className={classes.postComments}>
+      <FacebookProvider appId={facebook}>
+        <Comments
+          href={`${config.siteUrl}${slug}`}
+          width="100%"
+          colorScheme={props.theme.main.colors.fbCommentsColorscheme}
+        />
+      </FacebookProvider>
+    </div>
+  );
+};
+
+PostComments.propTypes = {
+  classes: PropTypes.object.isRequired,
+  post: PropTypes.object.isRequired,
+  slug: PropTypes.string.isRequired,
+  theme: PropTypes.object.isRequired,
+  facebook: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(PostComments);
+
+//src/components/Post/PostFooter.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+require("core-js/fn/array/find");
+
+import asyncComponent from "../common/AsyncComponent/";
+import PostAuthor from "./PostAuthor";
+import PostComments from "./PostComments";
+
+const styles = theme => ({
+  footer: {
+    color: theme.main.colors.footer,
+    fontSize: `${theme.main.fonts.footer.size}em`,
+    lineHeight: theme.main.fonts.footer.lineHeight,
+    "& p": {
+      margin: 0
+    }
+  }
+});
+
+const PostShare = asyncComponent(() =>
+  import("./PostShare")
+    .then(module => {
+      return module;
+    })
+    .catch(error => {})
+);
+
+const PostFooter = ({ classes, author, post, slug, facebook }) => {
+  return (
+    <footer className={classes.footer}>
+      <PostShare post={post} slug={slug} />
+      <PostAuthor author={author} />
+      <PostComments post={post} slug={slug} facebook={facebook} />
+    </footer>
+  );
+};
+
+PostFooter.propTypes = {
+  classes: PropTypes.object.isRequired,
+  author: PropTypes.object.isRequired,
+  post: PropTypes.object.isRequired,
+  slug: PropTypes.string.isRequired,
+  facebook: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(PostFooter);
+
+//src/components/Post/PostHeader.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+const styles = theme => ({
+  header: {
+    margin: "0 0 3em"
+  },
+  title: {
+    color: theme.main.colors.title,
+    fontSize: `${theme.main.fonts.title.size}em`,
+    letterSpacing: "-0.04em",
+    fontWeight: theme.main.fonts.title.weight,
+    lineHeight: theme.main.fonts.title.lineHeight,
+    margin: "0 0 0.4em",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      fontSize: `${theme.main.fonts.title.sizeM}em`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      fontSize: `${theme.main.fonts.title.sizeL}em`,
+      letterSpacing: "-0.05em"
+    }
+  },
+  subTitle: {
+    color: theme.main.colors.subTitle,
+    fontSize: `${theme.main.fonts.subTitle.size}em`,
+    lineHeight: theme.main.fonts.subTitle.lineHeight,
+    fontWeight: theme.main.fonts.subTitle.weight,
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      fontSize: `${theme.main.fonts.subTitle.sizeM}em`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      fontSize: `${theme.main.fonts.subTitle.sizeL}em`
+    }
+  },
+  meta: {
+    fontSize: `${theme.main.fonts.meta.size}em`,
+    fontWeight: theme.main.fonts.meta.weight,
+    color: theme.main.colors.meta
+  }
+});
+
+const PostHeader = props => {
+  const { classes, title, subTitle, date } = props;
+
+  function myDate(dateString) {
+    const dateObj = new Date(dateString).toUTCString();
+    const dateToShow = dateObj
+      .split(" ")
+      .slice(0, 4)
+      .join(" ");
+
+    return dateToShow;
+  }
+
+  return (
+    <header className={classes.header}>
+      <h1 className={classes.title}>{title}</h1>
+      <h2 className={classes.subTitle}>{subTitle}</h2>
+      <div className={classes.meta}>{myDate(date)}</div>
+    </header>
+  );
+};
+
+PostHeader.propTypes = {
+  classes: PropTypes.object.isRequired,
+  title: PropTypes.string.isRequired,
+  subTitle: PropTypes.string,
+  date: PropTypes.string.isRequired
+};
+
+export default injectSheet(styles)(PostHeader);
+
+//src/components/Post/PostShare.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import {
+  FacebookShareButton,
+  GooglePlusShareButton,
+  LinkedinShareButton,
+  TwitterShareButton,
+  FacebookShareCount,
+  GooglePlusShareCount,
+  LinkedinShareCount,
+  FacebookIcon,
+  TwitterIcon,
+  GooglePlusIcon,
+  LinkedinIcon
+} from "react-share";
+
+import config from "../../../content/meta/config";
+
+const styles = theme => ({
+  share: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "1em 0 0",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      flexDirection: "row"
+    }
+  },
+  links: {
+    display: "flex",
+    flexDirection: "row",
+    "& .SocialMediaShareButton": {
+      margin: "0 .8em",
+      cursor: "pointer"
+    }
+  },
+  label: {
+    fontSize: "1.2em",
+    margin: "0 1em 1em",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      margin: "0 1em"
+    }
+  }
+});
+
+class PostShare extends React.Component {
+  render() {
+    const { post, classes, slug } = this.props;
+    const { excerpt, frontmatter } = post;
+    const { title } = frontmatter;
+    const url = config.siteUrl + config.pathPrefix + slug;
+
+    const iconSize = 36;
+    const filter = count => (count > 0 ? count : "");
+
+    return (
+      <div className={classes.share}>
+        <span className={classes.label}>SHARE</span>
+        <div className={classes.links}>
+          <TwitterShareButton url={url} title={title}>
+            <TwitterIcon round size={iconSize} />
+          </TwitterShareButton>
+          <GooglePlusShareButton url={url}>
+            <GooglePlusIcon round size={iconSize} />
+            <GooglePlusShareCount url={url}>
+              {count => <div className="share-count">{filter(count)}</div>}
+            </GooglePlusShareCount>
+          </GooglePlusShareButton>
+          <FacebookShareButton
+            url={url}
+            quote={`${title} - ${excerpt}`}
+            aria-label="Facebook share"
+          >
+            <FacebookIcon round size={iconSize} />
+            <FacebookShareCount url={url}>
+              {count => <div className="share-count">{filter(count)}</div>}
+            </FacebookShareCount>
+          </FacebookShareButton>
+          <LinkedinShareButton url={url} title={title} description={excerpt}>
+            <LinkedinIcon round size={iconSize} />
+            <LinkedinShareCount url={url}>
+              {count => <div className="share-count">{filter(count)}</div>}
+            </LinkedinShareCount>
+          </LinkedinShareButton>
+        </div>
+      </div>
+    );
+  }
+}
+
+PostShare.propTypes = {
+  post: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
+  slug: PropTypes.string.isRequired
+};
+
+export default injectSheet(styles)(PostShare);
+                                                                                                                                    Quant aux styles appliqués, il étaient développés sous l'ancien code gatsby dans l'ordre suivant:                                                                                                                 
+
+
+//src/components/styles/colors.js
+module.exports = {
+  background: "#ffffff",
+  white: "#ffffff",
+  accent: "#709425",
+  bright: "#ffffff",
+  dark: "#333333",
+  gray: "#555555",
+  lightGray: "#bbbbbb",
+  superLightGray: "#dedede"
+};
+
+//src/components/styles/globals.js
+import theme from "./theme";
+
+export default {
+  /*
+      BEGINNING OF NORMALIZE STYLE
+    */
+
+  "@global": {
+    /**
+     * Add the correct display in IE9
+     */
+    "article, aside, footer, header, nav, section, figcaption, figure, main": {
+      display: "block"
+    },
+
+    /**
+     * Correct the font size and margin on `h1` elements within `section` and
+     * `article` contexts in Chrome, Firefox, and Safari.
+     */
+    h1: {
+      fontSize: "2em",
+      margin: [["0.67em", 0]]
+    },
+
+    /**
+     * 1. Add the correct box sizing in Firefox.
+     * 2. Show the overflow in Edge and IE.
+     */
+    hr: {
+      boxSizing: "content-box" /* 1 */,
+      height: 0 /* 1 */,
+      overflow: "visible" /* 2 */
+    },
+
+    /**
+     * 1. Correct the inheritance and scaling of font size in all browsers.
+     * 2. Correct the odd `em` font sizing in all browsers.
+     */
+    pre: {
+      fontFamily: "monospace, monospace" /* 1 */,
+      fontSize: "1em" /* 2 */
+    },
+
+    /**
+     * 1. Remove the gray background on active links in IE 10.
+     * 2. Remove gaps in links underline in iOS 8+ and Safari 8+.
+     * 3. Remove the outline on focused links when they are also
+     *    active or hovered in all browsers (opinionated).
+     */
+    // a: {
+    //   background: "transparent" /* 1 */,
+    //   textDecorationSkip: "objects" /* 2 */
+    // },
+    "a:active, a:hover": {
+      outlineWidth: 0 /* 3 */
+    },
+
+    /**
+     * 1. Remove the bottom border in Firefox 39-.
+     * 2. Add the correct text decoration in Chrome, Edge, IE, Opera, and Safari.
+     */
+    "abbr[title]": {
+      borderBottom: "none" /* 1 */,
+      textDecoration: "underline" /* 2 */
+    },
+
+    /**
+     * Add the correct font weight in Chrome, Edge, and Safari.
+     */
+    "b, strong": {
+      fontWeight: "bolder"
+    },
+
+    /**
+     * 1. Correct the inheritance and scaling of font size in all browsers.
+     * 2. Correct the odd `em` font sizing in all browsers.
+     */
+    "code, kbp, samp": {
+      fontFamily: "monospace, monospace" /* 1 */,
+      fontSize: "1em" /* 2 */
+    },
+
+    /**
+     * Add the correct font style in Android 4.3-.
+     */
+    dfn: {
+      fontStyle: "italic"
+    },
+
+    /**
+     * Add the correct background and color in IE 9-.
+     */
+    mark: {
+      backgroundColor: "#ff0",
+      color: "#000"
+    },
+
+    /**
+     * Add the correct font size in all browsers.
+     */
+    small: {
+      fontSize: "80%"
+    },
+
+    /**
+     * Prevent `sub` and `sup` elements from affecting the line height in
+     * all browsers.
+     */
+    "sub, sup": {
+      fontSize: "75%",
+      lineHeight: 0,
+      position: "relative",
+      verticalAlign: "baseline"
+    },
+    sup: {
+      top: "-0.5em"
+    },
+    sub: {
+      bottom: "-0.25em"
+    },
+
+    /**
+     * Add the correct display in IE 9-.
+     */
+    "audio, video": {
+      display: "inline-block"
+    },
+
+    /**
+     * Add the correct display in iOS 4-7.
+     */
+    "audio:not([controls])": {
+      display: "none",
+      height: 0
+    },
+
+    /**
+     * 1. Remove the border on images inside links in IE 10-.
+     * 2. Remove extra space in all browsers
+     */
+    img: {
+      borderStyle: "none" /* 1 */,
+      verticalAlign: "middle" /* 2 */
+    },
+
+    /**
+     * Hide the overflow in IE.
+     */
+    "svg:not(:root)": {
+      overflow: "hidden"
+    },
+
+    /**
+     * 1. Change the font styles in all browsers (opinionated).
+     * 2. Remove the margin in Firefox and Safari.
+     */
+    "button, input, optgroup, select, textarea": {
+      fontFamily: "sans-serif" /* 1 */,
+      fontSize: "100%" /* 1 */,
+      lineHeight: "1.15" /* 1 */,
+      margin: 0 /* 2 */
+    },
+
+    /**
+     * Show the overflow in IE & Edge.
+     */
+    "button, input": {
+      overflow: "visible"
+    },
+
+    /**
+     * Remove the inheritance of text transform in Edge, Firefox, and IE.
+     */
+    "button, select": {
+      textTransform: "none"
+    },
+
+    /**
+     * Correct the inability to style clickable types in iOS and Safari.
+     */
+    "button, [type=reset], [type=submit]": {
+      "-webkit-appearance": "button"
+    },
+
+    /**
+     * Remove the inner border and padding in Firefox.
+     */
+    "button::-moz-focus-inner, [type=button]::-moz-focus-inner, [type=reset]::-moz-focus-inner, [type=submit]::-moz-focus-inner": {
+      borderStyle: "none",
+      padding: 0
+    },
+
+    /**
+     * Restore the focus styles unset by the previous rule.
+     */
+    "button:-moz-focusring, [type=button]:-moz-focusring, [type=reset]:-moz-focusring, [type=submit]:-moz-focusring": {
+      outline: "1px dotted ButtonText"
+    },
+
+    /**
+     * Change the border, margin, and padding in all browsers (opinionated).
+     */
+    fieldset: {
+      border: "1px solid #c0c0c0",
+      margin: [[0, "2px"]],
+      padding: [["0.35em", "0.625em", "0.75em"]]
+    },
+
+    /**
+     * 1. Correct the text wrapping in Edge and IE.
+     * 2. Correct the color inheritance from `fieldset` elements in IE.
+     * 3. Remove the padding so developers are not caught out when they zero out
+     *    `fieldset` elements in all browsers.
+     */
+    legend: {
+      boxSizing: "border-box" /* 1 */,
+      color: "inherit" /* 2 */,
+      display: "table" /* 1 */,
+      maxWidth: "100%" /* 1 */,
+      padding: 0 /* 3 */,
+      whiteSpace: "normal" /* 1 */
+    },
+
+    /**
+     * 1. Add the correct display in IE 9-.
+     * 2. Add the correct vertical alignment in Chrome, Firefox, and Opera.
+     */
+    progress: {
+      display: "inline-block" /* 1 */,
+      verticalAlign: "baseline" /* 2 */
+    },
+
+    /**
+     * Remove the default vertical scrollbar in IE.
+     */
+    textarea: {
+      overflow: "auto"
+    },
+
+    /**
+     * 1. Add the correct box sizing in IE 10-.
+     * 2. Remove the padding in IE 10-.
+     */
+    "[type=checkbox], [type=radio]": {
+      boxSizing: "border-box" /* 1 */,
+      padding: 0 /* 2 */
+    },
+
+    /**
+     * Correct the cursor style of increment and decrement buttons in Chrome.
+     */
+    "[type=number]::-webkit-inner-spin-button, [type=number]::-webkit-outer-spin-button": {
+      height: "auto"
+    },
+
+    /**
+     * 1. Correct the odd appearance in Chrome and Safari.
+     * 2. Correct the outline style in Safari.
+     */
+    "[type=search]": {
+      appearance: "textfield" /* 1 */,
+      outlineOffset: "-2px" /* 2 */
+    },
+
+    /**
+     * Remove the inner padding and cancel buttons in Chrome and Safari on OS X.
+     */
+    "[type=search]::-webkit-search-cancel-button, [type=search]::-webkit-search-decoration": {
+      appearance: "none"
+    },
+
+    /**
+     * 1. Correct the inability to style clickable types in iOS and Safari.
+     * 2. Change font properties to `inherit` in Safari.
+     */
+    "::-webkit-file-upload-button": {
+      appearance: "button" /* 1 */,
+      font: "inherit" /* 2 */
+    },
+
+    /*
+     * Add the correct display in Edge, IE, and Firefox.
+     */
+    "details, menu": {
+      display: "block"
+    },
+
+    /*
+     * Add the correct display in all browsers.
+     */
+    summary: {
+      display: "list-item"
+    },
+
+    /**
+     * Add the correct display in IE 9-.
+     */
+    canvas: {
+      display: "inline-block"
+    },
+
+    /**
+     * Add the correct display in IE.
+     */
+    template: {
+      display: "none"
+    },
+
+    /**
+     * Add the correct display in IE 10-.
+     */
+    "[hidden]": {
+      display: "none"
+    },
+
+    /*
+      END OF NORMALIZE STYLE
+    */
+
+    /*
+      BEGiNNIG OF CUTSOM GLOBAL STYLE
+     */
+
+    html: {
+      boxSizing: "border-box",
+      "-webkit-text-size-adjust": "100%",
+      "-moz-text-size-adjust": "none",
+      "-ms-text-size-adjust": "100%",
+      fontFamily: theme.base.fonts.unstyledFamily,
+      lineHeight: "1.15",
+      textSizeAdjust: "100%"
+    },
+    "html.wf-active": {
+      fontFamily: theme.base.fonts.styledFamily
+    },
+    "*, *:before, *:after": {
+      boxSizing: "inherit"
+    },
+    noscript: {
+      background: "#d00",
+      color: "#fff",
+      position: "absolute",
+      top: "50%",
+      left: "50%",
+      zIndex: 1000,
+      transform: "translate(-50%, -50%)",
+      padding: "1.5rem 2.5rem",
+      fontWeight: 400,
+      borderRadius: "2px",
+      boxShadow: "0 0 10px 52px rgba(255,255,255,.8)"
+    },
+    body: {
+      margin: 0,
+      background: theme.base.colors.background,
+      //overflow: "hidden",
+      "-webkit-tap-highlight-color": "rgba(0,0,0,.05)"
+    },
+    wrapper: {},
+    main: {
+      position: "relative"
+    },
+    "h1, h2, h3": {
+      fontWeight: 300
+    },
+    a: {
+      background: "transparent",
+      textDecorationSkip: "objects",
+      fontWeight: "bold",
+      textDecoration: "none",
+      transition: "0.3s"
+    },
+    "input:-webkit-autofill": {
+      "-webkit-box-shadow": "0 0 0 50px white inset"
+    },
+    ":not(pre) > code[class*='language-']": {
+      background: "#eee",
+      color: "#666",
+      textShadow: "none",
+      padding: "1px 5px",
+      borderRadius: "2px"
+    }
+  }
+};
+
+//src/components/styles/new-colors.js
+module.exports = {
+  background: "#222222",
+  white: "#ffffff",
+  accent: "#709425",
+  bright: "#cccccc",
+  dark: "#333333",
+  gray: "#555555",
+  lightGray: "#bbbbbb",
+  superLightGray: "#dedede"
+};
+
+//src/components/styles/new-theme.js
+// This is a custom theme, for details go to http://forgatsby.greglobinski.com/customize-personal-blog-starter/
+
+import { createMuiTheme } from "@material-ui/core/styles";
+import Color from "color";
+
+import colors from "./new-colors";
+
+const theme = createMuiTheme({
+  base: {
+    colors: {
+      background: colors.background,
+      text: colors.bright,
+      link: colors.accent,
+      linkHover: Color(colors.accent)
+        .lighten(0.1)
+        .string(),
+      accent: colors.accent,
+      lines: colors.gray
+    },
+    sizes: {
+      linesMargin: "20px"
+    },
+    fonts: {
+      unstyledFamily: `Arial`,
+      styledFamily: "IBM Plex Serif",
+      styledFonts: "300,400,600"
+    }
+  },
+  info: {
+    colors: {
+      text: colors.bright,
+      background: colors.background,
+      socialIcons: colors.lightGray,
+      socialIconsHover: colors.accent,
+      menuLink: colors.bright,
+      menuLinkHover: colors.accent
+    },
+    sizes: {
+      width: 320,
+      headerHeight: 170
+    },
+    fonts: {
+      boxTitleSize: 1.3,
+      boxTitleSizeM: 1.5,
+      boxTitleSizeL: 1.7
+    }
+  },
+  navigator: {
+    colors: {
+      background: colors.background,
+      postsListItemLink: colors.bright,
+      postsListItemLinkHover: colors.accent,
+      postsHeader: colors.bright
+    },
+    sizes: {
+      closedHeight: 80,
+      postsListItemH1Font: 1.3,
+      postsListItemH2Font: 1.1,
+      fontIncraseForM: 1.15,
+      fontIncraseForL: 1.3
+    }
+  },
+  main: {
+    colors: {
+      background: colors.background,
+      title: colors.bright,
+      subTitle: colors.bright,
+      meta: colors.bright,
+      content: colors.bright,
+      footer: colors.bright,
+      contentHeading: colors.bright,
+      blockquoteFrame: colors.dark,
+      link: colors.accent,
+      linkHover: colors.dark,
+      fbCommentsColorscheme: "dark"
+    },
+    sizes: {
+      articleMaxWidth: "50em"
+    },
+    fonts: {
+      title: {
+        size: 1.9,
+        sizeM: 2.5,
+        sizeL: 2.7,
+        weight: 600,
+        lineHeight: 1.1
+      },
+      subTitle: {
+        size: 1.5,
+        sizeM: 1.8,
+        sizeL: 1.95,
+        weight: 300,
+        lineHeight: 1.1
+      },
+      meta: {
+        size: 0.9,
+        weight: 600
+      },
+      content: {
+        size: 1.0,
+        sizeM: 1.15,
+        sizeL: 1.1,
+        lineHeight: 1.6
+      },
+      contentHeading: {
+        h2Size: 1.5,
+        h3Size: 1.3,
+        weight: 600,
+        lineHeight: 1.3
+      },
+      footer: {
+        size: 1,
+        lineHeight: 1.4
+      }
+    }
+  },
+  footer: {
+    colors: {
+      text: Color(colors.gray)
+        .lighten(0.5)
+        .string(),
+      link: colors.accent,
+      linkHover: Color(colors.accent)
+        .lighten(0.2)
+        .string()
+    },
+    fonts: {
+      footnote: {
+        size: 0.8,
+        lineHeight: 1.4
+      }
+    }
+  },
+  bars: {
+    colors: {
+      background: colors.background,
+      icon: colors.bright,
+      text: colors.bright
+    },
+    sizes: {
+      actionsBar: 60,
+      infoBar: 60
+    }
+  },
+  mediaQueryTresholds: {
+    M: 600,
+    L: 1024
+  },
+  palette: {
+    primary: {
+      main: "#709425"
+    },
+    type: "dark",
+    action: {
+      hover: "rgba(0, 0, 0, 0.01)"
+    }
+  },
+  typography: {
+    fontFamily: `Arial, sans-serif`,
+    fontSize: 16
+  }
+});
+
+export default theme;
+
+//src/components/styles/theme.js
+import { createMuiTheme } from "@material-ui/core/styles";
+import Color from "color";
+import colors from "./colors";
+
+const theme = createMuiTheme({
+  base: {
+    colors: {
+      background: colors.background,
+      text: colors.dark,
+      link: colors.accent,
+      linkHover: Color(colors.accent)
+        .lighten(0.1)
+        .string(),
+      accent: colors.accent,
+      lines: colors.superLightGray
+    },
+    sizes: {
+      linesMargin: "20px"
+    },
+    fonts: {
+      unstyledFamily: `Arial`,
+      styledFamily: "Open Sans",
+      styledFonts: "300,400,600"
+    }
+  },
+  info: {
+    colors: {
+      text: colors.gray,
+      background: colors.background,
+      socialIcons: colors.lightGray,
+      socialIconsHover: colors.accent,
+      menuLink: colors.gray,
+      menuLinkHover: colors.accent
+    },
+    sizes: {
+      width: 320,
+      headerHeight: 170
+    },
+    fonts: {
+      boxTitleSize: 1.3,
+      boxTitleSizeM: 1.5,
+      boxTitleSizeL: 1.7
+    }
+  },
+  navigator: {
+    colors: {
+      background: colors.background,
+      postsListItemLink: colors.gray,
+      postsListItemLinkHover: colors.accent,
+      postsHeader: colors.gray
+    },
+    sizes: {
+      closedHeight: 80,
+      postsListItemH1Font: 1.3,
+      postsListItemH2Font: 1.1,
+      fontIncraseForM: 1.15,
+      fontIncraseForL: 1.3
+    }
+  },
+  main: {
+    colors: {
+      background: colors.background,
+      title: colors.gray,
+      subTitle: colors.gray,
+      meta: colors.gray,
+      content: colors.dark,
+      footer: colors.gray,
+      contentHeading: colors.gray,
+      blockquoteFrame: colors.lightGray,
+      link: colors.accent,
+      linkHover: colors.dark,
+      fbCommentsColorscheme: "light"
+    },
+    sizes: {
+      articleMaxWidth: "50em"
+    },
+    fonts: {
+      title: {
+        size: 1.9,
+        sizeM: 2.5,
+        sizeL: 2.7,
+        weight: 600,
+        lineHeight: 1.1
+      },
+      subTitle: {
+        size: 1.5,
+        sizeM: 1.8,
+        sizeL: 1.95,
+        weight: 300,
+        lineHeight: 1.1
+      },
+      meta: {
+        size: 0.9,
+        weight: 600
+      },
+      content: {
+        size: 1.0,
+        sizeM: 1.15,
+        sizeL: 1.1,
+        lineHeight: 1.6
+      },
+      contentHeading: {
+        h2Size: 1.5,
+        h3Size: 1.3,
+        weight: 600,
+        lineHeight: 1.3
+      },
+      footer: {
+        size: 1,
+        lineHeight: 1.4
+      }
+    }
+  },
+  footer: {
+    colors: {
+      text: Color(colors.gray)
+        .lighten(0.5)
+        .string(),
+      link: colors.accent,
+      linkHover: Color(colors.accent)
+        .lighten(0.2)
+        .string()
+    },
+    fonts: {
+      footnote: {
+        size: 0.8,
+        lineHeight: 1.4
+      }
+    }
+  },
+  bars: {
+    colors: {
+      background: colors.background,
+      icon: colors.gray,
+      text: colors.gray
+    },
+    sizes: {
+      actionsBar: 60,
+      infoBar: 60
+    }
+  },
+  mediaQueryTresholds: {
+    M: 600,
+    L: 1024
+  },
+  palette: {
+    primary: {
+      main: colors.accent
+    },
+    action: {
+      hover: "rgba(0, 0, 0, 0.01)"
+    }
+  },
+  typography: {
+    fontFamily: `Arial, sans-serif`,
+    fontSize: 16
+  }
+});
+
+export default theme;
+
+                                                                                                                                        
+Autres information de l'ancien code sous gatsby qui pourraient être intéressants: 
+
+//src/components/templates/PageTemplate.js
+import React from "react";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+
+import { setNavigatorPosition, setNavigatorShape } from "../state/store";
+import { moveNavigatorAside } from "../utils/shared";
+import Main from "../components/Main/";
+import Page from "../components/Page/";
+import Footer from "../components/Footer/";
+import Seo from "../components/Seo";
+
+class PageTemplate extends React.Component {
+  moveNavigatorAside = moveNavigatorAside.bind(this);
+
+  componentDidMount() {
+    if (this.props.navigatorPosition === "is-featured") {
+      this.moveNavigatorAside();
+    }
+  }
+
+  render() {
+    const { data } = this.props;
+    const facebook = (((data || {}).site || {}).siteMetadata || {}).facebook;
+
+    return (
+      <Main>
+        <Page page={data.page} />
+        <Footer footnote={data.footnote} />
+        <Seo data={data.post} facebook={facebook} />
+      </Main>
+    );
+  }
+}
+
+PageTemplate.propTypes = {
+  data: PropTypes.object.isRequired,
+  navigatorPosition: PropTypes.string.isRequired,
+  setNavigatorPosition: PropTypes.func.isRequired,
+  isWideScreen: PropTypes.bool.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    navigatorPosition: state.navigatorPosition,
+    isWideScreen: state.isWideScreen
+  };
+};
+
+const mapDispatchToProps = {
+  setNavigatorPosition,
+  setNavigatorShape
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PageTemplate);
+
+//eslint-disable-next-line no-undef
+export const pageQuery = graphql`
+  query PageByPath($slug: String!) {
+    page: markdownRemark(fields: { slug: { eq: $slug } }) {
+      id
+      html
+      frontmatter {
+        title
+      }
+    }
+    footnote: markdownRemark(id: { regex: "/footnote/" }) {
+      id
+      html
+    }
+    site {
+      siteMetadata {
+        facebook {
+          appId
+        }
+      }
+    }
+  }
+`;
+
+
+//src/components/templates/PostTemplate.js
+import React from "react";
+import PropTypes from "prop-types";
+import Main from "../components/Main/";
+import { connect } from "react-redux";
+require("core-js/fn/array/find");
+require("prismjs/themes/prism-okaidia.css");
+
+import { setNavigatorPosition, setNavigatorShape } from "../state/store";
+import { moveNavigatorAside } from "../utils/shared";
+import Post from "../components/Post/";
+import Footer from "../components/Footer/";
+import Seo from "../components/Seo";
+
+class PostTemplate extends React.Component {
+  moveNavigatorAside = moveNavigatorAside.bind(this);
+
+  componentDidMount() {
+    if (this.props.navigatorPosition === "is-featured") {
+      this.moveNavigatorAside();
+    }
+  }
+
+  render() {
+    const { data, pathContext } = this.props;
+    const facebook = (((data || {}).site || {}).siteMetadata || {}).facebook;
+
+    return (
+      <Main>
+        <Post post={data.post} slug={pathContext.slug} author={data.author} facebook={facebook} />
+        <Footer footnote={data.footnote} />
+        <Seo data={data.post} facebook={facebook} />
+      </Main>
+    );
+  }
+}
+
+PostTemplate.propTypes = {
+  data: PropTypes.object.isRequired,
+  pathContext: PropTypes.object.isRequired,
+  navigatorPosition: PropTypes.string.isRequired,
+  setNavigatorPosition: PropTypes.func.isRequired,
+  isWideScreen: PropTypes.bool.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    navigatorPosition: state.navigatorPosition,
+    isWideScreen: state.isWideScreen
+  };
+};
+
+const mapDispatchToProps = {
+  setNavigatorPosition,
+  setNavigatorShape
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PostTemplate);
+
+//eslint-disable-next-line no-undef
+export const postQuery = graphql`
+  query PostBySlug($slug: String!) {
+    post: markdownRemark(fields: { slug: { eq: $slug } }) {
+      id
+      html
+      htmlAst
+      fields {
+        slug
+        prefix
+      }
+      frontmatter {
+        title
+        subTitle
+        cover {
+          childImageSharp {
+            resize(width: 300) {
+              src
+            }
+          }
+        }
+      }
+    }
+    author: markdownRemark(id: { regex: "/author/" }) {
+      id
+      html
+    }
+    footnote: markdownRemark(id: { regex: "/footnote/" }) {
+      id
+      html
+    }
+    site {
+      siteMetadata {
+        facebook {
+          appId
+        }
+      }
+    }
+  }
+`;
+
+
+
+
+
+//src/components/state/store.js
+import { createStore as reduxCreateStore, applyMiddleware } from "redux";
+import { composeWithDevTools } from "redux-devtools-extension";
+
+/*
+ * action types
+ */
+
+const SET_NAVIGATOR_POSITION = "SET_NAVIGATOR_POSITION";
+const SET_NAVIGATOR_SHAPE = "SET_NAVIGATOR_SHAPE";
+const SET_NAVIGATOR_FILTER = "SET_NAVIGATOR_FILTER";
+const SET_IS_WIDE_SCREEN = "SET_IS_WIDE_SCREEN";
+const SET_SCROLL_TO_TOP = "SET_SCROLL_TO_TOP";
+const SET_FONT_SIZE_INCREASE = "SET_FONT_SIZE_INCREASE";
+const SET_CATEGORY_FILTER = "SET_CATEGORY_FILTER";
+
+/*
+ * action creators
+ */
+
+export function setNavigatorPosition(val) {
+  return { type: SET_NAVIGATOR_POSITION, val };
+}
+
+export function setNavigatorShape(val) {
+  return { type: SET_NAVIGATOR_SHAPE, val };
+}
+
+export function setNavigatorFilter(val) {
+  return { type: SET_NAVIGATOR_FILTER, val };
+}
+
+export function setIsWideScreen(val) {
+  return { type: SET_IS_WIDE_SCREEN, val };
+}
+
+export function setScrollToTop(val) {
+  return { type: SET_SCROLL_TO_TOP, val };
+}
+
+export function setFontSizeIncrease(val) {
+  return { type: SET_FONT_SIZE_INCREASE, val };
+}
+
+export function setCategoryFilter(val) {
+  return { type: SET_CATEGORY_FILTER, val };
+}
+
+/*
+ * reducer
+ */
+const reducer = (state, action) => {
+  switch (action.type) {
+    case SET_NAVIGATOR_POSITION:
+      return {
+        ...state,
+        navigatorPosition: action.val
+      };
+
+    case SET_NAVIGATOR_SHAPE:
+      return {
+        ...state,
+        navigatorShape: action.val
+      };
+
+    case SET_NAVIGATOR_FILTER:
+      return {
+        ...state,
+        navigatorFilter: action.val
+      };
+
+    case SET_IS_WIDE_SCREEN:
+      return {
+        ...state,
+        isWideScreen: action.val
+      };
+
+    case SET_SCROLL_TO_TOP:
+      return {
+        ...state,
+        scrollToTop: action.val
+      };
+
+    case SET_FONT_SIZE_INCREASE:
+      return {
+        ...state,
+        fontSizeIncrease: action.val
+      };
+
+    case SET_CATEGORY_FILTER:
+      return {
+        ...state,
+        categoryFilter: action.val
+      };
+
+    default:
+      return state;
+  }
+};
+
+const initialState = {
+  navigatorPosition: "is-aside",
+  navigatorShape: "open",
+  navigatorFilter: "",
+  isWideScreen: false,
+  scrollToTop: false,
+  fontSizeIncrease: 1,
+  categoryFilter: "all posts"
+};
+
+const createStore = () =>
+  reduxCreateStore(reducer, initialState, composeWithDevTools(applyMiddleware()));
+export default createStore;
+
+
+
+//src/components/layouts/index.js
+import React from "react";
+import injectSheet from "react-jss";
+import { MuiThemeProvider } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+
+import withRoot from "../withRoot";
+
+import theme from "../styles/theme";
+import globals from "../styles/globals";
+
+
+import { setFontSizeIncrease, setIsWideScreen } from "../state/store";
+
+import asyncComponent from "../components/common/AsyncComponent/";
+import Loading from "../components/common/Loading/";
+import Navigator from "../components/Navigator/";
+import ActionsBar from "../components/ActionsBar/";
+import InfoBar from "../components/InfoBar/";
+import LayoutWrapper from "../components/LayoutWrapper/";
+
+import { isWideScreen, timeoutThrottlerHandler } from "../utils/helpers";
+
+const InfoBox = asyncComponent(
+  () =>
+    import("../components/InfoBox/")
+      .then(module => {
+        return module;
+      })
+      .catch(error => {}),
+  <Loading
+    overrides={{ width: `${theme.info.sizes.width}px`, height: "100vh", right: "auto" }}
+    afterRight={true}
+  />
+);
+
+class Layout extends React.Component {
+  timeouts = {};
+  categories = [];
+
+  componentDidMount() {
+    this.props.setIsWideScreen(isWideScreen());
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", this.resizeThrottler, false);
+    }
+  }
+
+  componentWillMount() {
+    if (typeof localStorage !== "undefined") {
+      const inLocal = +localStorage.getItem("font-size-increase");
+
+      const inStore = this.props.fontSizeIncrease;
+
+      if (inLocal && inLocal !== inStore && inLocal >= 1 && inLocal <= 1.5) {
+        this.props.setFontSizeIncrease(inLocal);
+      }
+    }
+
+    this.getCategories();
+  }
+
+  getCategories = () => {
+    this.categories = this.props.data.posts.edges.reduce((list, edge, i) => {
+      const category = edge.node.frontmatter.category;
+      if (category && !~list.indexOf(category)) {
+        return list.concat(edge.node.frontmatter.category);
+      } else {
+        return list;
+      }
+    }, []);
+  };
+
+  resizeThrottler = () => {
+    return timeoutThrottlerHandler(this.timeouts, "resize", 500, this.resizeHandler);
+  };
+
+  resizeHandler = () => {
+    this.props.setIsWideScreen(isWideScreen());
+  };
+
+  render() {
+    const { children, data } = this.props;
+
+    // TODO: dynamic management of tabindexes for keybord navigation
+    return (
+      <LayoutWrapper>
+        {children()}
+        <Navigator posts={data.posts.edges} />
+        <ActionsBar categories={this.categories} />
+        <InfoBar pages={data.pages.edges} parts={data.parts.edges} />
+        {this.props.isWideScreen && <InfoBox pages={data.pages.edges} parts={data.parts.edges} />}
+      </LayoutWrapper>
+    );
+  }
+}
+
+Layout.propTypes = {
+  data: PropTypes.object.isRequired,
+  children: PropTypes.func.isRequired,
+  setIsWideScreen: PropTypes.func.isRequired,
+  isWideScreen: PropTypes.bool.isRequired,
+  fontSizeIncrease: PropTypes.number.isRequired,
+  setFontSizeIncrease: PropTypes.func.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pages: state.pages,
+    isWideScreen: state.isWideScreen,
+    fontSizeIncrease: state.fontSizeIncrease
+  };
+};
+
+const mapDispatchToProps = {
+  setIsWideScreen,
+  setFontSizeIncrease
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRoot(injectSheet(globals)(Layout)));
+
+//eslint-disable-next-line no-undef
+export const guery = graphql`
+  query LayoutQuery {
+    posts: allMarkdownRemark(
+      filter: { id: { regex: "//posts//" } }
+      sort: { fields: [fields___prefix], order: DESC }
+    ) {
+      edges {
+        node {
+          excerpt
+          fields {
+            slug
+            prefix
+          }
+          frontmatter {
+            title
+            subTitle
+            category
+            cover {
+              children {
+                ... on ImageSharp {
+                  resolutions(width: 90, height: 90) {
+                    ...GatsbyImageSharpResolutions_withWebp_noBase64
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    pages: allMarkdownRemark(
+      filter: { id: { regex: "//pages//" }, fields: { prefix: { regex: "/^\\d+$/" } } }
+      sort: { fields: [fields___prefix], order: ASC }
+    ) {
+      edges {
+        node {
+          fields {
+            slug
+            prefix
+          }
+          frontmatter {
+            title
+            menuTitle
+          }
+        }
+      }
+    }
+    parts: allMarkdownRemark(filter: { id: { regex: "//parts//" } }) {
+      edges {
+        node {
+          html
+          frontmatter {
+            title
+          }
+        }
+      }
+    }
+  }
+`;
+
+//src/components/Footer/Footer.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+import Footnote from "./Footnote";
+
+const styles = theme => ({
+  footer: {
+    color: theme.main.colors.footer,
+    padding: `1.5rem 1.5rem  calc(${theme.bars.sizes.actionsBar}px + 1.5rem) 1.5rem`,
+    "& p": {
+      margin: 0
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      padding: `2rem 2.5rem  calc(${theme.bars.sizes.actionsBar}px + 2rem) 2.5rem`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      padding: `2rem 3rem 2rem 3rem`
+    }
+  }
+});
+
+const Footer = props => {
+  const { classes, footnote } = props;
+  const { html } = footnote;
+
+  return (
+    <footer className={classes.footer}>
+      <Footnote content={html} />
+    </footer>
+  );
+};
+
+Footer.propTypes = {
+  classes: PropTypes.object.isRequired,
+  footnote: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(Footer);
+
+//src/components/Footer/Footernote.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+const styles = theme => ({
+  container: {
+    fontSize: `${theme.footer.fonts.footnote.size}em`,
+    lineHeight: theme.footer.fonts.footnote.lineHeight,
+    color: theme.footer.colors.text,
+    "& a": {
+      color: theme.footer.colors.link,
+      fontWeight: "normal",
+      textShadow: "none"
+    },
+    "& a:hover": {
+      color: theme.footer.colors.linkHover
+    },
+    "& ul": {
+      listStyle: "none",
+      margin: 0,
+      padding: 0,
+      textAlign: "center"
+    },
+    "& li": {
+      display: "inline-block",
+      margin: "0 .3em"
+    }
+  }
+});
+
+const Footnote = ({ classes, content }) => {
+  return <div className={classes.container} dangerouslySetInnerHTML={{ __html: content }} />;
+};
+
+Footnote.propTypes = {
+  classes: PropTypes.object.isRequired,
+  content: PropTypes.string.isRequired
+};
+
+export default injectSheet(styles)(Footnote);
+
+//src/components/Footer/index.js
+export { default } from "./Footer";
+
+
+
+
+//src/components/common/AsyncComponent/AsyncComponent.js
+import React from "react";
+
+export default function asyncComponent(getComponent, loadingComponent) {
+  class AsyncComponent extends React.Component {
+    state = { Component: null };
+
+    componentDidMount() {
+      if (!this.state.Component) {
+        getComponent().then(Component => {
+          this.setState({ Component });
+        });
+      }
+    }
+    render() {
+      const { Component } = this.state;
+      if (Component) {
+        return <Component {...this.props} />;
+      }
+      return loadingComponent ? loadingComponent : <div>Loading...</div>;
+    }
+  }
+  return AsyncComponent;
+}
+
+//src/components/common/AsyncComponent/index.js
+export { default } from "./AsyncComponent";
+
+
+//src/components/common/Loading/index.js
+export { default } from "./Loading";
+
+//src/components/common/Loading/Loading.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import CircularProgress from "@material-ui/core/CircularProgress";
+
+const styles = theme => ({
+  loading: {
+    display: "flex",
+    background: props =>
+      props.overrides && props.overrides.background
+        ? props.overrides.background
+        : theme.base.colors.background,
+    position: "absolute",
+    left: props => (props.overrides && props.overrides.left ? props.overrides.left : 0),
+    right: props => (props.overrides && props.overrides.right ? props.overrides.right : 0),
+    top: "0",
+    width: props => (props.overrides && props.overrides.width ? props.overrides.width : "100%"),
+    height: props => (props.overrides && props.overrides.height ? props.overrides.height : "100%"),
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    "&::after": {
+      content: props => (props.afterLeft || props.afterRight ? `""` : ``),
+      position: "absolute",
+      right: props => (props.afterRight ? 0 : ""),
+      left: props => (props.afterLeft ? 0 : ""),
+      top: theme.base.sizes.linesMargin,
+      bottom: theme.base.sizes.linesMargin,
+      width: 0,
+      borderRight: `1px solid ${theme.base.colors.lines}`
+    }
+  },
+  progress: {}
+});
+
+const Loading = props => {
+  const { classes, progressSize } = props;
+
+  return (
+    <div className={classes.loading}>
+      <CircularProgress className={classes.progress} size={progressSize ? progressSize : 30} />
+    </div>
+  );
+};
+
+Loading.propTypes = {
+  classes: PropTypes.object.isRequired,
+  progressSize: PropTypes.number,
+  overrides: PropTypes.object
+};
+
+export default injectSheet(styles)(Loading);
+
+
+
+
+
+
+//src/components/LayoutWrapper/index.js
+export { default } from "./LayoutWrapper";
+
+//src/components/LayoutWrapper/LayoutWrapper.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+const styles = theme => ({
+  wrapper: {
+    padding: "1px",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    right: 0,
+    overflow: "hidden",
+    "@media print": {
+      position: "relative",
+      overflow: "visible"
+    }
+  }
+});
+
+const LayoutWrapper = props => {
+  const { classes, children } = props;
+
+  return <div className={classes.wrapper}>{children}</div>;
+};
+
+LayoutWrapper.propTypes = {
+  classes: PropTypes.object.isRequired,
+  children: PropTypes.node
+};
+
+export default injectSheet(styles)(LayoutWrapper);
+
+
+
+
+
+//src/components/Page/index.js
+export { default } from "./Page";
+
+
+//src/components/Page/index.js
+import React from "react";
+import PropTypes from "prop-types";
+
+import Article from "../Main/Article";
+import PageHeader from "./PageHeader";
+import Content from "../Main/Content";
+
+const Page = props => {
+  const { page } = props;
+  const html = (page || {}).html;
+
+  return (
+    <Article>
+      <PageHeader {...page.frontmatter} />
+      <Content html={html} />
+    </Article>
+  );
+};
+
+Page.propTypes = {
+  page: PropTypes.object.isRequired
+};
+
+export default Page;
+
+
+//src/components/Page/index.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+import AlgoliaIcon from "!svg-react-loader!../../images/svg-icons/algolia-full.svg?name=AlgoliaIcon";
+
+const styles = theme => ({
+  header: {
+    margin: "0 0 3em",
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignContent: "center"
+  },
+  title: {
+    color: theme.main.colors.title,
+    fontSize: `${theme.main.fonts.title.size}em`,
+    letterSpacing: "-0.04em",
+    fontWeight: theme.main.fonts.title.weight,
+    lineHeight: theme.main.fonts.title.lineHeight,
+    margin: "0 0 0.4em",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      fontSize: `${theme.main.fonts.title.sizeM}em`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      fontSize: `${theme.main.fonts.title.sizeL}em`,
+      letterSpacing: "-0.05em"
+    }
+  },
+  mark: {
+    width: "130px",
+    display: "block",
+    margin: "0 0 0 10px",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      width: "170px"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      width: "190px"
+    }
+  }
+});
+
+const Header = props => {
+  const { classes, title, algolia } = props;
+
+  return (
+    <header className={classes.header}>
+      <h1 className={classes.title}>{title}</h1>
+      {algolia && (
+        <a
+          className={classes.mark}
+          href="https://www.algolia.com"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <AlgoliaIcon />
+        </a>
+      )}
+    </header>
+  );
+};
+
+Header.propTypes = {
+  classes: PropTypes.object.isRequired,
+  title: PropTypes.string.isRequired,
+  algolia: PropTypes.bool
+};
+
+export default injectSheet(styles)(Header);
+
+
+
+
+//src/components/Seo/index.js
+export { default } from "./Seo";
+
+//src/components/Seo/Seo.js
+import React from "react";
+import PropTypes from "prop-types";
+import Helmet from "react-helmet";
+import config from "../../../content/meta/config";
+
+const Seo = props => {
+  const { data, facebook } = props;
+  const postTitle = ((data || {}).frontmatter || {}).title;
+  const postDescription = ((data || {}).frontmatter || {}).description;
+  const postCover = ((data || {}).frontmatter || {}).cover;
+  const postSlug = ((data || {}).fields || {}).slug;
+
+  const title = postTitle ? `${postTitle} - ${config.shortSiteTitle}` : config.siteTitle;
+  const description = postDescription ? postDescription : config.siteDescription;
+  const image = postCover ? postCover.childImageSharp.resize.src : config.siteImage;
+  const url = config.siteUrl + config.pathPrefix + postSlug;
+
+  return (
+    <Helmet
+      htmlAttributes={{
+        lang: config.siteLanguage,
+        prefix: "og: http://ogp.me/ns#"
+      }}
+    >
+      {/* General tags */}
+      <title>{title}</title>
+      <meta name="description" content={description} />
+      {/* OpenGraph tags */}
+      <meta property="og:url" content={url} />
+      <meta property="og:title" content={title} />
+      <meta property="og:description" content={description} />
+      <meta property="og:image" content={image} />
+      <meta property="og:type" content="website" />
+      <meta property="fb:app_id" content={facebook.appId} />
+
+      {/* Twitter Card tags */}
+      <meta name="twitter:card" content="summary" />
+      <meta
+        name="twitter:creator"
+        content={config.authorTwitterAccount ? config.authorTwitterAccount : ""}
+      />
+    </Helmet>
+  );
+};
+
+Seo.propTypes = {
+  data: PropTypes.object,
+  facebook: PropTypes.object.isRequired
+};
+
+export default Seo;
+
+
+
+
+
+//src/components/utils/helpers.js
+import theme from "../styles/theme";
+
+export function isWideScreen() {
+  if (typeof window !== `undefined`) {
+    const windowWidth = window.innerWidth;
+    const mediaQueryL = theme.mediaQueryTresholds.L;
+
+    return windowWidth >= mediaQueryL;
+  }
+}
+
+export function timeoutThrottlerHandler(timeouts, name, delay, handler) {
+  if (!timeouts[name]) {
+    timeouts[name] = setTimeout(() => {
+      timeouts[name] = null;
+      handler();
+    }, delay);
+  }
+}
+
+
+//src/components/utils/shared.js
+import { forceCheck } from "react-lazyload";
+
+// import { navigateTo } from 'gatsby-link';
+
+export function featureNavigator(e) {
+  e && e.preventDefault();
+
+  if (this.props.navigatorPosition === "is-aside") {
+    if (this.props.isWideScreen) {
+      this.props.setNavigatorPosition("moving-featured");
+
+      setTimeout(() => {
+        this.props.setNavigatorPosition("resizing-featured");
+        setTimeout(() => {
+          this.props.setNavigatorPosition("is-featured");
+          this.props.setNavigatorShape("open");
+
+          // uncomment following lines if you want to count featuring Navigator as a visit
+          // to index page ('/'), you have to also uncomment import { navigateTo }...
+          /*
+          setTimeout(() => {
+            navigateTo("/");
+          }, 1000);
+          */
+        });
+      }, 300);
+    } else {
+      setTimeout(() => {
+        this.props.setNavigatorPosition("is-featured");
+      }, 0);
+    }
+  }
+}
+
+export function moveNavigatorAside(e) {
+  const target = e ? e.currentTarget : null;
+  const dataShape = target ? target.getAttribute("data-shape") : null;
+  const navigatorShape = dataShape ? dataShape : "open";
+
+  if (this.props.navigatorPosition === "is-featured") {
+    if (this.props.isWideScreen) {
+      this.props.setNavigatorPosition("moving-aside");
+
+      setTimeout(() => {
+        if (typeof window !== `undefined`) {
+          if (window.location.pathname !== "/") {
+            this.props.setNavigatorPosition("resizing-aside");
+            this.props.setNavigatorShape(navigatorShape);
+            setTimeout(() => {
+              this.props.setNavigatorPosition("is-aside");
+              setTimeout(forceCheck, 600);
+            });
+          }
+        }
+      }, 1000);
+    } else {
+      setTimeout(() => {
+        this.props.setNavigatorPosition("is-aside");
+      }, 100);
+    }
+  }
+}
+
+
+
+
+//src/getPageContext.js
+/* eslint-disable no-underscore-dangle */
+
+import { SheetsRegistry } from "jss";
+import { createGenerateClassName } from "@material-ui/core/styles";
+
+import theme from "./styles/theme";
+
+function createPageContext() {
+  return {
+    theme,
+    // This is needed in order to deduplicate the injection of CSS in the page.
+    sheetsManager: new Map(),
+    // This is needed in order to inject the critical CSS.
+    sheetsRegistry: new SheetsRegistry(),
+    // The standard class name generator.
+    generateClassName: createGenerateClassName()
+  };
+}
+
+export default function getPageContext() {
+  // Make sure to create a new context for every server-side request so that data
+  // isn't shared between connections (which would be bad).
+  if (!process.browser) {
+    return createPageContext();
+  }
+
+  // Reuse context on the client-side.
+  if (!global.__INIT_MATERIAL_UI__) {
+    global.__INIT_MATERIAL_UI__ = createPageContext();
+  }
+
+  return global.__INIT_MATERIAL_UI__;
+}
+
+
+//src/html.js
+/* eslint  react/prop-types: 0 */
+import React from "react";
+
+let stylesStr;
+if (process.env.NODE_ENV === `production`) {
+  try {
+    stylesStr = require(`!raw-loader!../public/styles.css`);
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+module.exports = class HTML extends React.Component {
+  render() {
+    let css;
+    if (process.env.NODE_ENV === `production`) {
+      css = <style id="gatsby-inlined-css" dangerouslySetInnerHTML={{ __html: stylesStr }} />;
+    }
+    return (
+      <html {...this.props.htmlAttributes}>
+        <head>
+          <meta charSet="utf-8" />
+          <meta httpEquiv="x-ua-compatible" content="ie=edge" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          {this.props.headComponents}
+          {css}
+          <meta name="apple-mobile-web-app-capable" content="yes" />
+          <meta name="apple-mobile-web-app-status-bar-style" content="#D0E0D8" />
+          <meta name="apple-mobile-web-app-title" content="Lazywill" />
+          <link rel="apple-touch-icon" href="/icons/apple-icon-57x57.png" sizes="57x57" />
+          <link rel="apple-touch-icon" href="/icons/apple-icon-60x60.png" sizes="60x60" />
+          <link rel="apple-touch-icon" href="/icons/apple-icon-72x72.png" sizes="72x72" />
+          <link rel="apple-touch-icon" href="/icons/apple-icon-76x76.png" sizes="76x76" />
+          <link rel="apple-touch-icon" href="/icons/apple-icon-114x114.png" sizes="114x114" />
+          <link rel="apple-touch-icon" href="/icons/apple-icon-120x120.png" sizes="120x120" />
+          <link rel="apple-touch-icon" href="/icons/apple-icon-144x144.png" sizes="144x144" />
+          <link rel="apple-touch-icon" href="/icons/apple-icon-152x152.png" sizes="152x152" />
+          <link rel="apple-touch-icon" href="/icons/apple-icon-180x180.png" sizes="180x180" />
+          <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png" />
+          <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png" />
+          <link rel="icon" type="image/png" sizes="96x96" href="/icons/favicon-96x96.png" />
+        </head>
+        <body {...this.props.bodyAttributes}>
+          <noscript>You need to enable JavaScript to run this app!</noscript>
+          {this.props.preBodyComponents}
+          <div key={`body`} id="___gatsby" dangerouslySetInnerHTML={{ __html: this.props.body }} />
+          {this.props.postBodyComponents}
+        </body>
+      </html>
+    );
+  }
+};
+
+
+//src/withRoot.js
+import React from "react";
+import PropTypes from "prop-types";
+import { MuiThemeProvider } from "@material-ui/core/styles";
+import CssBaseline from "@material-ui/core/CssBaseline";
+import getPageContext from "./getPageContext";
+
+function withRoot(Component) {
+  class WithRoot extends React.Component {
+    constructor(props) {
+      super(props);
+
+      this.pageContext = this.props.pageContext || getPageContext();
+    }
+
+    componentDidMount() {
+      // Remove the server-side injected CSS.
+      const jssStyles = document.querySelector("#server-side-jss");
+      if (jssStyles && jssStyles.parentNode) {
+        jssStyles.parentNode.removeChild(jssStyles);
+      }
+    }
+
+    pageContext = null;
+
+    render() {
+      // MuiThemeProvider makes the theme available down the React tree thanks to React context.
+      return (
+        <MuiThemeProvider
+          theme={this.pageContext.theme}
+          sheetsManager={this.pageContext.sheetsManager}
+        >
+          {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
+          <CssBaseline />
+          <Component {...this.props} />
+        </MuiThemeProvider>
+      );
+    }
+  }
+
+  WithRoot.propTypes = {
+    pageContext: PropTypes.object
+  };
+
+  return WithRoot;
+}
+
+export default withRoot;
+
+
+//static
+	//static/icons
+	//static/screens
+	//static/svg
+	                                                                                                                                                               
+Enfin, je te présente ici ci-dessous, la liste des packages.json qui 
+avaient servi à développer se projet sous Gatsby js version 1. Pourrais-tu 
+avoir besoin de queslques-uns:
+
+
+{
+  "name": "gatsby-starter-personal-blog",
+  "description": "A Gatsby starter for a GeoDeveloper & GeoDesigner",
+  "author": "Mandjo Béa Boré <boremandjo@gmail.com>",
+  "repository": "https://github.com/mandjo2010/monsite2",
+  "version": "1.1.1",
+  "license": "MIT",
+  "scripts": {
+    "develop": "gatsby develop",
+    "develop-host": "gatsby develop --host 192.168.0.112",
+    "build": "gatsby build",
+    "serve": "gatsby serve",
+    "format-output": "prettier src/**/*.{js,jsx}",
+    "format": "prettier --write src/**/*.{js,jsx}",
+    "lint-errors": "eslint src/**/*.{js,jsx} --quiet",
+    "lint": "eslint src/**/*.{js,jsx}",
+    "generate-app-icons": "sh ./scripts/generate-app-icons.sh"
+  },
+  "devDependencies": {
+    "babel-eslint": "^8.2.6",
+    "babel-plugin-dynamic-import-webpack": "^1.0.2",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "dotenv": "^6.0.0",
+    "eslint": "^5.1.0",
+    "eslint-config-google": "^0.9.1",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-graphql": "^2.1.1",
+    "eslint-plugin-import": "^2.13.0",
+    "eslint-plugin-jsx-a11y": "^6.1.1",
+    "eslint-plugin-prettier": "^2.6.2",
+    "eslint-plugin-react": "^7.10.0",
+    "prettier": "^1.13.7",
+    "sharp-cli": "^1.7.0",
+    "webpack-bundle-analyzer": "^2.13.1"
+  },
+  "dependencies": {
+    "@material-ui/core": "^1.4.0",
+    "@material-ui/icons": "^1.1.0",
+    "color": "^3.0.0",
+    "gatsby": "^1.9.274",
+    "gatsby-image": "^1.0.55",
+    "gatsby-link": "^1.6.46",
+    "gatsby-plugin-algolia": "^0.0.4",
+    "gatsby-plugin-catch-links": "^1.0.24",
+    "gatsby-plugin-feed": "^1.3.25",
+    "gatsby-plugin-google-analytics": "^1.0.31",
+    "gatsby-plugin-jss": "^1.5.14",
+    "gatsby-plugin-manifest": "^1.0.27",
+    "gatsby-plugin-netlify": "^1.0.21",
+    "gatsby-plugin-offline": "^1.0.18",
+    "gatsby-plugin-react-helmet": "^2.0.11",
+    "gatsby-plugin-react-next": "^1.0.11",
+    "gatsby-plugin-react-svg": "^1.1.1",
+    "gatsby-plugin-sharp": "^1.6.48",
+    "gatsby-plugin-sitemap": "^1.2.25",
+    "gatsby-remark-component": "^1.1.3",
+    "gatsby-remark-copy-linked-files": "^1.5.37",
+    "gatsby-remark-external-links": "^0.0.4",
+    "gatsby-remark-images": "^1.5.67",
+    "gatsby-remark-prismjs": "^2.0.5",
+    "gatsby-remark-responsive-iframe": "^1.4.20",
+    "gatsby-remark-smartypants": "^1.4.10",
+    "gatsby-source-filesystem": "^1.5.39",
+    "gatsby-transformer-remark": "^1.7.44",
+    "gatsby-transformer-sharp": "^1.6.27",
+    "hoek": "^5.0.3",
+    "instantsearch.css": "^7.1.0",
+    "prismjs": "^1.15.0",
+    "react-custom-scrollbars": "^4.2.1",
+    "react-facebook": "^5.0.3",
+    "react-headroom": "^2.2.2",
+    "react-helmet": "^5.1.3",
+    "react-instantsearch": "^5.2.2",
+    "react-lazyload": "^2.3.0",
+    "react-loadable-visibility": "^2.5.0",
+    "react-material-ui-form-validator": "^2.0.1",
+    "react-obfuscate": "^2.1.4",
+    "react-popper": "0.10.4",
+    "react-redux": "^5.0.6",
+    "react-share": "^2.2.0",
+    "rebound": "^0.1.0",
+    "redux": "^4.0.0",
+    "redux-devtools-extension": "^2.13.5",
+    "screenfull": "^3.3.2"
+  }
+}
+ 

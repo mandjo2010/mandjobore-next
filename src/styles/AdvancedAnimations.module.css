@@ -1,0 +1,221 @@
+/* 🎨 Animations Avancées - Reproduction Gatsby Original */
+
+/* 1. Navigation Double État - Transitions Fluides */
+.navigationTransition {
+  transition: all 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  will-change: transform, opacity, left, width;
+}
+
+.navigationFeatured {
+  animation: slideIntoFocus 0.5s ease-out;
+}
+
+.navigationAside {
+  animation: slideToSide 0.9s ease-in-out;
+}
+
+@keyframes slideIntoFocus {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideToSide {
+  0% {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  100% {
+    left: 0;
+    transform: translateX(0);
+  }
+}
+
+/* 2. Interactions Élégantes - Effets Hover Avancés */
+.interactiveElement {
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: center;
+  will-change: transform, box-shadow;
+}
+
+.interactiveElement:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Avatar Interactif avec Animation */
+.avatarInteractive {
+  transition: all 0.3s ease;
+  border-radius: 65% 75%;
+  will-change: border-radius, transform;
+}
+
+.avatarInteractive:hover {
+  border-radius: 75% 65%;
+  transform: scale(1.05) rotate(2deg);
+}
+
+/* 3. Chargement Progressif et Lazy Loading */
+.lazyLoadElement {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s ease-out;
+}
+
+.lazyLoadElement.loaded {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* 4. Scroll Personnalisé avec Rebond */
+.customScrollContainer {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+.scrollIndicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #dc3545, #ff6b7a);
+  transform-origin: left;
+  transition: transform 0.1s ease-out;
+  z-index: 9999;
+}
+
+/* 5. Parallaxe et Déplacements Coordonnés */
+.parallaxElement {
+  will-change: transform;
+  backface-visibility: hidden;
+}
+
+.parallaxBackground {
+  transform: translateZ(0);
+  animation: floatBackground 8s ease-in-out infinite;
+}
+
+@keyframes floatBackground {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.01);
+  }
+}
+
+/* 6. Système de Thème - Changement de Palette */
+.themeTransition {
+  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+}
+
+.darkThemeTransition {
+  background-color: var(--dark-bg);
+  color: var(--dark-text);
+}
+
+.lightThemeTransition {
+  background-color: var(--light-bg);
+  color: var(--light-text);
+}
+
+/* 7. Typographie Responsive Dynamique */
+.responsiveTypography {
+  font-size: clamp(1rem, 2.5vw, 2rem);
+  line-height: 1.4;
+  transition: font-size 0.3s ease;
+}
+
+/* 8. Indicateurs Visuels Position */
+.positionIndicator {
+  position: relative;
+}
+
+.positionIndicator::before {
+  content: '';
+  position: absolute;
+  left: -10px;
+  top: 50%;
+  width: 4px;
+  height: 0;
+  background: #dc3545;
+  transition: height 0.3s ease;
+  transform: translateY(-50%);
+}
+
+.positionIndicator.active::before {
+  height: 100%;
+}
+
+/* 9. Feedback Visuels Constants */
+.feedbackElement {
+  position: relative;
+  overflow: hidden;
+}
+
+.feedbackElement::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.feedbackElement:active::after {
+  width: 200%;
+  height: 200%;
+}
+
+/* 10. Articles avec Curseur Personnalisé */
+.articleInteractive {
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.articleInteractive:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+/* 11. Menu Déroulant Élégant */
+.elegantDropdown {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transform-origin: top;
+}
+
+.elegantDropdown.open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* 12. Navigation Tangible */
+.tangibleNavigation {
+  transform: perspective(1000px) rotateX(0deg);
+  transition: transform 0.3s ease;
+}
+
+.tangibleNavigation:hover {
+  transform: perspective(1000px) rotateX(5deg) translateZ(10px);
+}
+
+/* Variables CSS locales pour cohérence */
+.variables {
+  --transition-smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --transition-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --organic-red: #dc3545;
+  --organic-red-hover: #c82333;
+  --shadow-elegant: 0 8px 25px rgba(0, 0, 0, 0.15);
+  --shadow-strong: 0 10px 30px rgba(0, 0, 0, 0.1);
+}

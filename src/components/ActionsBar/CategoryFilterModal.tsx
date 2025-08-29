@@ -36,7 +36,7 @@ const CATEGORIES = [
 ];
 
 const CategoryFilterModal: React.FC<CategoryFilterModalProps> = ({ isOpen, onClose }) => {
-  const { categoryFilter, resetFilters, setCategoryFilter } = useUIStore();
+  const { categoryFilter, clearFilters, setCategoryFilter } = useUIStore();
 
   const handleCategorySelect = (categoryId: string) => {
     setCategoryFilter(categoryId);
@@ -44,7 +44,7 @@ const CategoryFilterModal: React.FC<CategoryFilterModalProps> = ({ isOpen, onClo
   };
 
   const handleReset = () => {
-    resetFilters();
+    clearFilters();
     onClose();
   };
 
