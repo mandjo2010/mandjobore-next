@@ -1,5 +1,6 @@
 ---
 title: About
+menuTitle: About
 ---
 
 I am dedicated to understanding data and all related meaningful insights. My work is primarily based in collecting, analysing, stocking and spreading awareness by visualizing data. I fetch data from ground, governments data portals, satellites or from APIs to create maps, cards that display the statistics as well as charts. I use modern front and backend tools such as Python/Django, React, PostgreSQL/PostGIS, Gastby.js, MongoDB, Charts.js including Esri & satellite products and so on.

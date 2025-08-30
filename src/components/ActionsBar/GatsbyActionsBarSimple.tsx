@@ -3,46 +3,46 @@
  */
 'use client'
 
-import React from 'react'
 import { Box } from '@mui/material'
+import React from 'react'
 
 interface ActionsBarProps {
   categories?: string[]
 }
 
-export default function GatsbyActionsBar({ categories = [] }: ActionsBarProps) {
+export default function GatsbyActionsBar({ categories: _categories = [] }: ActionsBarProps) {
   return (
     <Box
       sx={{
-        position: 'fixed',
-        top: 0,
-        right: 0,
-        width: '64px',
-        height: '100vh',
+        '@media (max-width: 1023px)': {
+          display: 'none'
+        },
+        alignItems: 'center',
         backgroundColor: '#ffffff',
         borderLeft: '1px solid #eeeeee',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
+        height: '100vh',
         justifyContent: 'center',
-        zIndex: 10,
+        position: 'fixed',
+        right: 0,
+        top: 0,
+        width: '64px',
         
-        '@media (max-width: 1023px)': {
-          display: 'none'
-        }
+        zIndex: 10
       }}
     >
       <Box
         sx={{
-          width: '40px',
-          height: '40px',
+          alignItems: 'center',
           backgroundColor: '#f0f0f0',
           borderRadius: '50%',
+          color: '#666',
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
           fontSize: '12px',
-          color: '#666'
+          height: '40px',
+          justifyContent: 'center',
+          width: '40px'
         }}
       >
         Actions

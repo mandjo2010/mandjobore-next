@@ -16,9 +16,6 @@
 
 'use client';
 
-import React from 'react';
-import { styled } from '@mui/material/styles';
-import { Box, IconButton } from '@mui/material';
 import { 
   GitHub, 
   Twitter, 
@@ -26,31 +23,34 @@ import {
   LinkedIn, 
   Email 
 } from '@mui/icons-material';
+import { Box, IconButton } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import React from 'react';
 
 // Configuration des réseaux sociaux (sera remplacée par vraie config)
 const SOCIAL_CONFIG = {
   authorSocialLinks: [
     { name: 'github', url: 'https://github.com/mandjo2010' },
     { name: 'twitter', url: 'https://twitter.com/mandjo2010' },
-    { name: 'linkedin', url: 'https://linkedin.com/in/mandjo-bea-bore' },
-    { name: 'facebook', url: 'https://facebook.com/mandjo2010' },
+    { name: 'linkedin', url: 'https://fr.linkedin.com/in/mandjobb' },
+    { name: 'facebook', url: 'https://www.instagram.com/mandjo_bb/' },
     { name: 'email', url: 'mailto:contact@mandjobore.com' },
   ],
 };
 
 // Container pour les icônes sociales
-const SocialContainer = styled(Box)(({ theme }) => ({
+const SocialContainer = styled(Box)(({ theme: _theme }) => ({
   display: 'flex',
-  justifyContent: 'center',
   flexWrap: 'wrap',
+  gap: '0.8em', // Augmenté de 0.5em à 0.8em pour plus d'espacement
+  justifyContent: 'center',
   padding: '1em 0',
-  gap: '0.5em',
 }));
 
 // Wrapper pour chaque icône avec les couleurs personnalisées
 const SocialIconButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'socialType',
-})<{ socialType: string }>(({ theme, socialType }) => {
+})<{ socialType: string }>(({ socialType, theme }) => {
   // Couleurs spécifiques par réseau social (comme dans l'ancien code)
   const getIconColor = (type: string) => {
     switch (type) {
@@ -61,7 +61,7 @@ const SocialIconButton = styled(IconButton, {
       case 'facebook':
         return '#3c5898';
       case 'linkedin':
-        return '#a19b9a';
+        return '#0077B5'; // Bleu LinkedIn officiel
       case 'email':
         return '#dc4e41';
       default:
@@ -70,18 +70,6 @@ const SocialIconButton = styled(IconButton, {
   };
   
   return {
-    display: 'block',
-    padding: '5px',
-    color: getIconColor(socialType),
-    transition: 'all .5s ease',
-    
-    '& svg': {
-      width: '32px',
-      height: '32px',
-      fill: 'currentColor',
-      transition: 'all .5s ease',
-    },
-    
     '&:hover': {
       color: getIconColor(socialType),
       transform: 'scale(1.1)',
@@ -97,12 +85,24 @@ const SocialIconButton = styled(IconButton, {
         color: '#2d4373',
       }),
       ...(socialType === 'linkedin' && {
-        color: '#7d7675',
+        color: '#005885', // Bleu LinkedIn plus foncé pour le hover
       }),
       ...(socialType === 'email' && {
         color: '#b33e35',
       }),
     },
+    '& svg': {
+      fill: 'currentColor',
+      height: '32px',
+      transition: 'all .5s ease',
+      width: '32px',
+    },
+    color: getIconColor(socialType),
+    display: 'block',
+    
+    padding: '5px',
+    
+    transition: 'all .5s ease',
   };
 });
 
@@ -133,22 +133,23 @@ const SocialIcons: React.FC = () => {
         if (!IconComponent) return null;
         
         return (
-          <SocialIconButton
+          <a
             key={item.name}
-            socialType={item.name}
-            component="a"
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
             title={item.name}
             aria-label={`Visit ${item.name} profile`}
+            style={{ textDecoration: 'none' }}
           >
-            <IconComponent />
-          </SocialIconButton>
+            <SocialIconButton socialType={item.name}>
+              <IconComponent />
+            </SocialIconButton>
+          </a>
         );
       })}
     </SocialContainer>
   );
 };
 
-export default SocialIcons; 
+export default SocialIcons;

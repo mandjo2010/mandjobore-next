@@ -4,18 +4,18 @@
  */
 'use client'
 
-import React, { ReactNode, useEffect } from 'react'
 import { ThemeProvider, CssBaseline } from '@mui/material'
 import { styled } from '@mui/material/styles'
-import { extendedGatsbyTheme, gatsbyVariables } from '@/theme/gatsby-theme'
-import { useGatsbyUIStore, useResponsive, useUIPreferences } from '@/store/gatsby-ui-store'
-import LayoutWrapper from '@/components/LayoutWrapper/LayoutWrapper'
+import React, { ReactNode, useEffect } from 'react'
 
-// Import des composants principaux (à créer)
-import Navigator from '@/components/Navigator/Navigator'
 import ActionsBar from '@/components/ActionsBar/ActionsBar'
 import InfoBar from '@/components/InfoBar/InfoBar'
 import InfoBox from '@/components/InfoBox/InfoBox'
+import LayoutWrapper from '@/components/LayoutWrapper/LayoutWrapper'
+// Import des composants principaux (à créer)
+import GatsbyNavigator from '@/components/Navigator/GatsbyNavigator'
+import { useNavigatorState, useResponsive, useUIPreferences } from '@/store/gatsby-ui-store'
+import { extendedGatsbyTheme, gatsbyVariables } from '@/theme/gatsby-theme'
 
 // Types pour les données (reproduction exacte de Gatsby)
 interface Post {
@@ -56,27 +56,16 @@ interface GatsbyLayoutProps {
 // Container principal avec gestion du fontSize global
 const MainContainer = styled('div')<{ fontSize: number }>(({ fontSize }) => ({
   fontSize: `${fontSize}rem`,
-  position: 'relative',
   height: '100vh',
   overflow: 'hidden',
+  position: 'relative',
   
   // Variables CSS Gatsby
   ...gatsbyVariables,
   
-  // Styles pour le contenu principal
-  '& .main-content': {
-    position: 'absolute',
-    top: 0,
+  '&.is-aside .main-content': {
     left: 'var(--info-width)',
-    right: 'var(--actions-width)',
-    bottom: 0,
-    overflow: 'hidden',
-    transition: 'left 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
-    
-    '@media (max-width: 1023px)': {
-      left: 0,
-      right: 0
-    }
+    right: 'var(--actions-width)'
   },
   
   // Navigation states reproduisant les classes Gatsby
@@ -85,20 +74,31 @@ const MainContainer = styled('div')<{ fontSize: number }>(({ fontSize }) => ({
     right: 'var(--actions-width)'
   },
   
-  '&.is-aside .main-content': {
+  // Styles pour le contenu principal
+  '& .main-content': {
+    '@media (max-width: 1023px)': {
+      left: 0,
+      right: 0
+    },
+    bottom: 0,
     left: 'var(--info-width)',
-    right: 'var(--actions-width)'
+    overflow: 'hidden',
+    position: 'absolute',
+    right: 'var(--actions-width)',
+    top: 0,
+    
+    transition: 'left 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
   }
 }))
 
 export default function GatsbyLayout({ 
   children, 
-  posts = [], 
   pages = [], 
-  parts = [],
+  parts = [], 
+  posts = [],
   seo 
 }: GatsbyLayoutProps) {
-  const { navigatorPosition, navigatorShape, isWideScreen } = useGatsbyUIStore()
+  const { isWideScreen, navigatorPosition, navigatorShape } = useNavigatorState()
   const { setIsWideScreen } = useResponsive()
   const { fontSizeIncrease } = useUIPreferences()
   
@@ -113,7 +113,7 @@ export default function GatsbyLayout({
     window.addEventListener('resize', checkScreenSize)
     
     return () => window.removeEventListener('resize', checkScreenSize)
-  }, [setIsWideScreen])
+  }, []) // Remove setIsWideScreen dependency to prevent infinite loop
   
   // Extraction des catégories pour ActionsBar
   const categories = React.useMemo(() => {
@@ -153,7 +153,7 @@ export default function GatsbyLayout({
           fontSize={fontSizeIncrease}
         >
           {/* Navigator - Liste d'articles */}
-          <Navigator 
+          <GatsbyNavigator 
             posts={posts}
             categories={categories}
             className="navigator"
@@ -167,15 +167,12 @@ export default function GatsbyLayout({
           {/* ActionsBar - Barre d'actions droite */}
           <ActionsBar 
             categories={categories}
-            className="actions-bar"
           />
           
           {/* InfoBar - Mobile only */}
           {!isWideScreen && (
             <InfoBar 
               pages={pages}
-              parts={parts}
-              className="info-bar"
             />
           )}
           
@@ -185,7 +182,6 @@ export default function GatsbyLayout({
               <InfoBox 
                 pages={pages}
                 parts={parts}
-                className="info-box"
               />
             </React.Suspense>
           )}

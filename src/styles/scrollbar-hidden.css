@@ -1,0 +1,391 @@
+/**
+ * MASQUAGE GLOBAL DES BARRES DE DÉFILEMENT
+ * Reproduction fidèle du comportement Gatsby original
+ * Les barres de défilement sont complètement invisibles
+ */
+
+/* === MASQUAGE GLOBAL ULTRA-COMPLET POUR TOUS LES NAVIGATEURS === */
+
+/* WebKit (Chrome, Safari, Edge moderne) - Masquage radical */
+::-webkit-scrollbar {
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+  display: none !important;
+  opacity: 0 !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  opacity: 0 !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent !important;
+  border: none !important;
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  opacity: 0 !important;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent !important;
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  opacity: 0 !important;
+}
+
+/* Masquage des boutons de défilement WebKit */
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+/* Masquage des barres de redimensionnement */
+::-webkit-resizer {
+  display: none !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+/* Firefox - Masquage total */
+* {
+  scrollbar-width: none !important;
+  scrollbar-color: transparent transparent !important;
+}
+
+html {
+  scrollbar-width: none !important;
+  overflow: -moz-scrollbars-none !important;
+  appearance: none !important;
+  -moz-appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
+/* Internet Explorer et Edge Legacy */
+body {
+  -ms-overflow-style: none !important;
+}
+
+/* === MASQUAGE UNIVERSEL RADICAL === */
+
+/* Tous les éléments - Application globale */
+*,
+*::before,
+*::after {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+*::-webkit-scrollbar,
+*::before::-webkit-scrollbar,
+*::after::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+/* Ciblage spécifique de tous les pseudo-éléments WebKit */
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-button,
+*::-webkit-resizer {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+/* === STYLES SPÉCIFIQUES POUR LES CONTENEURS DÉFILABLES === */
+
+/* Container principal du navigator */
+.navigator,
+.navigator * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.navigator::-webkit-scrollbar,
+.navigator *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* Container du contenu principal */
+.main-content,
+.main-content * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.main-content::-webkit-scrollbar,
+.main-content *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* InfoBox wrapper */
+.info-box-wrapper,
+.info-box-wrapper * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.info-box-wrapper::-webkit-scrollbar,
+.info-box-wrapper *::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* Contenu des articles et pages */
+.post-content,
+.page-content,
+.article-content {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.post-content::-webkit-scrollbar,
+.page-content::-webkit-scrollbar,
+.article-content::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* === MASQUAGE POUR LES COMPOSANTS MUI === */
+
+/* MUI Box avec overflow */
+.MuiBox-root {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.MuiBox-root::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* MUI Paper avec overflow */
+.MuiPaper-root {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.MuiPaper-root::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* MUI List avec overflow */
+.MuiList-root {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.MuiList-root::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* === MASQUAGE UNIVERSEL POUR ÉLÉMENTS SPÉCIFIQUES === */
+
+/* Tous les éléments avec overflow scroll/auto */
+*[style*="overflow-y: auto"],
+*[style*="overflow-y: scroll"],
+*[style*="overflow-x: auto"],
+*[style*="overflow-x: scroll"],
+*[style*="overflow: auto"],
+*[style*="overflow: scroll"] {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+*[style*="overflow-y: auto"]::-webkit-scrollbar,
+*[style*="overflow-y: scroll"]::-webkit-scrollbar,
+*[style*="overflow-x: auto"]::-webkit-scrollbar,
+*[style*="overflow-x: scroll"]::-webkit-scrollbar,
+*[style*="overflow: auto"]::-webkit-scrollbar,
+*[style*="overflow: scroll"]::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* === SUPPORT NAVIGATEURS SPÉCIAUX ET MODERNES === */
+
+/* Chrome, Edge moderne - Version renforcée */
+@supports (-webkit-appearance: none) {
+  ::-webkit-scrollbar {
+    display: none !important;
+    width: 0px !important;
+    height: 0px !important;
+  }
+  
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0px !important;
+    height: 0px !important;
+  }
+}
+
+/* Safari spécifique - Version renforcée */
+@supports (-webkit-touch-callout: none) {
+  ::-webkit-scrollbar {
+    display: none !important;
+    width: 0px !important;
+    height: 0px !important;
+  }
+  
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0px !important;
+    height: 0px !important;
+  }
+}
+
+/* Firefox moderne */
+@supports (scrollbar-width: none) {
+  * {
+    scrollbar-width: none !important;
+  }
+  
+  html, body {
+    scrollbar-width: none !important;
+  }
+}
+
+/* === RÈGLES DE FALLBACK POUR ANCIENS NAVIGATEURS === */
+
+/* Pour les très anciens navigateurs WebKit */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  ::-webkit-scrollbar {
+    display: none !important;
+    width: 0px !important;
+    height: 0px !important;
+  }
+  
+  *::-webkit-scrollbar {
+    display: none !important;
+    width: 0px !important;
+    height: 0px !important;
+  }
+}
+
+/* Support pour les anciennes versions d'Internet Explorer */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+  body, html, * {
+    -ms-overflow-style: none !important;
+  }
+}
+
+/* === MASQUAGE POUR ÉLÉMENTS CRÉÉS DYNAMIQUEMENT === */
+
+/* Attributs data-* spécifiques à React/Next.js */
+[data-reactroot] *,
+[data-nextjs-scroll-focus-boundary] *,
+#__next *,
+.next-page * {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+[data-reactroot] *::-webkit-scrollbar,
+[data-nextjs-scroll-focus-boundary] *::-webkit-scrollbar,
+#__next *::-webkit-scrollbar,
+.next-page *::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+/* Règle de sécurité finale - Ultra complète */
+body, html, div, main, section, article, aside, nav, header, footer, span, p, ul, ol, li, pre, code {
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+body::-webkit-scrollbar, 
+html::-webkit-scrollbar, 
+div::-webkit-scrollbar, 
+main::-webkit-scrollbar, 
+section::-webkit-scrollbar, 
+article::-webkit-scrollbar, 
+aside::-webkit-scrollbar, 
+nav::-webkit-scrollbar, 
+header::-webkit-scrollbar, 
+footer::-webkit-scrollbar,
+span::-webkit-scrollbar,
+p::-webkit-scrollbar,
+ul::-webkit-scrollbar,
+ol::-webkit-scrollbar,
+li::-webkit-scrollbar,
+pre::-webkit-scrollbar,
+code::-webkit-scrollbar {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+/* === RÈGLE FINALE ABSOLUE - DERNIÈRE DÉFENSE === */
+
+/* Masquage forcé de toute barre qui pourrait encore apparaître */
+html {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+body {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+/* Force la suppression de toute trace de scrollbar */
+* {
+  box-sizing: border-box !important;
+}
+
+*::-webkit-scrollbar-track-piece,
+*::-webkit-scrollbar-thumb:window-inactive {
+  display: none !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+/* Suppression des ombres et bordures de scrollbar */
+*::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:active {
+  display: none !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}

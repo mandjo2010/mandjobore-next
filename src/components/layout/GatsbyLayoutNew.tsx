@@ -4,16 +4,18 @@
  */
 'use client'
 
-import React, { ReactNode } from 'react'
 import { ThemeProvider, CssBaseline, GlobalStyles, Box, Typography } from '@mui/material'
 import Link from 'next/link'
-import { extendedGatsbyTheme } from '@/theme/gatsby-theme'
-import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
-import LayoutWrapper from '@/components/LayoutWrapper/LayoutWrapper'
+import React, { ReactNode } from 'react'
 
+import InfoBar from '@/components/InfoBar'
 // Import des composants fidèles
-import InfoBox from '@/components/InfoBox/InfoBox'
-import GatsbyActionsBar from '@/components/ActionsBar/GatsbyActionsBar'
+import InfoBox from '@/components/InfoBox'
+import ActionsBar from '@/components/layout/ActionsBar'
+import LayoutWrapper from '@/components/LayoutWrapper'
+import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
+import { extendedGatsbyTheme } from '@/theme/gatsby-theme'
+import { getArticleAvatar } from '@/utils/articleImages'
 
 // Types pour les données (exactement comme dans Gatsby)
 interface Post {
@@ -59,39 +61,23 @@ const globalStyles = (
       '*': {
         boxSizing: 'border-box'
       },
-      html: {
-        fontSize: '16px',
-        lineHeight: 1.6
+      '.is-aside': {
+        '& .navigator': {
+          left: 'var(--info-width) !important',
+          width: 'calc(100% - var(--info-width) - var(--actions-width)) !important'
+        }
       },
-      body: {
-        fontFamily: '"Open Sans", Arial, sans-serif',
-        margin: 0,
-        padding: 0,
-        backgroundColor: '#ffffff',
-        color: '#333333',
-        overflow: 'hidden' // Important pour la structure fixe
-      },
-      
-      // Variables CSS pour les dimensions Gatsby
-      ':root': {
-        '--info-width': '320px',
-        '--actions-width': '64px',
-        '--navigator-closed-height': '80px',
-        '--accent-color': '#709425',
-        '--text-color': '#333333',
-        '--lines-color': '#e0e0e0'
-      },
-      
       // Classes d'état pour les animations Navigator (reproduction exacte)
       '.is-featured': {
         '& .navigator': {
-          transform: 'translateX(0) !important',
           left: '0 !important',
+          transform: 'translateX(0) !important',
           width: 'calc(100% - var(--actions-width)) !important'
         }
       },
       
-      '.is-aside': {
+      // Nouveau mode 3 colonnes (identique à is-aside pour l'affichage)
+      '.is-three-columns': {
         '& .navigator': {
           left: 'var(--info-width) !important',
           width: 'calc(100% - var(--info-width) - var(--actions-width)) !important'
@@ -104,12 +90,36 @@ const globalStyles = (
         }
       },
       
+      // Variables CSS pour les dimensions Gatsby
+      ':root': {
+        '--accent-color': '#709425',
+        '--actions-width': '64px',
+        '--info-width': '320px',
+        '--lines-color': '#e0e0e0',
+        '--navigator-closed-height': '80px',
+        '--text-color': '#333333'
+      },
+      
       // Responsive comme dans Gatsby
       '@media (max-width: 1023px)': {
         '.is-aside .navigator, .is-featured .navigator': {
           left: '0 !important',
           width: '100% !important'
         }
+      },
+      
+      body: {
+        backgroundColor: '#ffffff',
+        color: '#333333',
+        fontFamily: '"Open Sans", Arial, sans-serif',
+        margin: 0,
+        overflow: 'hidden', // Important pour la structure fixe
+        padding: 0
+      },
+      
+      html: {
+        fontSize: '16px',
+        lineHeight: 1.6
       }
     }}
   />
@@ -117,14 +127,22 @@ const globalStyles = (
 
 export default function GatsbyLayoutNew({ 
   children, 
-  posts = [], 
   pages = [], 
-  parts = [],
+  parts = [], 
+  posts = [],
   seo 
 }: GatsbyLayoutNewProps) {
   const { fontSizeIncrease } = useGatsbyUIStore()
   // const fontSizeIncrease = 1 // Valeur fixe temporaire
   
+  // Extraire les catégories des posts pour alimenter l'ActionsBar
+  const categories = React.useMemo(() => {
+    return posts.reduce((list: string[], post) => {
+      if (post.category && !list.includes(post.category)) return list.concat(post.category)
+      return list
+    }, [])
+  }, [posts])
+   
   return (
     <ThemeProvider theme={extendedGatsbyTheme}>
       <CssBaseline />
@@ -142,54 +160,59 @@ export default function GatsbyLayoutNew({
       
       {/* Layout Wrapper avec gestion des états */}
       <LayoutWrapper>
+        {/* InfoBar - Barre mobile (visible sur mobile/tablet uniquement) */}
+        <InfoBar pages={pages} />
+        
         {/* InfoBox - Sidebar gauche (320px, desktop only) */}
         <InfoBox 
           pages={pages}
           parts={parts}
+          posts={posts.map(post => ({
+            category: post.category || undefined,
+            cover: post.cover || undefined,
+            date: post.date,
+            excerpt: post.excerpt,
+            id: post.slug,
+            slug: post.slug,
+            subtitle: post.subTitle,
+            title: post.title
+          }))}
         />
         
         {/* Navigator - Liste d'articles (position flexible selon l'état) */}
         <Box
           className="navigator"
           sx={{
-            position: 'fixed',
-            top: 0,
-            left: '320px',
-            right: '64px',
-            bottom: 0,
-            backgroundColor: '#ffffff',
-            borderRight: '1px solid #eeeeee',
-            overflow: 'hidden',
             '@media (max-width: 1023px)': {
               left: 0,
               right: 0
-            }
+            },
+            backgroundColor: '#ffffff',
+            bottom: 0,
+            left: '320px',
+            // Pas de borderRight pour laisser la ligne de l'ActionsBar être visible
+            overflow: 'hidden',
+            position: 'fixed',
+            right: '64px',
+            top: 0
           }}
         >
           <Box
             sx={{
-              padding: '40px 40px 20px 40px',
-              borderBottom: '1px solid #eeeeee'
-            }}
-          >
-            <Typography
-              variant="h1"
-              sx={{
-                fontSize: '1.8rem',
-                fontWeight: 600,
-                color: '#333333',
-                fontFamily: '"Open Sans", Arial, sans-serif'
-              }}
-            >
-              Latest Posts
-            </Typography>
-          </Box>
-
-          <Box
-            sx={{
-              height: 'calc(100% - 120px)',
+              '&::-webkit-scrollbar': {
+                background: 'transparent',
+                display: 'none',
+                height: 0,
+                width: 0
+              },
+              height: '100%',
+              msOverflowStyle: 'none',
+              overflowX: 'hidden',
+              
               overflowY: 'auto',
-              padding: '0 40px 40px 40px'
+              padding: '40px 40px 40px 40px',
+              // Masquage complet de la barre de défilement comme Gatsby original
+              scrollbarWidth: 'none'
             }}
           >
             {posts.map((post, index) => (
@@ -200,48 +223,55 @@ export default function GatsbyLayoutNew({
               >
                 <Box
                   sx={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    padding: '30px 0',
-                    borderBottom: index < posts.length - 1 ? '1px solid #eeeeee' : 'none',
-                    cursor: 'pointer',
                     '&:hover': {
                       backgroundColor: '#fafafa'
-                    }
+                    },
+                    alignItems: 'flex-start',
+                    borderBottom: index < posts.length - 1 ? '1px solid #e0e0e0' : 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    padding: '30px 0'
                   }}
                 >
                   <Box
                     sx={{
-                      width: '60px',
-                      height: '60px',
-                      borderRadius: '50%',
-                      backgroundColor: '#f5f5f5',
-                      marginRight: '20px',
-                      flexShrink: 0,
-                      display: 'flex',
                       alignItems: 'center',
+                      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                      border: '2px solid #e0e0e0',
+                      borderRadius: '50%',
+                      display: 'flex',
+                      flexShrink: 0,
+                      height: '60px',
                       justifyContent: 'center',
-                      border: '2px solid #eeeeee'
+                      marginRight: '20px',
+                      overflow: 'hidden',
+                      width: '60px'
                     }}
                   >
-                    <Typography
-                      sx={{
-                        fontSize: '1.2rem',
-                        fontWeight: 600,
-                        color: '#888888'
+                    <img 
+                      src={getArticleAvatar(post.slug, post.category, post.title, index)}
+                      alt={`Illustration pour ${post.title}`}
+                      style={{
+                        borderRadius: '50%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        width: '100%'
                       }}
-                    >
-                      {post.title.charAt(0).toUpperCase()}
-                    </Typography>
+                      onError={(e) => {
+                        // Fallback vers un pattern SVG en cas d'erreur de chargement
+                        const target = e.target as HTMLImageElement
+                        target.src = getArticleAvatar(post.slug, post.category, post.title, index, true)
+                      }}
+                    />
                   </Box>
 
                   <Box sx={{ flexGrow: 1 }}>
                     <Typography
                       sx={{
-                        fontSize: '1.1rem',
-                        fontWeight: 600,
                         color: '#333333',
                         fontFamily: '"Open Sans", Arial, sans-serif',
+                        fontSize: '1.1rem',
+                        fontWeight: 600,
                         lineHeight: '1.3',
                         marginBottom: '6px'
                       }}
@@ -251,9 +281,9 @@ export default function GatsbyLayoutNew({
                     
                     <Typography
                       sx={{
-                        fontSize: '0.85rem',
                         color: '#555555',
                         fontFamily: '"Open Sans", Arial, sans-serif',
+                        fontSize: '0.85rem',
                         lineHeight: '1.5',
                         marginBottom: '8px'
                       }}
@@ -261,7 +291,8 @@ export default function GatsbyLayoutNew({
                       {post.excerpt}
                     </Typography>
                     
-                    <Typography
+                    {/* Date masquée sur la page d'accueil comme demandé */}
+                    {/* <Typography
                       sx={{
                         fontSize: '0.75rem',
                         color: '#888888',
@@ -273,7 +304,7 @@ export default function GatsbyLayoutNew({
                         month: 'long',
                         day: 'numeric'
                       })}
-                    </Typography>
+                    </Typography> */}
                   </Box>
                 </Box>
               </Link>
@@ -282,21 +313,27 @@ export default function GatsbyLayoutNew({
         </Box>
         
         {/* ActionsBar - Barre d'actions droite (64px, desktop only) */}
-        <GatsbyActionsBar />
+        <ActionsBar categories={categories} />
         
         {/* Zone de contenu principal (pour les pages post/page individuelles) */}
         {children && (
           <div 
+            className="main-content"
             style={{ 
-              position: 'fixed',
-              top: 0,
-              left: '320px',
-              right: '64px',
-              bottom: 0,
               backgroundColor: '#ffffff',
-              padding: '40px',
-              overflowY: 'auto',
+              bottom: 0,
               fontSize: `${fontSizeIncrease}rem`,
+              left: '320px',
+              msOverflowStyle: 'none',
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              padding: '40px',
+              position: 'fixed',
+              right: '64px',
+              // Masquage complet de la barre de défilement comme Gatsby original
+              scrollbarWidth: 'none',
+              
+              top: 0,
               zIndex: 100 // Au-dessus du Navigator
             }}
           >

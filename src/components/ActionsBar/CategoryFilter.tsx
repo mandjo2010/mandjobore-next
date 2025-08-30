@@ -13,10 +13,10 @@
 
 'use client';
 
-import React from 'react';
-import { IconButton } from '@mui/material';
 import { FilterList } from '@mui/icons-material';
+import { IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import React from 'react';
 
 interface CategoryFilterProps {
   categories: string[];
@@ -28,7 +28,7 @@ const FilterButton = styled(IconButton)(({ theme }) => ({
 }));
 
 const CategoryFilter: React.FC<CategoryFilterProps> = ({ 
-  categories, 
+  categories: _categories, // TODO: Use for dropdown implementation
   onFilterCategory 
 }) => {
   const handleClick = () => {

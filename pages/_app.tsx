@@ -5,6 +5,8 @@ import * as React from 'react'
 import '../src/styles/typography.css'
 import '../src/styles/font-size.css'
 import '../src/styles/layout.css' // CSS de layout absolue
+import '../src/styles/gatsby-theme.css' // Variables et styles du thème Gatsby
+import '../src/styles/scrollbar-hidden.css' // Masquage complet des barres de défilement
 
 // Composant wrapper pour utiliser le hook
 function AppWrapper({ Component, pageProps }: { Component: React.ComponentType<any>; pageProps: Record<string, unknown> }) {

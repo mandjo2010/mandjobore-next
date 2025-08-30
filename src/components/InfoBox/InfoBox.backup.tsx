@@ -4,24 +4,25 @@
  */
 'use client'
 
-import React, { useState } from 'react'
-import { Box, IconButton, Avatar, Typography, styled } from '@mui/material'
 import { ExpandMore, ExpandLess } from '@mui/icons-material'
+import { Box, IconButton, Avatar, Typography, styled } from '@mui/material'
 import Link from 'next/link'
+import React, { useState } from 'react'
+
 import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 
 // Configuration exacte de l'auteur (reproduisant content/meta/config)
 const authorConfig = {
-  name: 'Mandjo Béa Boré',
-  tagline: 'Data Analyst & Developer',
   avatar: '/images/avatar.jpg',
   bio: 'Design and build applications to support data including spatial & geospatial ones.',
+  name: 'Mandjo Béa Boré',
   social: {
-    github: 'https://github.com/mandjo2010',
-    linkedin: 'https://linkedin.com/in/mandjobore', 
-    twitter: 'https://twitter.com/mandjobore',
-    email: 'contact@mandjobore.com'
-  }
+    email: 'contact@mandjobore.com',
+    github: 'https://github.com/mandjo2010', 
+    linkedin: 'https://fr.linkedin.com/in/mandjobb',
+    twitter: 'https://twitter.com/mandjobore'
+  },
+  tagline: 'Data Analyst & Developer'
 }
 
 interface Page {
@@ -42,72 +43,72 @@ interface InfoBoxProps {
 
 // Container principal - dimensions exactes de Gatsby (320px)
 const InfoBoxContainer = styled(Box)({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '320px',
-  height: '100vh',
-  backgroundColor: '#ffffff',
-  borderRight: '1px solid #eeeeee',
-  zIndex: 1,
-  padding: '40px 0 0 0',
-  
-  // Animations exactes de Gatsby
-  willChange: 'left',
-  transition: 'left 0.5s ease',
-  
   // Caché sur mobile (< 1024px comme dans Gatsby)
   '@media (max-width: 1023px)': {
     display: 'none'
-  }
+  },
+  backgroundColor: '#ffffff',
+  borderRight: '1px solid #eeeeee',
+  height: '100vh',
+  left: 0,
+  padding: '40px 0 0 0',
+  position: 'fixed',
+  top: 0,
+  transition: 'left 0.5s ease',
+  
+  width: '320px',
+  // Animations exactes de Gatsby
+  willChange: 'left',
+  
+  zIndex: 1
 })
 
 // Zone scrollable du contenu
 const ScrollableContent = styled(Box)({
-  position: 'absolute',
-  top: '160px', // Après l'avatar
-  bottom: 0,
-  left: 0,
-  right: 0,
-  padding: '0 40px',
-  overflowY: 'auto',
-  
   // Style de scrollbar comme dans Gatsby
   '&::-webkit-scrollbar': {
     width: '6px'
   },
-  '&::-webkit-scrollbar-track': {
-    background: 'transparent'
-  },
   '&::-webkit-scrollbar-thumb': {
     background: '#cccccc',
     borderRadius: '3px'
-  }
+  },
+  '&::-webkit-scrollbar-track': {
+    background: 'transparent'
+  },
+  bottom: 0,
+  left: 0,
+  overflowY: 'auto',
+  padding: '0 40px',
+  
+  position: 'absolute',
+  right: 0,
+  top: '160px' // Après l'avatar
 })
 
 // Header avec avatar (position fixe comme dans Gatsby)
 const InfoHeader = styled(Box)({
-  position: 'absolute',
-  top: '40px',
-  left: '40px',
-  right: '40px',
-  height: '80px',
-  display: 'flex',
   alignItems: 'center',
-  cursor: 'pointer'
+  cursor: 'pointer',
+  display: 'flex',
+  height: '80px',
+  left: '40px',
+  position: 'absolute',
+  right: '40px',
+  top: '40px'
 })
 
 // Avatar avec forme organique caractéristique
 const OrganicAvatar = styled(Avatar)({
-  width: '60px',
-  height: '60px',
-  marginRight: '15px',
-  borderRadius: '75% 65%', // Forme organique signature
-  transition: 'border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-  
   '&:hover': {
     borderRadius: '65% 75%' // Animation au hover
-  }
+  },
+  borderRadius: '75% 65%', // Forme organique signature
+  height: '60px',
+  marginRight: '15px',
+  transition: 'border-radius 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+  
+  width: '60px'
 })
 
 // Infos auteur
@@ -116,44 +117,44 @@ const AuthorInfo = styled(Box)({
 })
 
 const AuthorName = styled(Typography)({
+  color: '#333333',
   fontFamily: '"Open Sans", Arial, sans-serif',
   fontSize: '18px',
   fontWeight: 600,
-  color: '#333333',
   lineHeight: '22px',
   marginBottom: '4px'
 })
 
 const AuthorTagline = styled(Typography)({
+  color: '#888888',
   fontFamily: '"Open Sans", Arial, sans-serif',
   fontSize: '14px',
   fontWeight: 300,
-  color: '#888888',
   lineHeight: '18px'
 })
 
 // Bouton Expand (position exacte de Gatsby)
 const ExpandButton = styled(IconButton)({
-  position: 'absolute',
-  top: '50px',
-  right: '15px',
-  width: '30px',
-  height: '30px',
-  backgroundColor: 'rgba(255, 255, 255, 0.9)',
-  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-  
   '&:hover': {
     backgroundColor: '#ffffff',
     boxShadow: '0 4px 8px rgba(0,0,0,0.15)'
-  }
+  },
+  backgroundColor: 'rgba(255, 255, 255, 0.9)',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+  height: '30px',
+  position: 'absolute',
+  right: '15px',
+  top: '50px',
+  
+  width: '30px'
 })
 
 // Bio de l'auteur
 const AuthorBio = styled(Typography)({
+  color: '#555555',
   fontFamily: '"Open Sans", Arial, sans-serif',
   fontSize: '14px',
   lineHeight: '20px',
-  color: '#555555',
   marginBottom: '30px'
 })
 
@@ -163,20 +164,20 @@ const NavigationMenu = styled(Box)({
 })
 
 const MenuLink = styled(Link)({
+  '&:hover': {
+    color: '#709425' // Vert accent de Gatsby
+  },
+  color: '#666666',
   display: 'block',
   fontFamily: '"Open Sans", Arial, sans-serif',
   fontSize: '16px',
   fontWeight: 300,
-  color: '#666666',
-  textDecoration: 'none',
-  textTransform: 'lowercase',
   lineHeight: '30px',
   padding: '5px 0',
-  transition: 'color 0.3s ease',
+  textDecoration: 'none',
+  textTransform: 'lowercase',
   
-  '&:hover': {
-    color: '#709425' // Vert accent de Gatsby
-  }
+  transition: 'color 0.3s ease'
 })
 
 // Icônes sociales (disposition exacte)
@@ -187,33 +188,33 @@ const SocialIcons = styled(Box)({
 })
 
 const SocialIcon = styled('a')({
-  width: '24px',
-  height: '24px',
+  '&:hover': {
+    opacity: 1
+  },
   display: 'block',
+  height: '24px',
   opacity: 0.7,
   transition: 'opacity 0.3s ease',
   
-  '&:hover': {
-    opacity: 1
-  }
+  width: '24px'
 })
 
 // Stack technique en bas (comme dans Gatsby)
 const StackSection = styled(Box)({
-  position: 'absolute',
   bottom: '30px',
   left: '40px',
+  position: 'absolute',
   right: '40px'
 })
 
 const StackTitle = styled(Typography)({
+  color: '#999999',
   fontFamily: '"Open Sans", Arial, sans-serif',
   fontSize: '11px',
   fontWeight: 300,
-  color: '#999999',
-  textTransform: 'uppercase',
   letterSpacing: '1px',
-  marginBottom: '15px'
+  marginBottom: '15px',
+  textTransform: 'uppercase'
 })
 
 const StackIcons = styled(Box)({
@@ -223,15 +224,15 @@ const StackIcons = styled(Box)({
 })
 
 const StackIcon = styled('a')({
-  width: '22px',
-  height: '22px',
+  '&:hover': {
+    opacity: 1
+  },
   display: 'block',
+  height: '22px',
   opacity: 0.6,
   transition: 'opacity 0.3s ease',
   
-  '&:hover': {
-    opacity: 1
-  }
+  width: '22px'
 })
 
 export default function InfoBox({ pages, parts }: InfoBoxProps) {

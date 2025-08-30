@@ -39,9 +39,9 @@ interface LayoutProps {
  */
 export default function OriginalLayout({
   children,
+  pages: _pages = [],
+  parts: _parts = [],
   posts = [],
-  pages = [],
-  parts = [],
   seo,
 }: LayoutProps) {
   
@@ -55,17 +55,8 @@ export default function OriginalLayout({
   const seoImage = seo?.image || '/images/avatar.svg';
   const seoUrl = seo?.url || 'https://mandjobore.com';
 
-  // Extraction des catégories
-  const categories = React.useMemo(() => {
-    return posts.reduce((list: string[], post) => {
-      const category = post.category;
-      if (category && !list.includes(category)) {
-        return list.concat(category);
-      }
-      return list;
-    }, []);
-  }, [posts]);
-
+  // Categories extraction removed - ActionsBar temporarily disabled
+  
   return (
     <>
       <Head>
@@ -83,18 +74,18 @@ export default function OriginalLayout({
       <div
         id="original-layout"
         style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          overflow: 'hidden',
+          background: '#ffffff',
+          color: '#555555',
           fontFamily: "'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
           fontSize: '16px',
           fontWeight: '300',
+          height: '100vh',
+          left: 0,
           lineHeight: '1.6',
-          color: '#555555',
-          background: '#ffffff'
+          overflow: 'hidden',
+          position: 'fixed',
+          top: 0,
+          width: '100vw'
         }}
       >
         {/* InfoBox temporairement désactivée pour diagnostic */}
@@ -106,15 +97,15 @@ export default function OriginalLayout({
         <div
           id="navigator-column"
           style={{
+            background: '#f8f8f8',
+            height: '100vh',
+            left: responsive.isMobile ? '0px' : '320px',
+            overflow: 'auto',
             position: 'absolute',
             top: 0,
-            left: responsive.isMobile ? '0px' : '320px',
+            transition: 'left 0.3s ease, width 0.3s ease',
             width: responsive.isMobile ? '100vw' : 'calc(100vw - 320px - 60px)',
-            height: '100vh',
-            background: '#f8f8f8',
-            overflow: 'auto',
-            zIndex: 50,
-            transition: 'left 0.3s ease, width 0.3s ease'
+            zIndex: 50
           }}
         >
           <NavigatorSimple posts={posts} />
@@ -123,15 +114,15 @@ export default function OriginalLayout({
           <div
             id="main-content"
             style={{
+              background: '#ffffff',
+              display: 'none', // Masqué par défaut, visible quand nécessaire
+              height: '100%',
+              left: 0,
+              overflow: 'auto',
+              padding: '40px',
               position: 'absolute',
               top: 0,
-              left: 0,
-              width: '100%',
-              height: '100%',
-              background: '#ffffff',
-              padding: '40px',
-              overflow: 'auto',
-              display: 'none' // Masqué par défaut, visible quand nécessaire
+              width: '100%'
             }}
           >
             {children}
@@ -150,14 +141,14 @@ export default function OriginalLayout({
         <div
           id="infobar-footer"
           style={{
-            position: 'absolute',
-            bottom: 0,
-            left: '320px',
-            width: 'calc(100vw - 320px - 60px)',
-            height: 'auto',
             background: 'rgba(85, 85, 85, 0.95)',
-            color: '#ffffff',
             borderTop: '1px solid #dedede',
+            bottom: 0,
+            color: '#ffffff',
+            height: 'auto',
+            left: '320px',
+            position: 'absolute',
+            width: 'calc(100vw - 320px - 60px)',
             zIndex: 75
           }}
         >

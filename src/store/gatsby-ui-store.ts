@@ -4,8 +4,8 @@
  */
 import { create } from 'zustand'
 
-// Types exacts de l'ancien store Gatsby
-export type NavigatorPosition = 'is-featured' | 'is-aside' | 'moving-aside' | 'moving-featured'
+// Types exacts de l'ancien store Gatsby + nouveau mode 3 colonnes
+export type NavigatorPosition = 'is-featured' | 'is-aside' | 'is-three-columns' | 'moving-aside' | 'moving-featured'
 export type NavigatorShape = 'open' | 'closed'
 
 interface GatsbyUIState {
@@ -22,6 +22,10 @@ interface GatsbyUIState {
   isInfoBoxExpanded: boolean
   isTransitioning: boolean
   lastNavigatorPosition: NavigatorPosition
+  
+  // États pour reproduire les comportements Gatsby
+  showPostsList: boolean // Affiche la liste des posts dans la sidebar (comme dans l'ancien Navigator)
+  showInfoContent: boolean // Affiche le contenu info de l'auteur
 
   // Actions Redux converties en Zustand
   setNavigatorPosition: (position: NavigatorPosition) => void
@@ -35,6 +39,8 @@ interface GatsbyUIState {
   // Nouvelles actions pour les animations
   setInfoBoxExpanded: (expanded: boolean) => void
   setIsTransitioning: (transitioning: boolean) => void
+  setShowPostsList: (show: boolean) => void
+  setShowInfoContent: (show: boolean) => void
   
   // Helpers reproduisant les utilitaires Gatsby
   featureNavigator: () => void
@@ -44,76 +50,56 @@ interface GatsbyUIState {
 
 export const useGatsbyUIStore = create<GatsbyUIState>((set, get) => ({
   categoryFilter: 'all posts',
-  // Helpers reproduisant src/utils/shared.js avec animations
+  // Helpers reproduisant src/utils/shared.js (simplified to avoid infinite loops)
   featureNavigator: () => {
     const state = get()
     set({ 
-      isTransitioning: true,
-      lastNavigatorPosition: state.navigatorPosition
+      isTransitioning: false,
+      lastNavigatorPosition: state.navigatorPosition,
+      navigatorPosition: 'is-three-columns', // Mode 3 colonnes pour la page d'accueil
+      navigatorShape: 'open'
     })
-    
-    // Animation avec délai
-    setTimeout(() => {
-      set({ 
-        isTransitioning: false,
-        navigatorPosition: 'is-featured',
-        navigatorShape: 'open'
-      })
-    }, 100)
   }, 
   fontSizeIncrease: 1,
   // Nouveaux états
   isInfoBoxExpanded: true,
   isTransitioning: false,
   isWideScreen: false,
-  lastNavigatorPosition: 'is-aside',
+  lastNavigatorPosition: 'is-three-columns', // Cohérent avec le nouvel état initial
 
   moveNavigatorAside: () => {
     const state = get()
     set({ 
-      isTransitioning: true,
-      lastNavigatorPosition: state.navigatorPosition
+      isTransitioning: false,
+      lastNavigatorPosition: state.navigatorPosition,
+      navigatorPosition: 'is-aside',
+      navigatorShape: 'open'
     })
-    
-    setTimeout(() => {
-      set({ 
-        isTransitioning: false,
-        navigatorPosition: 'is-aside',
-        navigatorShape: 'open'
-      })
-    }, 100)
   },
   navigatorFilter: '',
-  // État initial exactement comme dans Gatsby
-  navigatorPosition: 'is-aside',
-
+  // État initial modifié pour afficher les 3 colonnes dès l'accueil
+  navigatorPosition: 'is-three-columns', // Nouveau mode 3 colonnes
   navigatorShape: 'open',
   resetToHome: () => {
     const state = get()
     set({ 
-      isTransitioning: true,
-      lastNavigatorPosition: state.navigatorPosition
+      categoryFilter: 'all posts',
+      isInfoBoxExpanded: true,
+      isTransitioning: false,
+      lastNavigatorPosition: state.navigatorPosition,
+      navigatorFilter: '',
+      navigatorPosition: 'is-three-columns', // Mode 3 colonnes pour l'accueil
+      navigatorShape: 'open',
+      scrollToTop: true
     })
-    
-    setTimeout(() => {
-      set({ 
-        categoryFilter: 'all posts',
-        isInfoBoxExpanded: true,
-        isTransitioning: false,
-        navigatorFilter: '',
-        navigatorPosition: 'is-aside',
-        navigatorShape: 'open',
-        scrollToTop: true
-      })
-    }, 100)
   },
+
   scrollToTop: false,
   setCategoryFilter: (category) => set({ categoryFilter: category }),
   setFontSizeIncrease: (increase) => set({ fontSizeIncrease: increase }),
   // Nouvelles actions
   setInfoBoxExpanded: (expanded) => set({ isInfoBoxExpanded: expanded }),
   setIsTransitioning: (transitioning) => set({ isTransitioning: transitioning }),
-
   setIsWideScreen: (isWide) => set({ isWideScreen: isWide }),
   setNavigatorFilter: (filter) => set({ navigatorFilter: filter }),
 
@@ -122,52 +108,69 @@ export const useGatsbyUIStore = create<GatsbyUIState>((set, get) => ({
     lastNavigatorPosition: state.navigatorPosition,
     navigatorPosition: position 
   })),
-  
   setNavigatorShape: (shape) => set({ navigatorShape: shape }),
+  setScrollToTop: (scroll) => set({ scrollToTop: scroll }),
+  setShowInfoContent: (show) => set({ 
+    showInfoContent: show,
+    showPostsList: !show // Basculement exclusif
+  }),
 
-  setScrollToTop: (scroll) => set({ scrollToTop: scroll })
+  setShowPostsList: (show) => set({ 
+    showInfoContent: !show, // Basculement exclusif entre info auteur et liste posts
+    showPostsList: show
+  }),
+  
+  showInfoContent: true, // Contenu auteur affiché par défaut
+
+  showPostsList: false // Liste des posts dans sidebar (mode collapsed)
 }))
 
 // Hooks de convenance reproduisant les patterns Gatsby
-export const useNavigatorState = () => useGatsbyUIStore((state) => ({
-  isTransitioning: state.isTransitioning,
-  isWideScreen: state.isWideScreen,
-  lastNavigatorPosition: state.lastNavigatorPosition,
-  navigatorPosition: state.navigatorPosition,
-  navigatorShape: state.navigatorShape
-}))
+export const useNavigatorState = () => {
+  const navigatorPosition = useGatsbyUIStore((s) => s.navigatorPosition)
+  const navigatorShape = useGatsbyUIStore((s) => s.navigatorShape)
+  const isWideScreen = useGatsbyUIStore((s) => s.isWideScreen)
+  const isTransitioning = useGatsbyUIStore((s) => s.isTransitioning)
+  const lastNavigatorPosition = useGatsbyUIStore((s) => s.lastNavigatorPosition)
+  return { isTransitioning, isWideScreen, lastNavigatorPosition, navigatorPosition, navigatorShape }
+}
 
-export const useNavigatorActions = () => useGatsbyUIStore((state) => ({
-  featureNavigator: state.featureNavigator,
-  moveNavigatorAside: state.moveNavigatorAside,
-  resetToHome: state.resetToHome,
-  setNavigatorPosition: state.setNavigatorPosition,
-  setNavigatorShape: state.setNavigatorShape
-}))
+export const useNavigatorActions = () => {
+  const setNavigatorPosition = useGatsbyUIStore((s) => s.setNavigatorPosition)
+  const setNavigatorShape = useGatsbyUIStore((s) => s.setNavigatorShape)
+  const featureNavigator = useGatsbyUIStore((s) => s.featureNavigator)
+  const moveNavigatorAside = useGatsbyUIStore((s) => s.moveNavigatorAside)
+  const resetToHome = useGatsbyUIStore((s) => s.resetToHome)
+  return { featureNavigator, moveNavigatorAside, resetToHome, setNavigatorPosition, setNavigatorShape }
+}
 
-export const useUIPreferences = () => useGatsbyUIStore((state) => ({
-  fontSizeIncrease: state.fontSizeIncrease,
-  isInfoBoxExpanded: state.isInfoBoxExpanded,
-  scrollToTop: state.scrollToTop,
-  setFontSizeIncrease: state.setFontSizeIncrease,
-  setInfoBoxExpanded: state.setInfoBoxExpanded,
-  setScrollToTop: state.setScrollToTop
-}))
+export const useUIPreferences = () => {
+  const fontSizeIncrease = useGatsbyUIStore((s) => s.fontSizeIncrease)
+  const setFontSizeIncrease = useGatsbyUIStore((s) => s.setFontSizeIncrease)
+  const scrollToTop = useGatsbyUIStore((s) => s.scrollToTop)
+  const setScrollToTop = useGatsbyUIStore((s) => s.setScrollToTop)
+  const isInfoBoxExpanded = useGatsbyUIStore((s) => s.isInfoBoxExpanded)
+  const setInfoBoxExpanded = useGatsbyUIStore((s) => s.setInfoBoxExpanded)
+  return { fontSizeIncrease, isInfoBoxExpanded, scrollToTop, setFontSizeIncrease, setInfoBoxExpanded, setScrollToTop }
+}
 
-export const useFilters = () => useGatsbyUIStore((state) => ({
-  categoryFilter: state.categoryFilter,
-  navigatorFilter: state.navigatorFilter,
-  setCategoryFilter: state.setCategoryFilter,
-  setNavigatorFilter: state.setNavigatorFilter
-}))
+export const useFilters = () => {
+  const categoryFilter = useGatsbyUIStore((s) => s.categoryFilter)
+  const setCategoryFilter = useGatsbyUIStore((s) => s.setCategoryFilter)
+  const navigatorFilter = useGatsbyUIStore((s) => s.navigatorFilter)
+  const setNavigatorFilter = useGatsbyUIStore((s) => s.setNavigatorFilter)
+  return { categoryFilter, navigatorFilter, setCategoryFilter, setNavigatorFilter }
+}
 
-export const useResponsive = () => useGatsbyUIStore((state) => ({
-  isWideScreen: state.isWideScreen,
-  setIsWideScreen: state.setIsWideScreen
-}))
+export const useResponsive = () => {
+  const isWideScreen = useGatsbyUIStore((s) => s.isWideScreen)
+  const setIsWideScreen = useGatsbyUIStore((s) => s.setIsWideScreen)
+  return { isWideScreen, setIsWideScreen }
+}
 
-export const useAnimations = () => useGatsbyUIStore((state) => ({
-  isTransitioning: state.isTransitioning,
-  lastNavigatorPosition: state.lastNavigatorPosition,
-  setIsTransitioning: state.setIsTransitioning
-}))
+export const useAnimations = () => {
+  const isTransitioning = useGatsbyUIStore((s) => s.isTransitioning)
+  const setIsTransitioning = useGatsbyUIStore((s) => s.setIsTransitioning)
+  const lastNavigatorPosition = useGatsbyUIStore((s) => s.lastNavigatorPosition)
+  return { isTransitioning, lastNavigatorPosition, setIsTransitioning }
+}

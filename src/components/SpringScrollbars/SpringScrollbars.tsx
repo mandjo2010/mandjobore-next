@@ -5,10 +5,11 @@
  */
 'use client'
 
-import React, { useRef, useEffect, useCallback, ReactNode, forwardRef, useImperativeHandle } from 'react'
-import { motion, useSpring, useMotionValue, PanInfo } from 'framer-motion'
 import { Box, styled } from '@mui/material'
-import { useGatsbyUIStore, useUIPreferences } from '@/store/gatsby-ui-store'
+import { motion, useSpring, useMotionValue, PanInfo } from 'framer-motion'
+import React, { useRef, useEffect, useCallback, ReactNode } from 'react'
+
+import { useUIPreferences } from '@/store/gatsby-ui-store'
 
 interface SpringScrollbarsProps {
   children: ReactNode
@@ -19,19 +20,19 @@ interface SpringScrollbarsProps {
 
 // Styled components reproduisant les styles Gatsby
 const ScrollContainer = styled(Box)({
-  position: 'relative',
-  overflow: 'hidden',
-  width: '100%',
   height: '100%',
+  overflow: 'hidden',
+  position: 'relative',
+  width: '100%',
 })
 
 const ScrollContent = styled(motion.div)({
-  willChange: 'transform',
   '&::-webkit-scrollbar': {
     display: 'none',
   },
-  scrollbarWidth: 'none',
   msOverflowStyle: 'none',
+  scrollbarWidth: 'none',
+  willChange: 'transform',
 })
 
 // Helper pour mapper les valeurs comme dans Rebound (MathUtil.mapValueInRange)
@@ -45,7 +46,7 @@ const mapValueInRange = (value: number, fromLow: number, fromHigh: number, toLow
 export default function SpringScrollbars({ 
   children, 
   className = '',
-  isNavigator = false,
+  isNavigator: _isNavigator = false,
   onScrollFrame 
 }: SpringScrollbarsProps) {
   const containerRef = useRef<HTMLDivElement>(null)
@@ -55,28 +56,26 @@ export default function SpringScrollbars({
   // Motion values pour le scroll spring
   const y = useMotionValue(0)
   const springY = useSpring(y, {
-    stiffness: 300,
     damping: 30,
-    mass: 0.8
+    mass: 0.8,
+    stiffness: 300
   })
   
   // Référence pour les dimensions
   const scrollMetrics = useRef({
-    scrollTop: 0,
+    clientHeight: 0,
     scrollHeight: 0,
-    clientHeight: 0
+    scrollTop: 0
   })
 
   // API publique reproduisant l'interface Gatsby
-  const getScrollTop = useCallback(() => {
-    return Math.abs(springY.get())
-  }, [springY])
-
+  // getScrollTop removed - was unused
+  
   const scrollTop = useCallback((targetY: number) => {
     const container = containerRef.current
     if (!container) return
     
-    const { scrollHeight, clientHeight } = container
+    const { clientHeight, scrollHeight } = container
     const maxScroll = Math.max(0, scrollHeight - clientHeight)
     const clampedY = Math.max(0, Math.min(targetY, maxScroll))
     
@@ -85,17 +84,22 @@ export default function SpringScrollbars({
   }, [y])
 
   // Gestion du scrollToTop depuis le store (comme dans Gatsby)
+  // Safe implementation to prevent infinite loops
   useEffect(() => {
     if (scrollToTop) {
-      scrollTop(0)
-      setScrollToTop(false)
+      const timeoutId = setTimeout(() => {
+        scrollTop(0)
+        setScrollToTop(false)
+        
+        // Forcer la vérification lazy load comme dans l'original
+        if (typeof window !== 'undefined' && (window as any).forceCheck) {
+          setTimeout(() => (window as any).forceCheck(), 100)
+        }
+      }, 0) // Use timeout to prevent sync state updates
       
-      // Forcer la vérification lazy load comme dans l'original
-      if (typeof window !== 'undefined' && window.forceCheck) {
-        setTimeout(() => window.forceCheck(), 100)
-      }
+      return () => clearTimeout(timeoutId)
     }
-  }, [scrollToTop, scrollTop, setScrollToTop])
+  }, [scrollToTop]) // Only depend on scrollToTop, not setScrollToTop or scrollTop
 
   // Gestion du scroll wheel
   const handleWheel = useCallback((event: WheelEvent) => {
@@ -104,7 +108,7 @@ export default function SpringScrollbars({
     const container = containerRef.current
     if (!container) return
     
-    const { scrollHeight, clientHeight } = container
+    const { clientHeight, scrollHeight } = container
     const maxScroll = Math.max(0, scrollHeight - clientHeight)
     
     const currentY = y.get()
@@ -115,7 +119,7 @@ export default function SpringScrollbars({
     
     // Mettre à jour les métriques
     const scrollTop = Math.abs(newY)
-    scrollMetrics.current = { scrollTop, scrollHeight, clientHeight }
+    scrollMetrics.current = { clientHeight, scrollHeight, scrollTop }
     
     // Callback comme dans l'original
     if (onScrollFrame) {
@@ -123,10 +127,10 @@ export default function SpringScrollbars({
         ? mapValueInRange(scrollTop, 0, maxScroll, 0.01, 0.99)
         : 0
       onScrollFrame({ 
-        top: normalizedTop, 
-        scrollTop, 
+        clientHeight, 
         scrollHeight, 
-        clientHeight 
+        scrollTop, 
+        top: normalizedTop 
       })
     }
   }, [y, onScrollFrame])
@@ -141,7 +145,7 @@ export default function SpringScrollbars({
     const container = containerRef.current
     if (!container) return
     
-    const { scrollHeight, clientHeight } = container
+    const { clientHeight, scrollHeight } = container
     const maxScroll = Math.max(0, scrollHeight - clientHeight)
     
     const currentY = y.get()
@@ -154,7 +158,7 @@ export default function SpringScrollbars({
     const container = containerRef.current
     if (!container) return
     
-    const { scrollHeight, clientHeight } = container
+    const { clientHeight, scrollHeight } = container
     const maxScroll = Math.max(0, scrollHeight - clientHeight)
     
     // Appliquer l'inertie comme dans SpringScrollbars original
@@ -183,11 +187,11 @@ export default function SpringScrollbars({
     if (!container) return
     
     const resizeObserver = new ResizeObserver(() => {
-      const { scrollHeight, clientHeight } = container
+      const { clientHeight, scrollHeight } = container
       scrollMetrics.current = { 
         ...scrollMetrics.current,
-        scrollHeight, 
-        clientHeight 
+        clientHeight, 
+        scrollHeight 
       }
     })
     

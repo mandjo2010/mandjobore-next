@@ -16,23 +16,22 @@
 
 'use client';
 
-import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
-import { Box, IconButton } from '@mui/material';
-import Link from 'next/link';
 import {
   Home,
   Search,
   KeyboardArrowUp,
   Fullscreen,
   FullscreenExit,
-  FormatSize,
-  FilterList,
 } from '@mui/icons-material';
+import { Box, IconButton } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import React, { useState } from 'react';
 
+import CategoryFilter from './CategoryFilter';
 // Import des sous-composants
 import FontSetter from './FontSetter';
-import CategoryFilter from './CategoryFilter';
 
 interface ActionsBarProps {
   navigatorPosition?: 'is-aside' | 'is-featured' | '';
@@ -42,62 +41,67 @@ interface ActionsBarProps {
 }
 
 // Container principal de la ActionsBar
-const ActionsBarContainer = styled(Box)(({ theme }) => ({
-  position: 'absolute',
+const ActionsBarContainer = styled(Box)<{ hideTopBorder?: boolean }>(({ hideTopBorder, theme }) => ({
   background: theme.bars?.colors?.background || '#ffffff',
-  left: 0,
   bottom: 0,
   display: 'flex',
   flexDirection: 'row',
-  padding: `0 ${theme.base?.sizes?.linesMargin || '20px'}`,
-  justifyContent: 'space-between',
   height: `${theme.bars?.sizes?.actionsBar || 60}px`,
+  justifyContent: 'space-between',
+  left: 0,
+  padding: `0 ${theme.base?.sizes?.linesMargin || '20px'}`,
+  position: 'absolute',
   width: '100%',
   
-  // Bordure supérieure
-  '&::before': {
-    content: '""',
-    position: 'absolute',
-    left: theme.base?.sizes?.linesMargin || '20px',
-    right: theme.base?.sizes?.linesMargin || '20px',
-    height: 0,
+  // Bordure supérieure (conditionnelle)
+  ...(!hideTopBorder && {
+    '&::before': {
+      borderTop: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
+      content: '""',
+      height: 0,
+      left: theme.base?.sizes?.linesMargin || '20px',
+      position: 'absolute',
+      right: theme.base?.sizes?.linesMargin || '20px',
+      top: 0,
+    },
+  }),
+  
+  // Desktop layout - vertical sur la droite
+  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
+    flexDirection: 'column',
+    height: '100%',
+    left: 'auto',
+    padding: `${theme.base?.sizes?.linesMargin || '20px'} 0`,
+    right: 0,
     top: 0,
-    borderTop: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
+    width: `${theme.bars?.sizes?.actionsBar || 60}px`,
+    
+    // Bordure gauche (conditionnelle)
+    ...(!hideTopBorder && {
+      '&::before': {
+        borderLeft: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
+        borderTop: 'none',
+        bottom: theme.base?.sizes?.linesMargin || '20px',
+        height: 'auto',
+        left: 0,
+        right: 'auto',
+        top: theme.base?.sizes?.linesMargin || '20px',
+        width: 0,
+      },
+    }),
   },
   
   // Responsive pour tablet
   [theme.breakpoints?.up('md') || '@media (min-width: 600px)']: {
     padding: `0 calc(${theme.base?.sizes?.linesMargin || '20px'} * 1.5)`,
   },
-  
-  // Desktop layout - vertical sur la droite
-  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
-    flexDirection: 'column',
-    top: 0,
-    right: 0,
-    left: 'auto',
-    height: '100%',
-    padding: `${theme.base?.sizes?.linesMargin || '20px'} 0`,
-    width: `${theme.bars?.sizes?.actionsBar || 60}px`,
-    
-    '&::before': {
-      top: theme.base?.sizes?.linesMargin || '20px',
-      bottom: theme.base?.sizes?.linesMargin || '20px',
-      left: 0,
-      right: 'auto',
-      width: 0,
-      height: 'auto',
-      borderLeft: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
-      borderTop: 'none',
-    },
-  },
 }));
 
 // Groupe de boutons
 const ButtonGroup = styled(Box)(({ theme }) => ({
+  alignItems: 'center',
   display: 'flex',
   flexDirection: 'row',
-  alignItems: 'center',
   
   [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
     flexDirection: 'column',
@@ -106,21 +110,23 @@ const ButtonGroup = styled(Box)(({ theme }) => ({
 
 // Bouton stylisé
 const ActionButton = styled(IconButton)(({ theme }) => ({
-  color: theme.bars?.colors?.icon || '#555',
-  transition: 'all 0.3s ease',
-  
   '&:hover': {
     color: theme.base?.colors?.accent || '#709425',
     transform: 'scale(1.1)',
   },
+  color: theme.bars?.colors?.icon || '#555',
+  
+  transition: 'all 0.3s ease',
 }));
 
 const ActionsBar: React.FC<ActionsBarProps> = ({
+  categories = [],
+  isWideScreen = false,
   navigatorPosition = '',
   navigatorShape = '',
-  isWideScreen = false,
-  categories = [],
 }) => {
+  const router = useRouter()
+  const isHomePage = router.pathname === '/'
   const [isFullscreen, setIsFullscreen] = useState(false);
   
   // Handlers pour les actions
@@ -149,7 +155,7 @@ const ActionsBar: React.FC<ActionsBarProps> = ({
   const handleScrollToTopClick = () => {
     // TODO: Implémenter scroll to top
     console.log('Scroll to top clicked');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ behavior: 'smooth', top: 0 });
   };
   
   const handleFontSizeChange = (val: number) => {
@@ -163,7 +169,7 @@ const ActionsBar: React.FC<ActionsBarProps> = ({
   };
   
   return (
-    <ActionsBarContainer>
+    <ActionsBarContainer hideTopBorder={isHomePage}>
       {/* Groupe de gauche/haut */}
       <ButtonGroup>
         {/* Bouton Home */}
@@ -196,8 +202,8 @@ const ActionsBar: React.FC<ActionsBarProps> = ({
       
       {/* Groupe de droite/bas */}
       <ButtonGroup>
-        {/* Font Setter (conditionnel) */}
-        {navigatorPosition === 'is-aside' && (
+        {/* Font Setter (conditionnel) - JAMAIS sur la page d'accueil */}
+        {!isHomePage && navigatorPosition === 'is-aside' && (
           <FontSetter onIncreaseFont={handleFontSizeChange} />
         )}
         

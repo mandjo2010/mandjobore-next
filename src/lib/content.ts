@@ -37,7 +37,15 @@ export function getBySlug(type: "posts" | "pages", slug: string): MDEntry {
 }
 
 export function getAll(type: "posts" | "pages"): MDEntry[] {
-  return getSlugs(type).map((slug) => getBySlug(type, slug)).sort(byDateDesc);
+  const entries = getSlugs(type).map((slug) => getBySlug(type, slug));
+  
+  // Pour les pages, trier par nom de dossier (ordre numérique)
+  // Pour les posts, trier par date
+  if (type === "pages") {
+    return entries.sort((a, b) => a.slug.localeCompare(b.slug));
+  }
+  
+  return entries.sort(byDateDesc);
 }
 
 export function getAllCategories(posts: MDEntry[]) {

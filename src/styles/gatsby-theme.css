@@ -1,0 +1,396 @@
+/**
+ * GATSBY THEME MIGRATION - Styles exacts du thème original
+ * Reproduction fidèle des styles JSS de l'ancien starter Gatsby
+ * Applique les variables CSS et comportements identiques
+ */
+
+/* Variables CSS du thème Gatsby original */
+:root {
+  /* === COULEURS EXACTES DU THÈME GATSBY === */
+  /* Base colors */
+  --base-bg: #ffffff;
+  --base-text: #333333;
+  --base-lines: #e0e0e0;
+  --base-accent: #27ae60;
+  --base-link: #709425;
+  --base-link-hover: #8bc34a;
+  
+  /* Info colors (InfoBox) */
+  --info-bg: #ffffff;
+  --info-text: #333333;
+  --info-menu-link: #7f8c8d;
+  --info-menu-link-hover: #27ae60;
+  --info-social-icons: #966588;
+  --info-social-icons-hover: #709425;
+  
+  /* Bars colors (InfoBar/ActionsBar) */
+  --bars-bg: #ffffff;
+  --bars-text: #333333;
+  --bars-icon: #666666;
+  --bars-icon-hover: #709425;
+  
+  /* === DIMENSIONS EXACTES DU THÈME GATSBY === */
+  /* Layout sizes */
+  --info-width: 300px;
+  --info-header-height: 140px;
+  --bars-actions-width: 64px;
+  --bars-info-height: 48px;
+  --navigator-closed-height: 80px;
+  
+  /* Spacing */
+  --lines-margin: 20px;
+  --base-padding: 20px;
+  
+  /* === BREAKPOINTS EXACTES DU THÈME GATSBY === */
+  --bp-small: 600px;
+  --bp-medium: 768px;
+  --bp-large: 1024px;
+  
+  /* === TYPOGRAPHIE EXACTE DU THÈME GATSBY === */
+  /* Font families */
+  --font-family: "Open Sans", Arial, sans-serif;
+  
+  /* Info fonts */
+  --info-box-title-size: 1.1em;
+  --info-box-title-size-m: 1.2em;
+  --info-box-title-size-l: 1.3em;
+  
+  /* === TRANSITIONS EXACTES DU THÈME GATSBY === */
+  --transition-standard: all 0.5s ease;
+  --transition-fast: all 0.3s ease;
+  --transition-social: all 0.5s;
+}
+
+/* Variables CSS pour compatibilité avec layout.css existant */
+:root {
+  --c-accent: var(--base-accent);
+  --c-text: var(--base-text);
+  --c-background: var(--base-bg);
+  --c-lines: var(--base-lines);
+  --c-subtitle: var(--info-menu-link);
+  --color-lines: var(--base-lines);
+  --bars-background: var(--bars-bg);
+  --bars-icon-color: var(--bars-icon);
+  --layout-infobox-width: var(--info-width);
+  --layout-infobar-height: var(--bars-info-height);
+}
+
+/* === MASQUAGE COMPLET DE LA BARRE DE DÉFILEMENT (COMME GATSBY ORIGINAL) === */
+
+/* Masquage radical pour WebKit (Chrome, Safari, Edge moderne) */
+::-webkit-scrollbar {
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+  display: none !important;
+  opacity: 0 !important;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent !important;
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  opacity: 0 !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: transparent !important;
+  border: none !important;
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  opacity: 0 !important;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent !important;
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  opacity: 0 !important;
+}
+
+/* Masquage des boutons et éléments de scrollbar */
+::-webkit-scrollbar-button {
+  display: none !important;
+  width: 0px !important;
+  height: 0px !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+::-webkit-resizer {
+  display: none !important;
+  background: transparent !important;
+  opacity: 0 !important;
+}
+
+/* Masquage pour Firefox */
+* {
+  scrollbar-width: none !important;
+  scrollbar-color: transparent transparent !important;
+}
+
+/* Support pour les anciens navigateurs Firefox */
+html {
+  overflow: -moz-scrollbars-none !important;
+  -ms-overflow-style: none !important;
+  appearance: none !important;
+  -moz-appearance: none !important;
+  -webkit-appearance: none !important;
+}
+
+/* Masquage pour Internet Explorer et Edge Legacy */
+body {
+  -ms-overflow-style: none !important;
+}
+
+/* Styles pour assurer que le contenu reste défilable mais invisible */
+.navigator,
+.main-content,
+.info-box-wrapper,
+.post-content,
+.page-content {
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  scrollbar-width: none !important;
+  -ms-overflow-style: none !important;
+}
+
+.navigator::-webkit-scrollbar,
+.main-content::-webkit-scrollbar,
+.info-box-wrapper::-webkit-scrollbar,
+.post-content::-webkit-scrollbar,
+.page-content::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: transparent !important;
+}
+
+/* === CLASSES D'ÉTAT DU NAVIGATEUR (EXACTES GATSBY) === */
+
+/* État featured (page d'accueil) */
+.is-featured {
+  /* Navigator occupe toute la largeur */
+  .navigator {
+    transform: translateX(0) !important;
+    left: 0 !important;
+    width: calc(100% - var(--bars-actions-width)) !important;
+    transition: var(--transition-standard);
+  }
+}
+
+/* État aside (page d'article) */
+.is-aside {
+  /* Navigator à côté de l'InfoBox */
+  .navigator {
+    left: var(--info-width) !important;
+    width: calc(100% - var(--info-width) - var(--bars-actions-width)) !important;
+    transition: var(--transition-standard);
+  }
+  
+  /* InfoBox en mode ouvert */
+  &.open {
+    .info-box {
+      /* Mode ouvert : transitions et transformations spéciales */
+      transition: var(--transition-standard);
+    }
+  }
+  
+  /* InfoBox en mode fermé */
+  &.closed {
+    .info-box-wrapper {
+      bottom: var(--navigator-closed-height) !important;
+    }
+  }
+}
+
+/* États de transition */
+.moving-aside,
+.moving-featured {
+  .navigator {
+    transition: var(--transition-standard) !important;
+  }
+}
+
+.moving-featured {
+  .info-box-wrapper {
+    bottom: 0 !important;
+    opacity: 1 !important;
+  }
+}
+
+.navigator-in-transition-from.navigator-is-opened {
+  .avatar-link {
+    left: 50% !important;
+  }
+}
+
+/* === RESPONSIVE BREAKPOINTS EXACTES GATSBY === */
+
+/* Mobile et tablet */
+@media (max-width: 1023px) {
+  .is-aside .navigator,
+  .is-featured .navigator {
+    left: 0 !important;
+    width: 100% !important;
+  }
+}
+
+/* Desktop */
+@media (min-width: 1024px) {
+  /* InfoBox visible uniquement sur desktop */
+  .info-box {
+    display: block !important;
+  }
+  
+  /* InfoBar masquée sur desktop */
+  .info-bar {
+    display: none !important;
+  }
+}
+
+/* === STYLES GLOBAUX REPRODUISANT GATSBY === */
+
+/* Reset et base */
+html {
+  font-size: 16px;
+  line-height: 1.6;
+  font-family: var(--font-family);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--base-bg);
+  color: var(--base-text);
+  overflow: hidden; /* Important pour la structure fixe de Gatsby */
+  font-family: var(--font-family);
+}
+
+/* Liens globaux avec styles Gatsby */
+a {
+  color: var(--base-link);
+  transition: var(--transition-fast);
+  
+  &:hover {
+    color: var(--base-link-hover);
+  }
+}
+
+/* === CLASSES UTILITAIRES GATSBY === */
+
+/* Float utilities (utilisées dans InfoBar) */
+.float-left {
+  float: left;
+}
+
+.float-right {
+  float: right;
+}
+
+/* Display utilities */
+.block {
+  display: block;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+/* Position utilities */
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.fixed {
+  position: fixed;
+}
+
+/* Transition utilities */
+.transition-standard {
+  transition: var(--transition-standard);
+}
+
+.transition-fast {
+  transition: var(--transition-fast);
+}
+
+/* === ANIMATIONS SPÉCIFIQUES GATSBY === */
+
+/* Animation d'entrée du main */
+@keyframes main-entry {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.main-entry {
+  animation: main-entry 0.5s ease-out;
+}
+
+/* Animation des hover sur avatar */
+@media (hover: hover) {
+  .avatar-hover:hover {
+    border-radius: 75% 65% !important;
+  }
+}
+
+/* === COMPATIBILITÉ AVEC LES COMPOSANTS MUI === */
+
+/* S'assurer que les variables CSS sont appliquées aux composants MUI */
+.MuiBox-root {
+  &.info-box {
+    color: var(--info-text);
+    background: var(--info-bg);
+  }
+  
+  &.info-bar {
+    background: var(--bars-bg);
+  }
+  
+  &.actions-bar {
+    background: var(--bars-bg);
+  }
+}
+
+/* Typography avec variables CSS */
+.MuiTypography-root {
+  &.info-title {
+    color: var(--info-text);
+  }
+  
+  &.bars-title {
+    color: var(--bars-text);
+  }
+}
+
+/* IconButton avec couleurs du thème */
+.MuiIconButton-root {
+  &.bars-icon {
+    color: var(--bars-icon);
+    
+    &:hover {
+      color: var(--bars-icon-hover);
+    }
+  }
+  
+  &.social-icon {
+    color: var(--info-social-icons);
+    
+    &:hover {
+      color: var(--info-social-icons-hover);
+    }
+  }
+}

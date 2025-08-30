@@ -16,10 +16,10 @@
 
 'use client';
 
-import React, { useState } from 'react';
-import { styled } from '@mui/material/styles';
-import { Box, Typography, IconButton } from '@mui/material';
 import { ExpandLess, Close } from '@mui/icons-material';
+import { Box, Typography, IconButton } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import React, { useState } from 'react';
 
 interface NavigatorProps {
   posts?: any[];
@@ -29,17 +29,6 @@ interface NavigatorProps {
 
 // Container principal avec tous les states complexes de Gatsby
 const NavigatorContainer = styled(Box)(({ theme }) => ({
-  transform: 'translate3d(0, 0, 0)',
-  willChange: 'left, top, bottom, width',
-  background: theme.navigator?.colors?.background || '#ffffff',
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  height: '100vh',
-  transitionTimingFunction: 'ease',
-  transition: 'left .9s',
-  width: '100%',
-  
   // Mobile states
   '@media (max-width: 1023px)': {
     '&.is-aside': {
@@ -49,147 +38,158 @@ const NavigatorContainer = styled(Box)(({ theme }) => ({
       left: 0,
     },
   },
-  
+  background: theme.navigator?.colors?.background || '#ffffff',
+  height: '100vh',
+  left: 0,
+  position: 'absolute',
   // Desktop states  
   [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
-    '&.is-featured': {
-      transition: 'left .9s',
-      width: `calc(100vw - ${theme.info?.sizes?.width || 320}px - ${theme.bars?.sizes?.actionsBar || 60}px)`,
-      left: `${theme.info?.sizes?.width || 320}px`,
-      top: 0,
-    },
-    
     '&.is-aside': {
-      transition: 'none, bottom 0.5s',
-      left: 0,
-      width: `${(theme.info?.sizes?.width || 320) - 1}px`,
-      zIndex: 1,
-      top: 'auto',
-      
       '&.closed': {
         bottom: `calc(-100% + 100px + ${theme.navigator?.sizes?.closedHeight || 80}px)`,
         height: `calc(100% - 100px)`,
       },
-      
       '&.open': {
         bottom: 0,
         height: `calc(100% - 100px)`,
       },
-      
       '&::after': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: theme.base?.sizes?.linesMargin || '20px',
-        right: theme.base?.sizes?.linesMargin || '20px',
-        height: 0,
         borderTop: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
+        content: '""',
+        height: 0,
+        left: theme.base?.sizes?.linesMargin || '20px',
+        position: 'absolute',
+        right: theme.base?.sizes?.linesMargin || '20px',
+        top: 0,
       },
+      left: 0,
+      top: 'auto',
+      
+      transition: 'none, bottom 0.5s',
+      
+      width: `${(theme.info?.sizes?.width || 320) - 1}px`,
+      
+      zIndex: 1,
+    },
+    
+    '&.is-featured': {
+      left: `${theme.info?.sizes?.width || 320}px`,
+      top: 0,
+      transition: 'left .9s',
+      width: `calc(100vw - ${theme.info?.sizes?.width || 320}px - ${theme.bars?.sizes?.actionsBar || 60}px)`,
     },
     
     // États de transition
     '&.moving-aside': {
-      transition: 'left 0.9s',
       left: `calc(-100vw + ${2 * (theme.info?.sizes?.width || 320) + 60}px)`,
-      width: `calc(100vw - ${theme.info?.sizes?.width || 320}px - 60px)`,
       top: 0,
+      transition: 'left 0.9s',
+      width: `calc(100vw - ${theme.info?.sizes?.width || 320}px - 60px)`,
     },
     
     '&.moving-featured': {
-      transition: 'bottom .3s',
       bottom: '-100%',
-      top: 'auto',
       left: 0,
-      zIndex: 1,
+      top: 'auto',
+      transition: 'bottom .3s',
       width: `${(theme.info?.sizes?.width || 320) - 1}px`,
+      zIndex: 1,
     },
   },
+  top: 0,
+  transform: 'translate3d(0, 0, 0)',
+  transition: 'left .9s',
+  transitionTimingFunction: 'ease',
+  
+  width: '100%',
+  
+  willChange: 'left, top, bottom, width',
 }));
 
 // Content area avec scroll
-const ScrollableContent = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  left: 0,
-  top: 0,
+const ScrollableContent = styled(Box)(({ theme: _theme }) => ({
   bottom: 0,
-  width: '100%',
+  left: 0,
   overflowY: 'auto',
   padding: '1rem',
+  position: 'absolute',
+  top: 0,
+  width: '100%',
 }));
 
 // Header pour le mode collapsed
 const CollapsedHeader = styled(Box)(({ theme }) => ({
-  display: 'none',
-  
-  '.is-aside.closed &, .moving-featured.closed &': {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    margin: 0,
-    height: `${theme.navigator?.sizes?.closedHeight || 80}px`,
-    padding: '0 30px 0 40px',
-    background: theme.navigator?.colors?.background || '#ffffff',
-  },
-  
   '& h3': {
-    fontSize: '1.1em',
     color: theme.navigator?.colors?.postsHeader || '#555',
+    fontSize: '1.1em',
     fontWeight: 600,
     margin: '-.2em 0 0 0',
     textTransform: 'uppercase',
   },
+  
+  '.is-aside.closed &, .moving-featured.closed &': {
+    alignItems: 'center',
+    background: theme.navigator?.colors?.background || '#ffffff',
+    display: 'flex',
+    flexDirection: 'row',
+    height: `${theme.navigator?.sizes?.closedHeight || 80}px`,
+    justifyContent: 'space-between',
+    left: 0,
+    margin: 0,
+    padding: '0 30px 0 40px',
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+  },
+  
+  display: 'none',
 }));
 
 // Article item temporaire
 const ArticleItem = styled(Box)(({ theme }) => ({
-  display: 'flex',
-  alignItems: 'center',
-  padding: '1rem',
-  borderBottom: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
-  cursor: 'pointer',
-  transition: 'background-color 0.2s ease',
-  
   '&:hover': {
     backgroundColor: theme.palette?.action?.hover || 'rgba(0, 0, 0, 0.04)',
   },
+  alignItems: 'center',
+  borderBottom: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
+  cursor: 'pointer',
+  display: 'flex',
+  padding: '1rem',
+  
+  transition: 'background-color 0.2s ease',
 }));
 
 const ArticleThumb = styled(Box)({
-  width: '60px',
-  height: '60px',
-  borderRadius: '75% 65%',
   backgroundColor: '#f0f0f0',
-  marginRight: '1rem',
+  borderRadius: '75% 65%',
   flexShrink: 0,
+  height: '60px',
+  marginRight: '1rem',
+  width: '60px',
 });
 
 const ArticleContent = styled(Box)({
-  flexGrow: 1,
-  
   '& h3': {
-    margin: 0,
     fontSize: '1.1em',
     fontWeight: 600,
     lineHeight: 1.2,
+    margin: 0,
   },
   
   '& p': {
-    margin: '0.5em 0 0 0',
-    fontSize: '0.9em',
     color: '#666',
+    fontSize: '0.9em',
     lineHeight: 1.3,
+    margin: '0.5em 0 0 0',
   },
+  
+  flexGrow: 1,
 });
 
 const Navigator: React.FC<NavigatorProps> = ({
-  posts = [],
   navigatorPosition = '',
   navigatorShape = '',
+  posts = [],
 }) => {
   const [categoryFilter, setCategoryFilter] = useState('all posts');
   
@@ -211,25 +211,25 @@ const Navigator: React.FC<NavigatorProps> = ({
   // Posts mock pour le développement
   const mockPosts = posts.length > 0 ? posts : [
     {
-      id: '1',
-      title: 'Remote Sensing of Mt. Kenya Wildfire',
-      excerpt: 'How satellite imagery and the science of remote sensing detect wildfires...',
       category: 'GIS Analysis',
       date: 'Fri, 03 Jan 2020',
+      excerpt: 'How satellite imagery and the science of remote sensing detect wildfires...',
+      id: '1',
+      title: 'Remote Sensing of Mt. Kenya Wildfire',
     },
     {
-      id: '2', 
-      title: 'A System for Economic, Sociocultural, and Environmental Benefits',
-      excerpt: 'The role of agroforestry in providing a wide range of benefits...',
-      category: 'Research',
+      category: 'Research', 
       date: 'Thu, 02 Jan 2020',
+      excerpt: 'The role of agroforestry in providing a wide range of benefits...',
+      id: '2',
+      title: 'A System for Economic, Sociocultural, and Environmental Benefits',
     },
     {
-      id: '3',
-      title: 'Finding Geographic Data',
-      excerpt: 'Best practices and resources for finding quality geographic datasets...',
       category: 'Data Science',
       date: 'Wed, 01 Jan 2020',
+      excerpt: 'Best practices and resources for finding quality geographic datasets...',
+      id: '3',
+      title: 'Finding Geographic Data',
     },
   ];
   
@@ -254,11 +254,11 @@ const Navigator: React.FC<NavigatorProps> = ({
         {/* Filter header si actif */}
         {navigatorShape === 'open' && categoryFilter !== 'all posts' && (
           <Box sx={{ 
-            padding: '1rem', 
+            alignItems: 'center', 
             borderBottom: '1px solid #dedede',
             display: 'flex',
             justifyContent: 'space-between',
-            alignItems: 'center'
+            padding: '1rem'
           }}>
             <Box>
               <Typography variant="body2" color="textSecondary">

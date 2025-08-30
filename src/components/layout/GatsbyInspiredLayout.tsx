@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+ 
 /**
  * TODO/MIGRATION BLOCK - GatsbyInspiredLayout.tsx
  * - Component: GatsbyInspiredLayout 
@@ -16,20 +16,26 @@
 
 'use client';
 
-import React, { ReactNode } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
 import { Box, useMediaQuery } from '@mui/material';
+import { styled, useTheme } from '@mui/material/styles';
+import React, { ReactNode } from 'react';
 
+import { ActionsBar } from '../ActionsBar';
 // Import des composants à créer
 import InfoBox from '../InfoBox/InfoBox';
-import ActionsBar from '../ActionsBar/ActionsBar';
-import Navigator from '../Navigator/Navigator';
+import Navigator from '../Navigator';
 
 // Types pour les states (à déplacer vers un store Zustand plus tard)
 interface GatsbyLayoutProps {
   children: ReactNode;
   posts?: any[]; // À typer correctement avec les posts
   pages?: any[]; // À typer correctement avec les pages
+  parts?: any[]; // Ajout pour la compatibilité
+  seo?: {
+    title?: string;
+    description?: string;
+    url?: string;
+  };
   navigatorPosition?: 'is-aside' | 'is-featured' | '';
   navigatorShape?: 'open' | 'closed' | '';
   isWideScreen?: boolean;
@@ -37,33 +43,21 @@ interface GatsbyLayoutProps {
 
 // Styled components avec le thème existant
 const LayoutContainer = styled(Box)(({ theme }) => ({
-  position: 'relative',
-  height: '100vh',
-  overflow: 'hidden',
-  background: theme.base?.colors?.background || '#ffffff',
-  
+  '&.closed': {},
   // Classes dynamiques pour les états du Navigator (à migrer de l'ancien CSS)
   '&.is-aside': {},
   '&.is-featured': {},
   '&.moving-aside': {},
+  
   '&.moving-featured': {},
   '&.open': {},
-  '&.closed': {},
+  background: theme.base?.colors?.background || '#ffffff',
+  height: '100vh',
+  overflow: 'hidden',
+  position: 'relative',
 }));
 
 const MainContent = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  bottom: 0,
-  width: '100%',
-  
-  // Responsive behavior
-  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
-    width: `calc(100vw - ${theme.info?.sizes?.width || 320}px - ${theme.bars?.sizes?.actionsBar || 60}px)`,
-    left: `${theme.info?.sizes?.width || 320}px`,
-  },
-  
   // States pour mobile
   '@media (max-width: 1023px)': {
     '&.is-aside': {
@@ -73,23 +67,37 @@ const MainContent = styled(Box)(({ theme }) => ({
       left: 0,
     },
   },
+  bottom: 0,
+  left: 0,
+  position: 'absolute',
+  // Responsive behavior
+  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
+    left: `${theme.info?.sizes?.width || 320}px`,
+    width: `calc(100vw - ${theme.info?.sizes?.width || 320}px - ${theme.bars?.sizes?.actionsBar || 60}px)`,
+  },
+  
+  top: 0,
+  
+  width: '100%',
 }));
 
 // Version temporaire - sera remplacée par le vrai Navigator
 const TemporaryMainArea = styled(Box)(({ theme }) => ({
-  height: '100%',
-  padding: theme.spacing?.(2) || '16px',
-  overflow: 'auto',
   background: theme.main?.colors?.background || '#ffffff',
+  height: '100%',
+  overflow: 'auto',
+  padding: theme.spacing?.(2) || '16px',
 }));
 
 const GatsbyInspiredLayout: React.FC<GatsbyLayoutProps> = ({ 
   children,
-  posts = [],
-  pages = [],
+  isWideScreen = false,
   navigatorPosition = '',
   navigatorShape = '',
-  isWideScreen = false,
+  pages = [],
+  parts = [],
+  posts = [],
+  seo: _seo = {},
 }) => {
   const theme = useTheme();
   const isLargeScreen = useMediaQuery(theme.breakpoints?.up('lg') || '(min-width: 1024px)');
@@ -105,10 +113,8 @@ const GatsbyInspiredLayout: React.FC<GatsbyLayoutProps> = ({
     <LayoutContainer className={containerClasses}>
       {/* InfoBox - Sidebar gauche avec profil */}
       <InfoBox 
-        pages={pages}
-        navigatorPosition={navigatorPosition}
-        navigatorShape={navigatorShape}
-        isWideScreen={isWideScreen}
+        pages={pages || []}
+        parts={parts || []}
       />
       
       {/* Zone principale - contenu ou navigator */}

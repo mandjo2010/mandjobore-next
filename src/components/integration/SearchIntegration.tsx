@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+
 import { useMinimalFilters } from '../../store/ui-minimal';
 
 interface SearchIntegrationProps {
@@ -18,7 +19,7 @@ interface SearchIntegrationProps {
  * Implémente la logique de connexion entre SearchBar et Navigator
  */
 export const SearchIntegration = ({ posts }: SearchIntegrationProps) => {
-  const { searchQuery, categoryFilter, setCategoryFilter } = useMinimalFilters();
+  const { categoryFilter, searchQuery, setCategoryFilter } = useMinimalFilters();
 
   // 🔄 Synchronisation automatique recherche ↔ filtres - CORRIGÉ
   useEffect(() => {
@@ -52,7 +53,7 @@ export const SearchIntegration = ({ posts }: SearchIntegrationProps) => {
  * Hook pour utiliser la recherche intégrée
  */
 export const useIntegratedSearch = (posts: SearchIntegrationProps['posts']) => {
-  const { searchQuery, categoryFilter } = useMinimalFilters();
+  const { categoryFilter, searchQuery } = useMinimalFilters();
 
   // Filtrage combiné recherche + catégorie
   const filteredPosts = posts.filter(post => {
@@ -71,16 +72,16 @@ export const useIntegratedSearch = (posts: SearchIntegrationProps['posts']) => {
 
   // Statistiques
   const stats = {
-    total: posts.length,
+    categoryActive: categoryFilter !== 'all posts',
     filtered: filteredPosts.length,
     hasActiveFilters: categoryFilter !== 'all posts' || searchQuery.length > 0,
     searchActive: searchQuery.length > 0,
-    categoryActive: categoryFilter !== 'all posts'
+    total: posts.length
   };
 
   return {
     filteredPosts,
-    stats,
-    isLoading: false // Pour compatibilité future
+    isLoading: false, // Pour compatibilité future
+    stats
   };
 };

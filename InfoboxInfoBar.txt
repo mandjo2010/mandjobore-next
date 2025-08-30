@@ -1,0 +1,839 @@
+2-1: InfoBar: 
+
+//src/components/InforBar/index.js
+export { default } from "./InfoBar";
+
+
+//src/components/InforBar/infoBar.js
+import React from "react";
+import injectSheet from "react-jss";
+import PropTypes from "prop-types";
+import Avatar from "@material-ui/core/Avatar";
+import Link from "gatsby-link";
+import { connect } from "react-redux";
+
+import { setNavigatorPosition } from "../../state/store";
+import { featureNavigator, moveNavigatorAside } from "./../../utils/shared";
+
+import config from "../../../content/meta/config";
+import avatar from "../../images/jpg/avatar.jpg";
+import TopMenu from "./TopMenu";
+
+const styles = theme => ({
+  infoBar: {
+    position: "absolute",
+    background: theme.bars.colors.background,
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: `${theme.bars.sizes.infoBar}px`,
+    "&::before": {
+      content: `""`,
+      position: "absolute",
+      left: theme.base.sizes.linesMargin,
+      right: theme.base.sizes.linesMargin,
+      height: 0,
+      bottom: 0,
+      borderTop: `1px solid ${theme.base.colors.lines}`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      display: "none"
+    }
+  },
+  title: {
+    float: "left",
+    margin: "10px 0 0 15px",
+    color: theme.bars.colors.text,
+    "& small": {
+      display: "block",
+      fontSize: ".65em",
+      margin: "2px 0 0 0"
+    }
+  },
+  avatarLink: {
+    display: "block",
+    float: "left",
+    margin: "13px 0 0 30px"
+  },
+  avatar: {
+    width: "36px",
+    borderRadius: "65% 75%",
+    border: "1px solid #ddd",
+    height: "36px"
+  }
+});
+
+class InfoBar extends React.Component {
+  homeLinkOnClick = featureNavigator.bind(this);
+  pageLinkOnClick = moveNavigatorAside.bind(this);
+
+  render() {
+    const { classes, pages } = this.props;
+
+    return (
+      <aside className={classes.infoBar}>
+        <Link to="/" className={classes.avatarLink} onClick={this.homeLinkOnClick}>
+          <Avatar alt={config.infoTitle} src={avatar} className={classes.avatar} />
+        </Link>
+        <h3 className={classes.title}>
+          {config.infoTitle}
+          <small>{config.infoTitleNote}</small>
+        </h3>
+        <TopMenu
+          pages={pages}
+          homeLinkOnClick={this.homeLinkOnClick}
+          pageLinkOnClick={this.pageLinkOnClick}
+        />
+      </aside>
+    );
+  }
+}
+
+InfoBar.propTypes = {
+  classes: PropTypes.object.isRequired,
+  pages: PropTypes.array.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    navigatorPosition: state.navigatorPosition,
+    navigatorShape: state.navigatorShape
+  };
+};
+
+const mapDispatchToProps = {
+  setNavigatorPosition
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectSheet(styles)(InfoBar));
+
+
+
+
+//src/components/InforBar/TopMenu.js
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import Grow from '@material-ui/core/Grow';
+import IconButton from '@material-ui/core/IconButton';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
+import Paper from '@material-ui/core/Paper';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import classNames from 'classnames';
+import Link from 'gatsby-link';
+import PropTypes from 'prop-types';
+import React from 'react';
+import injectSheet from 'react-jss';
+import {Manager, Popper, Target} from 'react-popper';
+
+const styles = theme => ({
+  topMenu: {
+    float: "right",
+    margin: "5px 10px 0 0",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {}
+  },
+  open: {
+    color: theme.bars.colors.icon
+  },
+  popperClose: {
+    pointerEvents: "none"
+  }
+});
+
+class TopMenu extends React.Component {
+  state = {
+    anchorEl: null,
+    open: false
+  };
+
+  componentWillUnmount() {
+    clearTimeout(this.timeout);
+  }
+
+  handleClick = () => {
+    this.setState({ open: !this.state.open });
+  };
+
+  handleClose = () => {
+    if (!this.state.open) {
+      return;
+    }
+
+    this.timeout = setTimeout(() => {
+      this.setState({ open: false });
+    });
+  };
+
+  render() {
+    const { classes, pages } = this.props;
+    const { anchorEl, open } = this.state;
+
+    return (
+      <nav className={classes.topMenu}>
+        <Manager>
+          <Target>
+            <IconButton
+              aria-label="More"
+              aria-owns={anchorEl ? "long-menu" : null}
+              aria-haspopup="true"
+              onClick={this.handleClick}
+              className={classes.open}
+            >
+              <MoreVertIcon />
+            </IconButton>
+          </Target>
+          <Popper
+            placement="bottom-end"
+            eventsEnabled={open}
+            className={classNames({ [classes.popperClose]: !open })}
+          >
+            <ClickAwayListener onClickAway={this.handleClose}>
+              <Grow in={open} id="menu-list" style={{ transformOrigin: "0 0 0" }}>
+                <Paper>
+                  <MenuList role="menu">
+                    <MenuItem
+                      onClick={e => {
+                        this.props.homeLinkOnClick(e);
+                        this.handleClose();
+                      }}
+                    >
+                      Home
+                    </MenuItem>
+                    {pages.map((page, i) => {
+                      const { fields, frontmatter } = page.node;
+
+                      return (
+                        <Link key={fields.slug} to={fields.slug} style={{ display: "block" }}>
+                          <MenuItem
+                            onClick={e => {
+                              this.props.pageLinkOnClick(e);
+                              this.handleClose();
+                            }}
+                          >
+                            {frontmatter.menuTitle ? frontmatter.menuTitle : frontmatter.title}
+                          </MenuItem>
+                        </Link>
+                      );
+                    })}
+                    <Link to="/contact/" style={{ display: "block" }}>
+                      <MenuItem
+                        onClick={e => {
+                          this.props.pageLinkOnClick(e);
+                          this.handleClose();
+                        }}
+                      >
+                        Contact
+                      </MenuItem>
+                    </Link>
+                  </MenuList>
+                </Paper>
+              </Grow>
+            </ClickAwayListener>
+          </Popper>
+        </Manager>
+      </nav>
+    );
+  }
+}
+
+TopMenu.propTypes = {
+  pages: PropTypes.array.isRequired,
+  classes: PropTypes.object.isRequired,
+  pageLinkOnClick: PropTypes.func.isRequired,
+  homeLinkOnClick: PropTypes.func.isRequired
+};
+
+export default injectSheet(styles)(TopMenu);
+
+
+
+
+2-2: InfoBox: 
+
+//src/components/InforBox/index.js
+
+export { default } from "./InfoBox";
+
+//src/components/InforBox/infoBox.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import { connect } from "react-redux";
+require("core-js/fn/array/find");
+
+import SocialIcons from "./SocialIcons";
+import InfoMenu from "./InfoMenu";
+import InfoHeader from "./InfoHeader";
+import InfoText from "./InfoText";
+import StackIcons from "./StackIcons";
+
+import { featureNavigator, moveNavigatorAside } from "./../../utils/shared";
+import { setNavigatorPosition, setNavigatorShape } from "../../state/store";
+
+const styles = theme => ({
+  infoBox: {
+    display: "none",
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      display: "block",
+      color: theme.info.colors.text,
+      background: theme.info.colors.background,
+      position: "absolute",
+      left: 0,
+      top: 0,
+      width: `${theme.info.sizes.width}px`,
+      height: "100%",
+      padding: "20px 40px",
+      "&::after": {
+        content: `""`,
+        position: "absolute",
+        right: 0,
+        top: "20px",
+        bottom: "20px",
+        width: "1px",
+        borderRight: `1px solid ${theme.base.colors.lines}`
+      }
+    }
+  },
+  wrapper: {
+    position: "absolute",
+    top: `${theme.info.sizes.headerHeight}px`,
+    bottom: 0,
+    left: 0,
+    width: "100%",
+    padding: "0 40px 0",
+    willChange: "opacity, bottom",
+    transition: "bottom .5s 0s",
+    opacity: 1,
+    transitionTimingFunction: "ease",
+    ".is-aside.closed &": {
+      bottom: `${theme.navigator.sizes.closedHeight}px`
+    },
+    ".moving-featured &": {
+      bottom: 0
+    }
+  }
+});
+
+class InfoBox extends React.Component {
+  avatarOnClick = featureNavigator.bind(this);
+  menulinkOnClick = moveNavigatorAside.bind(this);
+
+  expandOnClick = e => {
+    this.props.setNavigatorShape("closed");
+  };
+
+  render() {
+    const { classes, parts, pages, navigatorPosition, navigatorShape } = this.props;
+    const info = parts.find(el => el.node.frontmatter.title === "info");
+
+    return (
+      <aside
+        className={`${classes.infoBox} ${navigatorPosition ? navigatorPosition : ""} 
+        ${navigatorShape ? navigatorShape : ""}`}
+      >
+        {info && (
+          <InfoHeader
+            info={info}
+            avatarOnClick={this.avatarOnClick}
+            expandOnClick={this.expandOnClick}
+          />
+        )}
+        <div className={classes.wrapper}>
+          {info && <InfoText info={info} />}
+          <SocialIcons />
+          {pages && <InfoMenu pages={pages} linkOnClick={this.menulinkOnClick} />}
+          <StackIcons />
+        </div>
+      </aside>
+    );
+  }
+}
+
+InfoBox.propTypes = {
+  classes: PropTypes.object.isRequired,
+  parts: PropTypes.array.isRequired,
+  pages: PropTypes.array.isRequired,
+  navigatorPosition: PropTypes.string.isRequired,
+  navigatorShape: PropTypes.string.isRequired,
+  isWideScreen: PropTypes.bool.isRequired,
+  setNavigatorShape: PropTypes.func.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    navigatorPosition: state.navigatorPosition,
+    navigatorShape: state.navigatorShape,
+    isWideScreen: state.isWideScreen
+  };
+};
+
+const mapDispatchToProps = {
+  setNavigatorPosition,
+  setNavigatorShape
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(injectSheet(styles)(InfoBox));
+
+
+
+//src/components/InforBox/infoHeader.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import Link from "gatsby-link";
+import IconButton from "@material-ui/core/IconButton";
+
+import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
+
+import avatar from "../../images/jpg/avatar.jpg";
+import config from "../../../content/meta/config";
+
+const styles = theme => ({
+  header: {
+    lineHeight: 1,
+    position: "relative"
+  },
+  avatarLink: {
+    willChange: "left, top",
+    float: "left",
+    display: "block",
+    position: "relative",
+    margin: "0 12px 0 0",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      margin: "0 20px 0 0"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      position: "absolute",
+      top: "10px",
+      left: "50%",
+      marginLeft: "-30px",
+      transition: "all .5s",
+      transitionTimingFunction: "ease",
+      ".navigator-in-transition-from.navigator-is-opened &": {
+        left: "50%"
+      },
+      ".is-aside.open &": {
+        left: "8%",
+        top: "0"
+      }
+    }
+  },
+  avatar: {
+    width: "36px",
+    height: "36px",
+    borderRadius: "65% 75%",
+    border: "1px solid #ddd",
+    transition: "all .3s",
+    transitionTimingFunction: "ease",
+    display: "inline-block",
+    overflow: "hidden",
+    "& img": {
+      maxWidth: "100%"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      width: "44px",
+      height: "44px"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      width: "60px",
+      height: "60px"
+    },
+    "@media (hover: hover)": {
+      "&:hover": {
+        borderRadius: "75% 65%"
+      }
+    }
+  },
+  title: {
+    willChange: "transform, left, top",
+    fontSize: `${theme.info.fonts.boxTitleSize}em`,
+    margin: 0,
+    float: "left",
+    transitionTimingFunction: "ease",
+    "& small": {
+      display: "block",
+      fontSize: ".6em",
+      marginTop: ".3em"
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      fontSize: `${theme.info.fonts.boxTitleSizeM}em`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      fontSize: `${theme.info.fonts.boxTitleSizeL}em`,
+      position: "absolute",
+      top: "85px",
+      textAlign: "center",
+      left: "50%",
+      transform: "translate(-50%)",
+      transition: "all .5s",
+      ".is-aside.open &": {
+        left: "60%",
+        top: `${1.9 - theme.info.fonts.boxTitleSizeL}em`,
+        textAlign: "left"
+      }
+    }
+  },
+  expand: {
+    position: "absolute",
+    top: "30px",
+    right: "-25px",
+    display: "none",
+    color: theme.info.colors.text,
+    ".is-aside.open &": {
+      display: "block"
+    }
+  }
+});
+
+const InfoHeader = props => {
+  const { classes, avatarOnClick, expandOnClick } = props;
+
+  return (
+    <header className={classes.header}>
+      <Link className={classes.avatarLink} onClick={avatarOnClick} to="/" title="back to Home page">
+        <div className={classes.avatar}>
+          <img src={avatar} alt="" />
+        </div>
+      </Link>
+      <h1 className={classes.title}>
+        {config.infoTitle.replace(/ /g, "\u00a0")}
+        <small>{config.infoTitleNote}</small>
+      </h1>
+      <IconButton
+        aria-label="Expand the box"
+        className={classes.expand}
+        onClick={expandOnClick}
+        title="Expand the box"
+      >
+        <ExpandMoreIcon />
+      </IconButton>
+    </header>
+  );
+};
+
+InfoHeader.propTypes = {
+  classes: PropTypes.object.isRequired,
+  avatarOnClick: PropTypes.func.isRequired,
+  expandOnClick: PropTypes.func.isRequired
+};
+
+export default injectSheet(styles)(InfoHeader);
+
+
+//src/components/InforBox/infoMenu.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import Link from "gatsby-link";
+
+const styles = theme => ({
+  infoMenu: {
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    listStyle: "none",
+    margin: 0,
+    width: "100%"
+  },
+  link: {
+    padding: ".5em",
+    fontWeight: 300,
+    textTransform: "lowercase",
+    color: theme.info.colors.menuLink,
+    "&:hover": {
+      color: theme.info.colors.menuLinkHover
+    }
+  }
+});
+
+const InfoMenu = props => {
+  const { classes, pages, linkOnClick } = props;
+
+  return (
+    <nav className={classes.infoMenu}>
+      {pages.map((page, i) => {
+        const { fields, frontmatter } = page.node;
+        return (
+          <Link
+            key={fields.slug}
+            to={fields.slug}
+            onClick={linkOnClick}
+            className={classes.link}
+            data-shape="closed"
+          >
+            {frontmatter.menuTitle ? frontmatter.menuTitle : frontmatter.title}
+          </Link>
+        );
+      })}
+      <Link to="/contact/" onClick={linkOnClick} className={classes.link} data-shape="closed">
+        Contact
+      </Link>
+    </nav>
+  );
+};
+
+InfoMenu.propTypes = {
+  pages: PropTypes.array.isRequired,
+  classes: PropTypes.object.isRequired,
+  linkOnClick: PropTypes.func.isRequired
+};
+
+export default injectSheet(styles)(InfoMenu);
+
+
+//src/components/InforBox/infoText.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+const styles = theme => ({
+  text: {
+    display: "block",
+    fontWeight: 300,
+    lineHeight: 1.5,
+    fontSize: ".95em",
+    textAlign: "left",
+    marginBottom: ".8em",
+    "& p:first-child": {
+      marginTop: 0
+    },
+    "& p:last-child": {
+      marginBottom: 0
+    }
+  }
+});
+
+const InfoText = props => {
+  const { classes, info } = props;
+  const text = info.node.html;
+
+  return <div className={classes.text} dangerouslySetInnerHTML={{ __html: text }} />;
+};
+
+InfoText.propTypes = {
+  classes: PropTypes.object.isRequired,
+  info: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(InfoText);
+
+
+//src/components/InforBox/SocialIcons.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+import config from "../../../content/meta/config";
+
+import GithubIcon from "!svg-react-loader!../../images/svg-icons/github.svg?name=GithubIcon";
+import FacebookIcon from "!svg-react-loader!../../images/svg-icons/facebook.svg?name=FacebookIcon";
+import TwitterIcon from "!svg-react-loader!../../images/svg-icons/twitter.svg?name=TwitterIcon";
+import LinkedinIcon from "!svg-react-loader!../../images/svg-icons/linkedin.svg?name=LinkedinIcon";
+import EmailIcon from "!svg-react-loader!../../images/svg-icons/email.svg?name=EmailIcon";
+// import MediumIcon from "!svg-react-loader!../../images/svg-icons/medium.svg?name=MediumIcon";
+// import QuoraIcon from "!svg-react-loader!../../images/svg-icons/quora.svg?name=QuoraIcon";
+
+const styles = theme => ({
+  social: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap"
+  },
+  svg: {
+    width: "32px",
+    height: "32px",
+    fill: theme.info.colors.socialIcons,
+    transition: "all .5s"
+  },
+
+  // link: {
+  //   display: "inline-block",
+  //   padding: "5px",
+  //   "&:hover": {
+  //     "& svg": {
+  //       fill: theme.info.colors.socialIconsHover
+  //     }
+  //   }
+  // }
+
+  link: {
+    display: "block",
+    padding: "5px",
+    "&[title='github']": {
+      "& svg": {
+        fill: "#966588"
+      }
+    },
+
+    "&[title='twitter']": {
+      "& svg": {
+        fill: "#01acee"
+      }
+    },
+    "&[title='facebook']:hover": {
+      "& svg": {
+        fill: "#3c5898"
+      }
+    },
+    "&[title='linkedin']": {
+      "& svg": {
+        fill: "#a19b9a"
+      }
+    },
+    "&[title='email']": {
+      "& svg": {
+        fill: "#dc4e41"
+      }
+    },
+    "&[title='medium']:hover": {
+      "& svg": {
+        fill: "#000000"
+      }
+    },
+    "&[title='quora']:hover": {
+      "& svg": {
+        fill: "#b92b27"
+      }
+    }
+  }
+});
+
+const Socialcons = props => {
+  const { classes } = props;
+  const items = config.authorSocialLinks;
+  const icons = {
+    twitter: TwitterIcon,
+    facebook: FacebookIcon,
+    github: GithubIcon,
+    email: EmailIcon,
+    // medium: MediumIcon,
+    linkedin: LinkedinIcon
+    // quora: QuoraIcon
+  };
+
+  return (
+    <div className={classes.social}>
+      {items.map(item => {
+        const Icon = icons[item.name];
+        return (
+          <a
+            href={item.url}
+            key={item.name}
+            className={classes.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            title={item.name}
+          >
+            <Icon className={classes.svg} />
+          </a>
+        );
+      })}
+    </div>
+  );
+};
+
+Socialcons.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(Socialcons);
+
+//src/components/InforBox/StackIcons.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+import AlgoliaIcon from "!svg-react-loader!../../images/svg-icons/algolia.svg?name=AlgoliaIcon";
+import ReactIcon from "!svg-react-loader!../../images/svg-icons/react.svg?name=ReactIcon";
+import GraphqlIcon from "!svg-react-loader!../../images/svg-icons/graphql.svg?name=GraphqlIcon";
+import JssIcon from "!svg-react-loader!../../images/svg-icons/jss.svg?name=JssIcon";
+import MaterialUiIcon from "!svg-react-loader!../../images/svg-icons/material-ui.svg?name=MaterialUiIcon";
+import ReduxIcon from "!svg-react-loader!../../images/svg-icons/redux.svg?name=ReduxIcon";
+import GatsbyIcon from "!svg-react-loader!../../images/svg-icons/gatsby.svg?name=GatsbyIcon";
+import WebpackIcon from "!svg-react-loader!../../images/svg-icons/webpack.svg?name=WebpackIcon";
+import BabelIcon from "!svg-react-loader!../../images/svg-icons/babel.svg?name=BabelIcon";
+import NetlifyIcon from "!svg-react-loader!../../images/svg-icons/netlify.svg?name=NetlifyIcon";
+
+const styles = theme => ({
+  stack: {
+    display: "none",
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      display: "block",
+      position: "absolute",
+      left: 0,
+      bottom: 0,
+      width: "100%",
+      padding: "1em 2em"
+    }
+  },
+  box: {
+    display: "flex",
+    justifyContent: "center",
+    flexWrap: "wrap"
+  },
+  link: {
+    display: "inline-block",
+    padding: "8px"
+  },
+  svg: {
+    width: "22px",
+    height: "22px"
+  },
+  header: {
+    textAlign: "center",
+    fontSize: ".85em",
+    letterSpacing: ".3em",
+    width: "100%",
+    margin: "0 0 .8em 0",
+    fontWeight: 300
+  }
+});
+
+const StackIcons = props => {
+  const { classes } = props;
+
+  const items = [
+    { name: "gatsby", url: "https://www.gatsbyjs.org/", comp: GatsbyIcon },
+    { name: "react", url: "https://reactjs.org/", comp: ReactIcon },
+    { name: "graphql", url: "http://graphql.org/", comp: GraphqlIcon },
+    { name: "jss", url: "http://cssinjs.org/", comp: JssIcon },
+    { name: "material-ui", url: "https://material-ui-next.com/", comp: MaterialUiIcon },
+    { name: "redux", url: "https://redux.js.org/", comp: ReduxIcon },
+    { name: "algolia", url: "https://www.algolia.com/", comp: AlgoliaIcon },
+    { name: "webpack", url: "https://webpack.js.org/", comp: WebpackIcon },
+    { name: "babel", url: "https://babeljs.io/", comp: BabelIcon },
+    { name: "netlify", url: "https://www.netlify.com/", comp: NetlifyIcon }
+  ];
+
+  return (
+    <div className={classes.stack}>
+      <h5 className={classes.header}>built with:</h5>
+      <div className={classes.box}>
+        {items.map(item => {
+          const Icon = item.comp;
+          return (
+            <a
+              href={item.url}
+              key={item.name}
+              className={classes.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              title={item.name}
+            >
+              <Icon className={classes.svg} />
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+StackIcons.propTypes = {
+  classes: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(StackIcons);
+

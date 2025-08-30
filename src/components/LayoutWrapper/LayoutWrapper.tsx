@@ -4,11 +4,12 @@
  */
 'use client'
 
-import React, { ReactNode } from 'react'
 import { Box, styled } from '@mui/material'
+import React, { ReactNode } from 'react'
+
+import { useResponsiveDetector } from '@/hooks/useResponsiveDetector'
 import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 import { gatsbyVariables } from '@/theme/gatsby-theme'
-import { useResponsiveDetector } from '@/hooks/useResponsiveDetector'
 
 // Helpers temporairement désactivés pour éviter les boucles
 // const isWideScreen = () => {
@@ -25,16 +26,29 @@ import { useResponsiveDetector } from '@/hooks/useResponsiveDetector'
 // }
 
 const StyledWrapper = styled(Box)(({ theme }) => ({
-  position: 'absolute',
-  top: 0,
-  left: 0,
-  bottom: 0,
-  right: 0,
-  overflow: 'hidden',
   backgroundColor: theme.gatsby?.colors?.background || '#ffffff',
+  bottom: 0,
+  left: 0,
+  overflow: 'hidden',
+  position: 'absolute',
+  right: 0,
+  top: 0,
   
   // Variables CSS Gatsby
   ...gatsbyVariables,
+  
+  '&.closed': {
+    '& .navigator-list': {
+      height: 'var(--navigator-closed-height)'
+    }
+  },
+  
+  '&.is-aside': {
+    '& .navigator': {
+      transform: `translateX(calc(-100% + var(--info-width)))`,
+      width: 'var(--info-width)'
+    }
+  },
   
   // Classes d'état du Navigator (reproduction exacte des CSS Gatsby)
   '&.is-featured': {
@@ -44,10 +58,13 @@ const StyledWrapper = styled(Box)(({ theme }) => ({
     }
   },
   
-  '&.is-aside': {
+  // Nouveau mode 3 colonnes : InfoBox (320px) + Navigator (milieu) + ActionsBar (64px)
+  '&.is-three-columns': {
     '& .navigator': {
-      transform: `translateX(calc(-100% + var(--info-width)))`,
-      width: 'var(--info-width)'
+      left: 'var(--info-width)',
+      right: 'var(--actions-width)',
+      transform: 'translateX(0)',
+      width: 'calc(100% - var(--info-width) - var(--actions-width))'
     }
   },
   
@@ -63,15 +80,9 @@ const StyledWrapper = styled(Box)(({ theme }) => ({
     }
   },
   
-  '&.closed': {
-    '& .navigator-list': {
-      height: 'var(--navigator-closed-height)'
-    }
-  },
-  
   '@media print': {
-    position: 'relative',
-    overflow: 'visible'
+    overflow: 'visible',
+    position: 'relative'
   }
 }))
 
@@ -80,13 +91,15 @@ interface LayoutWrapperProps {
 }
 
 export default function LayoutWrapper({ children }: LayoutWrapperProps) {
-  const { navigatorPosition, navigatorShape } = useGatsbyUIStore()
+  const { navigatorPosition, navigatorShape, setIsWideScreen } = useGatsbyUIStore()
   
-  // Détection responsive isolée (pas connectée au store pour éviter les boucles)
-  const _isWide = useResponsiveDetector()
+  // Détection responsive connectée au store
+  const isWide = useResponsiveDetector()
   
-  // On peut utiliser _isWide ici si nécessaire pour la logique locale
-  // mais on évite de l'envoyer au store automatiquement
+  // Mettre à jour le store quand la taille change
+  React.useEffect(() => {
+    setIsWideScreen(isWide)
+  }, [isWide, setIsWideScreen])
   
   // Classes CSS dynamiques comme dans Gatsby
   const wrapperClasses = [

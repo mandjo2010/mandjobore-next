@@ -4,10 +4,11 @@
  */
 'use client'
 
-import React, { useState } from 'react'
-import { Box, IconButton, Avatar, Typography, styled } from '@mui/material'
 import { ExpandMore, ExpandLess } from '@mui/icons-material'
+import { Box, IconButton, Avatar, Typography, styled } from '@mui/material'
 import { motion, AnimatePresence } from 'framer-motion'
+import React, { useState } from 'react'
+
 import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 
 // Components enfants
@@ -16,54 +17,54 @@ import SocialIcons from './SocialIcons'
 import StackIcons from './StackIcons'
 
 const InfoContainer = styled(Box)(({ theme }) => ({
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  width: '320px',
-  height: '100vh',
   backgroundColor: '#ffffff',
   borderRight: '1px solid #e0e0e0',
-  zIndex: 10,
   display: 'flex',
   flexDirection: 'column',
-  
+  height: '100vh',
+  left: 0,
+  position: 'fixed',
   [theme.breakpoints.down('lg')]: {
     display: 'none'
-  }
+  },
+  top: 0,
+  width: '320px',
+  
+  zIndex: 10
 }))
 
 const AvatarContainer = styled(Box)({
-  padding: '2rem 2rem 1rem 2rem',
+  alignItems: 'center',
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
+  padding: '2rem 2rem 1rem 2rem',
   textAlign: 'center'
 })
 
 const StyledAvatar = styled(Avatar)({
-  width: 80,
-  height: 80,
-  marginBottom: '1rem',
-  cursor: 'pointer',
-  transition: 'all 0.3s ease',
-  borderRadius: '65% 75%',
-  
   '&:hover': {
     borderRadius: '75% 65%',
     transform: 'scale(1.05)'
-  }
+  },
+  borderRadius: '65% 75%',
+  cursor: 'pointer',
+  height: 80,
+  marginBottom: '1rem',
+  transition: 'all 0.3s ease',
+  
+  width: 80
 })
 
 const ExpandButton = styled(IconButton)({
+  color: '#555',
   position: 'absolute',
-  top: '1rem',
   right: '1rem',
-  color: '#555'
+  top: '1rem'
 })
 
 const ContentContainer = styled(Box)({
-  flex: 1,
   display: 'flex',
+  flex: 1,
   flexDirection: 'column',
   overflow: 'hidden'
 })
@@ -74,15 +75,15 @@ const AuthorInfo = styled(motion.div)({
 })
 
 const MenuContainer = styled(Box)({
-  padding: '1rem 2rem',
+  borderBottom: '1px solid #e0e0e0',
   borderTop: '1px solid #e0e0e0',
-  borderBottom: '1px solid #e0e0e0'
+  padding: '1rem 2rem'
 })
 
 const StackContainer = styled(Box)({
-  position: 'absolute',
   bottom: '1rem',
   left: '2rem',
+  position: 'absolute',
   right: '2rem'
 })
 
@@ -104,10 +105,10 @@ export default function InfoBox({ pages = [] }: InfoBoxProps) {
   
   // Configuration de l'auteur
   const authorConfig = {
-    name: 'Mandjo Béa Boré',
-    title: 'Data Analyst & Developer',
+    avatar: '/images/avatar.jpg',
     bio: 'Design and build applications to support data including spatial & geospatial ones.',
-    avatar: '/images/avatar.jpg'
+    name: 'Mandjo Béa Boré',
+    title: 'Data Analyst & Developer'
   }
   
   const handleAvatarClick = () => {
@@ -136,9 +137,9 @@ export default function InfoBox({ pages = [] }: InfoBoxProps) {
         <Typography 
           variant="h6" 
           sx={{ 
-            fontWeight: 600,
             color: '#333',
             fontSize: '1.1rem',
+            fontWeight: 600,
             mb: 0.5
           }}
         >
@@ -161,9 +162,9 @@ export default function InfoBox({ pages = [] }: InfoBoxProps) {
         <AnimatePresence>
           {isExpanded && (
             <AuthorInfo
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.3 }}
             >
               <Typography 
@@ -186,7 +187,7 @@ export default function InfoBox({ pages = [] }: InfoBoxProps) {
         </AnimatePresence>
         
         <MenuContainer>
-          <InfoMenu pages={pages} />
+          <InfoMenu pages={pages} onLinkClick={() => {}} />
         </MenuContainer>
         
         {/* Zone flexible pour le Navigator en mode compact */}

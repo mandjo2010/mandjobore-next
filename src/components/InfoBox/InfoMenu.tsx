@@ -16,88 +16,124 @@
 
 'use client';
 
-import React from 'react';
 import { styled } from '@mui/material/styles';
-import { Box } from '@mui/material';
 import Link from 'next/link';
+import React from 'react';
 
 interface InfoMenuProps {
   pages?: Array<{
-    node: {
-      fields: {
-        slug: string;
-      };
-      frontmatter: {
-        title: string;
-        menuTitle?: string;
-      };
-    };
+    slug: string;
+    title: string;
+    menuTitle?: string;
   }>;
   onLinkClick?: () => void;
 }
 
-// Container du menu de navigation
-const MenuContainer = styled(Box)(({ theme }) => ({
+// Container du menu de navigation - styles exacts du theme original
+const MenuContainer = styled('nav')(({ theme: _theme }) => ({
+  alignItems: 'center',
+  // Reproduction exacte des styles infoMenu du theme original
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
   listStyle: 'none',
   margin: 0,
-  width: '100%',
-  padding: '1em 0',
+  width: '100%'
 }));
 
-// Links du menu avec les styles Gatsby
-const MenuLink = styled(Link)(({ theme }) => ({
-  padding: '.5em',
-  fontWeight: 300,
-  textTransform: 'lowercase',
-  color: theme.info?.colors?.menuLink || '#555',
-  textDecoration: 'none',
-  display: 'block',
-  textAlign: 'center',
-  transition: 'color 0.3s ease',
-  cursor: 'pointer',
-  
-  '&:hover': {
-    color: theme.info?.colors?.menuLinkHover || theme.base?.colors?.accent || '#709425',
-  },
-  
+// Links du menu avec les styles exacts du theme original
+const MenuLink = styled(Link)(({ theme: _theme }) => ({
   // Style pour le lien actif (sera géré par le router plus tard)
   '&.active': {
-    color: theme.info?.colors?.menuLinkHover || theme.base?.colors?.accent || '#709425',
-    fontWeight: 400,
+    color: 'var(--c-accent)',
+    fontWeight: 400
   },
+  '&:hover': {
+    color: 'var(--c-accent)' // theme.info.colors.menuLinkHover
+  },
+  color: 'var(--c-subtitle)', // theme.info.colors.menuLink
+  cursor: 'pointer',
+  display: 'block',
+  fontWeight: 300,
+  // Reproduction exacte des styles link du theme original
+  padding: '.3em', // Réduit de .5em à .3em pour moins d'espacement
+  textAlign: 'center',
+  textDecoration: 'none',
+  
+  textTransform: 'lowercase',
+  
+  transition: 'color 0.3s ease'
 }));
 
-const InfoMenu: React.FC<InfoMenuProps> = ({ pages = [], onLinkClick }) => {
-  const handleLinkClick = (e: React.MouseEvent) => {
+const InfoMenu: React.FC<InfoMenuProps> = ({ onLinkClick, pages = [] }) => {
+  const handleLinkClick = (_e?: React.MouseEvent) => {
     if (onLinkClick) {
       onLinkClick();
     }
     // Ne pas prévenir le comportement par défaut pour permettre la navigation
   };
-  
+
   return (
-    <MenuContainer component="nav">
-      {/* Rendu des pages dynamiques */}
-      {pages.map((page, i) => {
-        const { fields, frontmatter } = page.node;
-        const linkTitle = frontmatter.menuTitle || frontmatter.title;
-        
-        return (
+    <MenuContainer>
+      {/* Menu ordonné - utilise les pages dynamiques si disponibles, sinon menu fixe */}
+      {pages.length > 0 ? (
+        // Tri et affichage des pages dynamiques dans l'ordre voulu
+        pages
+          .sort((a, b) => {
+            // Ordre souhaité basé sur les slugs
+            const order = ['/about', '/cartography', '/projects', '/services'];
+            const indexA = order.indexOf(a.slug);
+            const indexB = order.indexOf(b.slug);
+            return (indexA === -1 ? 999 : indexA) - (indexB === -1 ? 999 : indexB);
+          })
+          .map((page) => {
+            const linkTitle = page.menuTitle || page.title;
+            
+            return (
+              <MenuLink
+                key={page.slug}
+                href={page.slug}
+                onClick={handleLinkClick}
+                data-shape="closed"
+              >
+                {linkTitle}
+              </MenuLink>
+            );
+          })
+      ) : (
+        // Menu statique par défaut si pas de pages
+        <>
           <MenuLink
-            key={fields.slug}
-            href={fields.slug}
+            href="/about"
             onClick={handleLinkClick}
             data-shape="closed"
           >
-            {linkTitle}
+            About
           </MenuLink>
-        );
-      })}
+          <MenuLink
+            href="/cartography"
+            onClick={handleLinkClick}
+            data-shape="closed"
+          >
+            Cartography
+          </MenuLink>
+          <MenuLink
+            href="/projects"
+            onClick={handleLinkClick}
+            data-shape="closed"
+          >
+            Projects
+          </MenuLink>
+          <MenuLink
+            href="/services"
+            onClick={handleLinkClick}
+            data-shape="closed"
+          >
+            Services
+          </MenuLink>
+        </>
+      )}
       
-      {/* Lien Contact statique (comme dans l'ancien code) */}
+      {/* Lien Contact statique (toujours affiché) */}
       <MenuLink
         href="/contact/"
         onClick={handleLinkClick}
@@ -105,42 +141,10 @@ const InfoMenu: React.FC<InfoMenuProps> = ({ pages = [], onLinkClick }) => {
       >
         Contact
       </MenuLink>
-      
-      {/* Menu statique par défaut si pas de pages */}
-      {pages.length === 0 && (
-        <>
-          <MenuLink
-            href="/about"
-            onClick={handleLinkClick}
-            data-shape="closed"
-          >
-            about
-          </MenuLink>
-          <MenuLink
-            href="/cartography"
-            onClick={handleLinkClick}
-            data-shape="closed"
-          >
-            cartography
-          </MenuLink>
-          <MenuLink
-            href="/portfolio"
-            onClick={handleLinkClick}
-            data-shape="closed"
-          >
-            portfolio
-          </MenuLink>
-          <MenuLink
-            href="/contact"
-            onClick={handleLinkClick}
-            data-shape="closed"
-          >
-            contact
-          </MenuLink>
-        </>
-      )}
+
+      {/* Menu statique par défaut si pas de pages - supprimé car redondant */}
     </MenuContainer>
   );
 };
 
-export default InfoMenu; 
+export default InfoMenu;

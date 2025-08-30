@@ -16,17 +16,17 @@
 
 'use client';
 
-import React from 'react';
-import { styled } from '@mui/material/styles';
-import { Box, IconButton, Typography } from '@mui/material';
-import Link from 'next/link';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Box, IconButton } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Link from 'next/link';
+import React from 'react';
 
 // Configuration temporaire (sera remplacée par des vraies données)
 const CONFIG = {
+  authorName: 'Mandjo Béa Boré',
   infoTitle: 'Mandjo Béa Boré',
   infoTitleNote: 'Data analyst - Developer',
-  authorName: 'Mandjo Béa Boré',
 };
 
 interface InfoHeaderProps {
@@ -46,124 +46,124 @@ const HeaderContainer = styled(Box)({
 
 // Link wrapper pour l'avatar
 const AvatarLink = styled(Link)(({ theme }) => ({
-  willChange: 'left, top',
-  float: 'left',
   display: 'block',
-  position: 'relative',
+  float: 'left',
   margin: '0 12px 0 0',
+  position: 'relative',
+  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
+    '.is-aside.open &': {
+      left: '8%',
+      top: '0',
+    },
+    '.navigator-in-transition-from.navigator-is-opened &': {
+      left: '50%',
+    },
+    left: '50%',
+    marginLeft: '-30px',
+    position: 'absolute',
+    top: '10px',
+    
+    transition: 'all .5s',
+    transitionTimingFunction: 'ease',
+  },
   
   [theme.breakpoints?.up('md') || '@media (min-width: 600px)']: {
     margin: '0 20px 0 0',
   },
   
-  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
-    position: 'absolute',
-    top: '10px',
-    left: '50%',
-    marginLeft: '-30px',
-    transition: 'all .5s',
-    transitionTimingFunction: 'ease',
-    
-    '.navigator-in-transition-from.navigator-is-opened &': {
-      left: '50%',
-    },
-    '.is-aside.open &': {
-      left: '8%',
-      top: '0',
-    },
-  },
+  willChange: 'left, top',
 }));
 
 // Avatar avec les effets de transition
 const Avatar = styled(Box)(({ theme }) => ({
-  width: '36px',
-  height: '36px',
-  borderRadius: '65% 75%',
-  border: '1px solid #ddd',
-  transition: 'all .3s',
-  transitionTimingFunction: 'ease',
-  display: 'inline-block',
-  overflow: 'hidden',
-  
   '& img': {
-    maxWidth: '100%',
-    width: '100%',
     height: '100%',
+    maxWidth: '100%',
     objectFit: 'cover',
+    width: '100%',
   },
-  
-  [theme.breakpoints?.up('md') || '@media (min-width: 600px)']: {
-    width: '44px',
-    height: '44px',
-  },
-  
-  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
-    width: '60px',
-    height: '60px',
-  },
-  
   // Hover effect
   '@media (hover: hover)': {
     '&:hover': {
       borderRadius: '75% 65%',
     },
   },
+  border: '1px solid #ddd',
+  borderRadius: '65% 75%',
+  display: 'inline-block',
+  height: '36px',
+  overflow: 'hidden',
+  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
+    height: '60px',
+    width: '60px',
+  },
+  
+  [theme.breakpoints?.up('md') || '@media (min-width: 600px)']: {
+    height: '44px',
+    width: '44px',
+  },
+  
+  transition: 'all .3s',
+  
+  transitionTimingFunction: 'ease',
+  
+  width: '36px',
 }));
 
 // Titre avec transitions complexes
-const Title = styled(Typography)(({ theme }) => ({
-  willChange: 'transform, left, top',
-  fontSize: `${theme.info?.fonts?.boxTitleSize || 1.3}em`,
-  margin: 0,
-  float: 'left',
-  transitionTimingFunction: 'ease',
-  fontWeight: 600,
-  color: theme.info?.colors?.text || '#555',
-  
+const Title = styled('h1')(({ theme }) => ({
   '& small': {
+    color: theme.info?.colors?.text || '#555',
     display: 'block',
     fontSize: '.6em',
-    marginTop: '.3em',
     fontWeight: 300,
-    color: theme.info?.colors?.text || '#555',
+    marginTop: '.3em',
+  },
+  color: theme.info?.colors?.text || '#555',
+  float: 'left',
+  fontSize: `${theme.info?.fonts?.boxTitleSize || 1.3}em`,
+  fontWeight: 600,
+  margin: 0,
+  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
+    '.is-aside.open &': {
+      left: '60%',
+      textAlign: 'left',
+      top: `${1.9 - (theme.info?.fonts?.boxTitleSizeL || 1.7)}em`,
+    },
+    fontSize: `${theme.info?.fonts?.boxTitleSizeL || 1.7}em`,
+    left: '50%',
+    position: 'absolute',
+    textAlign: 'center',
+    top: '85px',
+    transform: 'translate(-50%)',
+    
+    transition: 'all .5s',
   },
   
   [theme.breakpoints?.up('md') || '@media (min-width: 600px)']: {
     fontSize: `${theme.info?.fonts?.boxTitleSizeM || 1.5}em`,
   },
   
-  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
-    fontSize: `${theme.info?.fonts?.boxTitleSizeL || 1.7}em`,
-    position: 'absolute',
-    top: '85px',
-    textAlign: 'center',
-    left: '50%',
-    transform: 'translate(-50%)',
-    transition: 'all .5s',
-    
-    '.is-aside.open &': {
-      left: '60%',
-      top: `${1.9 - (theme.info?.fonts?.boxTitleSizeL || 1.7)}em`,
-      textAlign: 'left',
-    },
-  },
+  transitionTimingFunction: 'ease',
+  
+  willChange: 'transform, left, top',
 }));
 
 // Bouton d'expansion
 const ExpandButton = styled(IconButton)(({ theme }) => ({
-  position: 'absolute',
-  top: '30px',
-  right: '-25px',
-  display: 'none',
-  color: theme.info?.colors?.text || '#555',
-  
   '.is-aside.open &': {
     display: 'block',
   },
+  color: theme.info?.colors?.text || '#555',
+  display: 'none',
+  position: 'absolute',
+  right: '-25px',
+  
+  top: '30px',
 }));
 
 const InfoHeader: React.FC<InfoHeaderProps> = ({ 
-  info,
+  info: _info, // TODO: Use for displaying author info
   onAvatarClick,
   onExpandClick 
 }) => {
@@ -181,7 +181,7 @@ const InfoHeader: React.FC<InfoHeaderProps> = ({
   };
   
   return (
-    <HeaderContainer component="header">
+    <HeaderContainer>
       {/* Avatar avec link vers la home */}
       <AvatarLink 
         href="/" 
@@ -202,7 +202,7 @@ const InfoHeader: React.FC<InfoHeaderProps> = ({
       </AvatarLink>
       
       {/* Titre avec nom et description */}
-      <Title component="h1">
+      <Title>
         {CONFIG.infoTitle.replace(/ /g, '\u00a0')}
         <small>{CONFIG.infoTitleNote}</small>
       </Title>

@@ -1,11 +1,12 @@
-import { Github, Linkedin, Facebook, Twitter } from 'lucide-react'
 import { useMediaQuery, useTheme } from '@mui/material'
+import { Github, Linkedin, Facebook, Twitter } from 'lucide-react'
 import Image from 'next/image'
 
-import styles from './ProfileSidebar.module.css'
 import animations from '@/styles/AdvancedAnimations.module.css'
-import OrganicProfileBar from './OrganicProfileBar'
+
 import InfoMenu from './InfoMenu'
+import OrganicProfileBar from './OrganicProfileBar'
+import styles from './ProfileSidebar.module.css'
 
 interface ProfileSidebarProps {
   isHorizontal?: boolean
@@ -51,10 +52,10 @@ export default function ProfileSidebar({ isHorizontal }: ProfileSidebarProps) {
           <a href="https://github.com/mandjobore" aria-label="GitHub" target="_blank" rel="noreferrer" className={animations.interactiveElement}>
             <Github size={20} />
           </a>
-          <a href="https://linkedin.com/in/mandjobore" aria-label="LinkedIn" target="_blank" rel="noreferrer" className={animations.interactiveElement}>
+          <a href="https://fr.linkedin.com/in/mandjobb" aria-label="LinkedIn" target="_blank" rel="noreferrer" className={animations.interactiveElement}>
             <Linkedin size={20} />
           </a>
-          <a href="https://facebook.com/mandjobore" aria-label="Facebook" target="_blank" rel="noreferrer" className={animations.interactiveElement}>
+          <a href="https://www.instagram.com/mandjo_bb/" aria-label="Facebook" target="_blank" rel="noreferrer" className={animations.interactiveElement}>
             <Facebook size={20} />
           </a>
           <a href="https://twitter.com/mandjobore" aria-label="X (Twitter)" target="_blank" rel="noreferrer" className={animations.interactiveElement}>

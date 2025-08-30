@@ -25,7 +25,7 @@ interface HomeProps {
 	}>;
 }
 
-export default function Home({ posts, pages, parts }: HomeProps) {
+export default function Home({ pages, parts, posts }: HomeProps) {
 	return (
 		<>
 			<Head>
@@ -38,8 +38,8 @@ export default function Home({ posts, pages, parts }: HomeProps) {
 				pages={pages}
 				parts={parts}
 				seo={{
-					title: 'Mandjo Béa Boré - Data Analyst & Developer',
 					description: 'Design and build applications to support data including spatial & geospatial ones.',
+					title: 'Mandjo Béa Boré - Data Analyst & Developer',
 					url: 'https://mandjobore.com',
 				}}
 			/>
@@ -52,27 +52,37 @@ export const getStaticProps: GetStaticProps<HomeProps> = async () => {
 	const allPages = getAll('pages')
 	
 	const posts = allPosts.map(post => ({
-		slug: post.slug,
-		title: post.data?.title || '',
-		excerpt: post.content?.substring(0, 100) + '...' || '',
 		category: post.data?.category || null,
 		cover: post.data?.cover || null,
 		date: post.data?.date || '',
+		excerpt: post.data?.excerpt || post.content?.substring(0, 100) + '...' || '',
+		slug: post.slug,
+		title: post.data?.title || '',
 	}))
 	
-	const pages = allPages.map(page => ({
-		slug: page.slug,
-		title: page.data?.title || '',
-		menuTitle: page.data?.menuTitle || page.data?.title || '',
-	}))
+	const pages = allPages.map(page => {
+		// Mapper les slugs des dossiers vers les URLs correctes
+		let slug = page.slug;
+		if (slug === '1--about') slug = '/about';
+		else if (slug === '2--cartography') slug = '/cartography';
+		else if (slug === '4--projects') slug = '/projects';
+		else if (slug === '5--services') slug = '/services';
+		else if (!slug.startsWith('/')) slug = `/${slug}`;
+		
+		return {
+			menuTitle: page.data?.menuTitle || page.data?.title || '',
+			slug,
+			title: page.data?.title || '',
+		};
+	})
 	
 	const parts: Array<{ title: string; html: string }> = []
 	
 	return {
 		props: {
-			posts,
 			pages,
 			parts,
+			posts,
 		},
 	}
 }

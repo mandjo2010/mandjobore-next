@@ -1,30 +1,67 @@
 /**
- * InfoBox - Sidebar gauche reproduisant le design Gatsby original
- * Simplifié pour être pixel-perfect avec l'original
+ * InfoBox - Sidebar reproduisant fidèlement le design Gatsby original
+ * Basé sur src/components/InfoBox/InfoBox.js du starter de Greg Lobinski
+ * Structure exacte : InfoHeader + wrapper(InfoText + SocialIcons + InfoMenu + StackIcons)
+ * Nouveauté : Basculement entre contenu auteur et liste des posts (Expand box/list)
  */
 'use client'
 
-import { ExpandMore, ExpandLess } from '@mui/icons-material'
+import { ExpandMore } from '@mui/icons-material'
 import { Box, Typography, IconButton, Avatar } from '@mui/material'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React from 'react'
-import { FaGithub, FaLinkedin, FaTwitter, FaEnvelope } from 'react-icons/fa'
+import { 
+  FaGithub, 
+  FaLinkedin, 
+  FaEnvelope,
+  FaReact,
+  FaPython,
+  FaFacebook,
+  FaInstagram
+} from 'react-icons/fa'
+import { FaXTwitter } from 'react-icons/fa6'
+import { 
+  SiNextdotjs,
+  SiTypescript,
+  SiMui,
+  SiPostgresql,
+  SiQgis,
+  SiRedux
+} from 'react-icons/si'
 
 import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 
-// Configuration de l'auteur - comme dans Gatsby
+import InfoMenu from './InfoMenu'
+import PostsList from './PostsList'
+
+// Configuration de l'auteur - comme dans Gatsby config
 const author = {
   avatar: '/images/jpg/avatar.jpg',
   bio: 'Design and build applications to support data including spatial & geospatial ones.',
   name: 'Mandjo Béa Boré',
   social: {
     email: 'mailto:contact@mandjobore.com',
+    facebook: 'https://www.instagram.com/mandjo_bb/', // Nouveau Facebook
     github: 'https://github.com/mandjo2010',
-    linkedin: 'https://linkedin.com/in/mandjobore',
-    twitter: 'https://twitter.com/mandjobore'
+    instagram: 'https://www.instagram.com/mandjo_bb/', // Nouveau Instagram
+    linkedin: 'https://fr.linkedin.com/in/mandjobb',
+    x: 'https://x.com/mandjobore' // Nouveau X (ex-Twitter)
   },
   tagline: 'Data Analyst & Developer'
 }
+
+// Tech stack avec icônes comme dans le original
+const techStack = [
+  { color: '#000000', icon: SiNextdotjs, name: 'Next.js', url: 'https://nextjs.org/' },
+  { color: '#61DAFB', icon: FaReact, name: 'React', url: 'https://reactjs.org/' },
+  { color: '#3178C6', icon: SiTypescript, name: 'TypeScript', url: 'https://www.typescriptlang.org/' },
+  { color: '#007FFF', icon: SiMui, name: 'MUI', url: 'https://mui.com/' },
+  { color: '#FF6B35', icon: SiRedux, name: 'Zustand', url: 'https://github.com/pmndrs/zustand' },
+  { color: '#3776AB', icon: FaPython, name: 'Python', url: 'https://www.python.org/' },
+  { color: '#336791', icon: SiPostgresql, name: 'PostGIS', url: 'https://postgis.net/' },
+  { color: '#589632', icon: SiQgis, name: 'QGIS', url: 'https://qgis.org/' }
+]
 
 interface Page {
   slug: string
@@ -37,362 +74,612 @@ interface Part {
   html: string
 }
 
-interface InfoBoxProps {
-  pages: Page[]
-  parts: Part[]  
+interface Post {
+  id: string
+  slug: string
+  title: string
+  subtitle?: string
+  excerpt?: string
+  cover?: string
+  date: string
+  category?: string
 }
 
-export default function InfoBox({ pages, parts: _parts }: InfoBoxProps) {
-  // Connection au store pour les états globaux
-  const { isInfoBoxExpanded, navigatorPosition, setInfoBoxExpanded } = useGatsbyUIStore()
+interface InfoBoxProps {
+  pages: Page[]
+  parts: Part[]
+  posts?: Post[] // Ajout pour la liste des posts dans la sidebar
+}
+
+export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxProps) {
+  const router = useRouter()
+  const isHomePage = router.pathname === '/'
   
-  // Détermine si l'InfoBox doit être réduite (quand un article est ouvert)
-  const isInfoBoxCollapsed = navigatorPosition === 'is-featured'
+  // États du store Gatsby
+  const { 
+    featureNavigator, 
+    moveNavigatorAside, 
+    navigatorPosition,
+    navigatorShape,
+    setNavigatorShape,
+    setShowPostsList,
+    showPostsList
+  } = useGatsbyUIStore()
+  
+  // Actions du composant original
+  const expandOnClick = () => {
+    setNavigatorShape('closed') // Reproduit exactement l'action du original
+  }
+
+  // Action pour basculer vers la liste des posts (bouton "Expand the list")
+  const expandListOnClick = () => {
+    setShowPostsList(true) // Affiche la liste des posts dans la sidebar
+  }
+
+  // Action pour revenir au contenu auteur (bouton "Expand the box")
+  const expandBoxOnClick = () => {
+    setShowPostsList(false) // Cache la liste des posts
+  }
+  
+  const menuLinkOnClick = () => {
+    moveNavigatorAside() // Navigation vers pages
+  }
+
+  const avatarOnClick = () => {
+    featureNavigator() // Retour à l'accueil
+  }
 
   return (
     <Box
+      component="aside"
+      className={`${navigatorPosition} ${navigatorShape}`}
       sx={{
-        // Caché sur mobile comme dans Gatsby
-        '@media (max-width: 1023px)': {
-          display: 'none'
+        '@media (min-width: 1024px)': {
+          // Border right comme dans le original avec theme.base.colors.lines
+          '&::after': {
+            borderRight: '1px solid #e0e0e0', // Couleur exacte du thème Gatsby (--base-lines)
+            bottom: 'var(--lines-margin)',
+            content: '""',
+            position: 'absolute',
+            right: 0,
+            top: 'var(--lines-margin)', // theme.base.sizes.linesMargin
+            width: '1px'
+          },
+          background: 'var(--c-background)', // theme.info.colors.background
+          color: 'var(--c-text)', // theme.info.colors.text
+          display: 'block',
+          height: '100%',
+          left: 0,
+          padding: '20px 40px',
+          position: 'absolute',
+          top: 0,
+          
+          width: 'var(--layout-infobox-width)' // theme.info.sizes.width = 300px
         },
-        backgroundColor: '#ffffff',
-        borderRight: '1px solid #eeeeee',
-        display: 'flex',
-        flexDirection: 'column',
-        height: '100vh',
-        left: 0,
-        position: 'fixed',
-        top: 0,
-        transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)', // Animation fluide
-        width: isInfoBoxCollapsed ? '80px' : '320px', // Largeur réduite quand collapsée
         
-        zIndex: 1
+        // Style de base du container infoBox (reproduction exacte du theme Gatsby)
+        display: 'none'
       }}
     >
-      {/* Section Avatar avec flèche d'expansion */}
+      {/* InfoHeader - Avatar, Nom et bouton "Expand the box" */}
       <Box
+        component="header"
         sx={{
-          borderBottom: '1px solid #eeeeee',
-          padding: '40px 40px 30px 40px',
-          position: 'relative',
-          textAlign: 'center'
+          lineHeight: 1,
+          position: 'relative'
         }}
       >
-        {/* Container de l'avatar avec positionnement relatif */}
-        <Box sx={{ display: 'inline-block', position: 'relative' }}>
+        {/* Avatar avec lien vers accueil - styles exacts InfoHeader */}
+        <Box
+          component={Link}
+          href="/" 
+          onClick={avatarOnClick}
+          title="back to Home page"
+          sx={{
+            '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
+              margin: '0 20px 0 0'
+            },
+            '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+              // Position selon l'état du navigator (.is-aside.open &)
+              '.is-aside.open &': {
+                left: '8%',
+                top: '0'
+              },
+              // Styles pour .navigator-in-transition-from.navigator-is-opened
+              '.navigator-in-transition-from.navigator-is-opened &': {
+                left: '50%'
+              },
+              left: '50%',
+              marginLeft: '-30px',
+              position: 'absolute',
+              
+              top: '10px',
+              
+              transition: 'all 0.5s ease'
+            },
+            display: 'block',
+            float: 'left',
+            margin: '0 12px 0 0',
+            position: 'relative',
+            
+            textDecoration: 'none',
+            
+            // Reproduction exacte des styles avatarLink du theme original
+            willChange: 'left, top'
+          }}
+        >
           <Avatar
             src={author.avatar}
             alt={author.name}
             sx={{
-              border: '2px solid #eeeeee',
-              height: isInfoBoxCollapsed ? 48 : 80,
-              margin: isInfoBoxCollapsed ? '0 auto 10px auto' : '0 auto 20px auto',
-              transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-              width: isInfoBoxCollapsed ? 48 : 80 // Avatar plus petit quand collapsé
+              '& img': {
+                maxWidth: '100%'
+              },
+              // Hover effect exact de l'original
+              '@media (hover: hover)': {
+                '&:hover': {
+                  borderRadius: '75% 65%'
+                }
+              },
+              '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
+                height: '44px',
+                width: '44px'
+              },
+              '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+                height: '60px',
+                width: '60px'
+              },
+              border: '1px solid #ddd',
+              borderRadius: '65% 75%',
+              display: 'inline-block',
+              
+              height: '36px',
+              
+              overflow: 'hidden',
+              
+              transition: 'all 0.3s ease',
+              
+              // Reproduction exacte des styles avatar du theme original
+              width: '36px'
             }}
           />
-          
-          {/* Flèche d'expansion principale - visible uniquement quand pas collapsé */}
-          {!isInfoBoxCollapsed && (
-            <IconButton            onClick={() => setInfoBoxExpanded(!isInfoBoxExpanded)}
-            sx={{
-              '&:hover': {
-                backgroundColor: '#f5f5f5',
-                borderColor: '#999999'
-              },
-              backgroundColor: '#ffffff',
-              border: '1px solid #ddd',
-              borderRadius: '50%',
-              color: '#666666',
-              fontSize: '10px',
-              height: '20px',
-              padding: 0,
-              position: 'absolute',
-              right: '-8px',
-              top: '-8px',
-              width: '20px',
-              zIndex: 2
-            }}
-            title={isInfoBoxExpanded ? "Collapse the box" : "Expand the box"}
-          >
-            {isInfoBoxExpanded ? <ExpandLess /> : <ExpandMore />}
-            </IconButton>
-          )}
         </Box>
 
-        {/* Informations de base - cachées quand collapsé */}
-        {!isInfoBoxCollapsed && (
-          <>
-            <Typography
-              variant="h6"
-              sx={{
-                color: '#333333',
-                fontFamily: '"Open Sans", Arial, sans-serif',
-                fontSize: '1.2rem',
-                fontWeight: 600,
-                marginBottom: '6px'
-              }}
-            >
-              {author.name}
-            </Typography>
-            <Typography
-              sx={{
-                color: '#888888',
-                fontFamily: '"Open Sans", Arial, sans-serif',
-                fontSize: '0.9rem'
-              }}
-            >
-              {author.tagline}
-            </Typography>
-          </>
-        )}
-      </Box>
-
-      {/* Contenu complet - caché quand InfoBox est collapsée */}
-      {!isInfoBoxCollapsed && isInfoBoxExpanded && (
-        <>
-          {/* Section Bio */}
-          <Box
-            sx={{
-              borderBottom: '1px solid #eeeeee',
-              padding: '30px 40px'
-            }}
-          >
-            <Typography
-              sx={{
-                color: '#555555',
-                fontFamily: '"Open Sans", Arial, sans-serif',
-                fontSize: '0.85rem',
-                lineHeight: '1.5'
-              }}
-            >
-              {author.bio}
-            </Typography>
-          </Box>
-
-      {/* Section Menu */}
-      <Box
-        sx={{
-          borderBottom: '1px solid #eeeeee',
-          padding: '30px 40px'
-        }}
-      >
+        {/* Titre avec nom et tagline - styles exacts du theme original */}
         <Typography
-          variant="h6"
+          component="h1"
           sx={{
-            color: '#333333',
-            fontFamily: '"Open Sans", Arial, sans-serif',
-            fontSize: '0.9rem',
-            fontWeight: 600,
-            marginBottom: '15px'
+            '& small': {
+              display: 'block',
+              fontSize: '0.6em',
+              marginTop: '0.3em'
+            },
+            '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
+              fontSize: '1.2em' // theme.info.fonts.boxTitleSizeM
+            },
+            '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+              // Position selon l'état du navigator (.is-aside.open &)
+              '.is-aside.open &': {
+                left: '60%',
+                textAlign: 'left',
+                top: '0.5em', // Calcul: 1.9 - theme.info.fonts.boxTitleSizeL
+                transform: 'none'
+              },
+              fontSize: '1.3em', // theme.info.fonts.boxTitleSizeL
+              left: '50%',
+              position: 'absolute',
+              textAlign: 'center',
+              top: '85px',
+              transform: 'translate(-50%)',
+              
+              transition: 'all 0.5s ease'
+            },
+            float: 'left',
+            fontSize: '1.1em', // theme.info.fonts.boxTitleSize
+            
+            margin: 0,
+            
+            transition: 'all 0.5s ease',
+            
+            // Reproduction exacte des styles title du theme original
+            willChange: 'transform, left, top'
           }}
         >
-          Menu
+          {author.name.replace(/ /g, '\u00a0')} {/* Non-breaking spaces comme l'original */}
+          <small>{author.tagline}</small>
         </Typography>
-        
-        {/* Navigation Pages */}
-        {pages.map((page) => (
-          <Link
-            key={page.slug}
-            href={`/pages/${page.slug}`}
-            style={{ textDecoration: 'none' }}
-          >
+
+        {/* Bouton "Expand the box" - styles exacts du theme original */}
+        <IconButton
+          aria-label="Expand the box"
+          onClick={expandOnClick}
+          title="Expand the box"
+          sx={{
+            // Visible uniquement quand .is-aside.open (mode article)
+            '.is-aside.open &': {
+              display: 'block'
+            },
+            color: 'var(--c-text)', // theme.info.colors.text
+            display: 'none',
+            // Reproduction exacte des styles expand du theme original
+            position: 'absolute',
+            right: '-25px',
+            
+            top: '30px'
+          }}
+        >
+          <ExpandMore />
+        </IconButton>
+      </Box>
+
+      {/* Wrapper du contenu avec transitions exactes du original */}
+      <Box
+        className="info-box-wrapper"
+        sx={{
+          '&::-webkit-scrollbar': {
+            background: 'transparent',
+            display: 'none',
+            height: 0,
+            width: 0
+          },
+          // Animations selon navigatorShape (comme dans l'original Gatsby)
+          '.is-aside.closed &': {
+            bottom: '80px' // theme.navigator.sizes.closedHeight
+          },
+          '.moving-featured &': {
+            bottom: 0
+          },
+          bottom: 0,
+          left: 0,
+          msOverflowStyle: 'none',
+          opacity: 1,
+          overflowX: 'hidden',
+          overflowY: 'auto',
+          padding: '0 40px 0',
+          // Reproduction exacte des styles wrapper du theme original
+          position: 'absolute',
+          
+          // Masquage complet de la barre de défilement comme Gatsby original
+          scrollbarWidth: 'none',
+          top: '140px', // theme.info.sizes.headerHeight
+          transition: 'bottom 0.5s ease',
+          
+          width: '100%',
+          
+          willChange: 'opacity, bottom'
+        }}
+      >
+        {/* Affichage conditionnel : Info auteur OU Liste des posts */}
+        {/* Reproduit exactement la logique Gatsby : toujours afficher le contenu auteur par défaut */}
+        {/* La liste des posts s'affiche seulement quand showPostsList est true */}
+        {!showPostsList ? (
+          // Contenu auteur (original InfoBox)
+          <>
+            {/* InfoText - Bio de l'auteur avec styles exacts */}
             <Box
               sx={{
-                '&:hover': {
-                  '& .page-title': {
-                    color: '#709425'
-                  }
+                '& p:first-child': {
+                  marginTop: 0
                 },
-                padding: '8px 0'
+                '& p:last-child': {
+                  marginBottom: 0
+                },
+                // Reproduction exacte des styles text du theme original
+                display: 'block',
+                fontSize: '0.95em',
+                fontWeight: 300,
+                lineHeight: 1.5,
+                
+                marginBottom: '0.8em',
+                textAlign: 'left'
               }}
             >
               <Typography
-                className="page-title"
                 sx={{
                   color: '#555555',
-                  fontFamily: '"Open Sans", Arial, sans-serif',
-                  fontSize: '0.85rem',
-                  transition: 'color 0.2s ease'
+                  fontSize: '0.95em',
+                  fontWeight: 300,
+                  lineHeight: 1.5
                 }}
               >
-                {page.menuTitle || page.title}
+                {author.bio}
               </Typography>
             </Box>
-          </Link>
-        ))}
-      </Box>
 
-      {/* Section Réseaux Sociaux */}
-      <Box
-        sx={{
-          borderBottom: '1px solid #eeeeee',
-          padding: '30px 40px'
-        }}
-      >
-        <Box
-          sx={{
-            alignItems: 'center',
-            display: 'flex',
-            justifyContent: 'space-between',
-            marginBottom: '15px'
-          }}
-        >
-          <Typography
-            variant="h6"
+            {/* SocialIcons - Réseaux sociaux avec couleurs exactes du theme */}
+            <Box
+              sx={{
+                // Reproduction exacte des styles social du theme original
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: '0.5em', // Espacement léger entre les icônes
+                justifyContent: 'center',
+                marginBottom: '2em'
+              }}
+            >
+              <Link href={author.social.github} target="_blank" rel="noopener noreferrer">
+                <IconButton
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none !important' // Pas d'ombre au survol
+                    },
+                    '&:hover svg': {
+                      color: '#709425' // Vert foncé comme les liens d'articles
+                    },
+                    boxShadow: 'none !important', // Suppression de l'ombre
+                    color: '#966588', // Couleur exacte du theme original pour github
+                    display: 'block',
+                    padding: '5px'
+                  }}
+                  title="github"
+                >
+                  <FaGithub size={18} />
+                </IconButton>
+              </Link>
+              <Link href={author.social.linkedin} target="_blank" rel="noopener noreferrer">
+                <IconButton
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none !important' // Pas d'ombre au survol
+                    },
+                    '&:hover svg': {
+                      color: '#005885' // Bleu LinkedIn plus foncé pour le hover (cohérent)
+                    },
+                    boxShadow: 'none !important', // Suppression de l'ombre
+                    color: '#0077B5', // Bleu LinkedIn officiel (cohérent avec SocialIcons.tsx)
+                    display: 'block',
+                    padding: '5px'
+                  }}
+                  title="linkedin"
+                >
+                  <FaLinkedin size={18} />
+                </IconButton>
+              </Link>
+              <Link href={author.social.x} target="_blank" rel="noopener noreferrer">
+                <IconButton
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none !important' // Pas d'ombre au survol
+                    },
+                    '&:hover svg': {
+                      color: '#709425' // Vert foncé comme les liens d'articles
+                    },
+                    boxShadow: 'none !important', // Suppression de l'ombre
+                    color: '#000000', // Couleur noire pour X (nouveau logo)
+                    display: 'block',
+                    padding: '5px'
+                  }}
+                  title="x"
+                >
+                  <FaXTwitter size={18} />
+                </IconButton>
+              </Link>
+              <Link href={author.social.facebook} target="_blank" rel="noopener noreferrer">
+                <IconButton
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none !important' // Pas d'ombre au survol
+                    },
+                    '&:hover svg': {
+                      color: '#709425' // Vert foncé comme les liens d'articles
+                    },
+                    boxShadow: 'none !important', // Suppression de l'ombre
+                    color: '#3c5898', // Couleur exacte du theme original pour facebook
+                    display: 'block',
+                    padding: '5px'
+                  }}
+                  title="facebook"
+                >
+                  <FaFacebook size={18} />
+                </IconButton>
+              </Link>
+              <Link href={author.social.instagram} target="_blank" rel="noopener noreferrer">
+                <IconButton
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none !important' // Pas d'ombre au survol
+                    },
+                    '&:hover svg': {
+                      color: '#709425' // Vert foncé comme les liens d'articles
+                    },
+                    boxShadow: 'none !important', // Suppression de l'ombre
+                    color: '#E4405F', // Couleur officielle Instagram
+                    display: 'block',
+                    padding: '5px'
+                  }}
+                  title="instagram"
+                >
+                  <FaInstagram size={18} />
+                </IconButton>
+              </Link>
+              <Link href={author.social.email}>
+                <IconButton
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                      boxShadow: 'none !important' // Pas d'ombre au survol
+                    },
+                    '&:hover svg': {
+                      color: '#709425' // Vert foncé comme les liens d'articles
+                    },
+                    boxShadow: 'none !important', // Suppression de l'ombre
+                    color: '#dc4e41', // Couleur exacte du theme original pour email
+                    display: 'block',
+                    padding: '5px'
+                  }}
+                  title="email"
+                >
+                  <FaEnvelope size={18} />
+                </IconButton>
+              </Link>
+            </Box>
+
+            {/* InfoMenu - Menu de navigation */}
+            <InfoMenu pages={pages} onLinkClick={menuLinkOnClick} />
+
+            {/* Bouton "Expand the list" en bas - reproduit ListHeader behavior */}
+            {/* N'affiche pas sur la page d'accueil */}
+            {!isHomePage && (
+              <Box
+                sx={{
+                  alignItems: 'center',
+                  borderTop: '1px solid #eeeeee',
+                  bottom: '120px', // Au-dessus du StackIcons
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  left: '40px',
+                  padding: '1em 0',
+                  position: 'absolute',
+                  right: '40px'
+                }}
+              >
+                <Typography
+                  variant="overline"
+                  sx={{
+                    color: '#666666',
+                    fontSize: '0.75em',
+                    fontWeight: 600,
+                    letterSpacing: '0.3em',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  List of posts
+                </Typography>
+                
+                <IconButton
+                  onClick={expandListOnClick}
+                  title="Expand the list"
+                  sx={{
+                    '&:hover': { color: '#709425' },
+                    color: '#666666'
+                  }}
+                >
+                  <ExpandMore />
+                </IconButton>
+              </Box>
+            )}
+          </>
+        ) : (
+          // Liste des posts (remplace le contenu auteur)
+          <>
+            {/* Header avec bouton "Expand the box" pour revenir */}
+            <Box
+              sx={{
+                alignItems: 'center',
+                borderBottom: '1px solid #eeeeee',
+                display: 'flex',
+                justifyContent: 'space-between',
+                mb: 2,
+                pb: 1
+              }}
+            >
+              <Typography
+                variant="overline"
+                sx={{
+                  color: '#666666',
+                  fontSize: '0.75em',
+                  fontWeight: 600,
+                  letterSpacing: '0.3em',
+                  textTransform: 'uppercase'
+                }}
+              >
+                Latest Posts
+              </Typography>
+              
+              <IconButton
+                onClick={expandBoxOnClick}
+                title="Expand the box"
+                sx={{
+                  '&:hover': { color: '#709425' },
+                  color: '#666666'
+                }}
+              >
+                <ExpandMore />
+              </IconButton>
+            </Box>
+
+            {/* Liste des posts dans la sidebar */}
+            <PostsList posts={posts} />
+          </>
+        )}
+
+        {/* StackIcons - Tech Stack en bas avec styles exacts du theme original */}
+        {!showPostsList && (
+          <Box
             sx={{
-              color: '#333333',
-              fontFamily: '"Open Sans", Arial, sans-serif',
-              fontSize: '0.9rem',
-              fontWeight: 600
+              '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+                bottom: 0,
+                display: 'block',
+                left: 0,
+                padding: '1em 2em',
+                position: 'absolute',
+                width: '100%'
+              },
+              
+              // Reproduction exacte des styles stack du theme original
+              display: 'none'
             }}
           >
-            Connect
-          </Typography>
-          <IconButton
-            size="small"
-            onClick={() => setInfoBoxExpanded(!isInfoBoxExpanded)}
-            sx={{ color: '#888888' }}
-          >
-            {isInfoBoxExpanded ? <ExpandLess /> : <ExpandMore />}
-          </IconButton>
-        </Box>
-
-        {isInfoBoxExpanded && (
-          <Box sx={{ display: 'flex', gap: '12px' }}>
-            <Link href={author.social.github} target="_blank" rel="noopener noreferrer">
-              <IconButton size="small" sx={{ '&:hover': { color: '#709425' }, color: '#555555' }}>
-                <FaGithub size={18} />
-              </IconButton>
-            </Link>
-            <Link href={author.social.linkedin} target="_blank" rel="noopener noreferrer">
-              <IconButton size="small" sx={{ '&:hover': { color: '#709425' }, color: '#555555' }}>
-                <FaLinkedin size={18} />
-              </IconButton>
-            </Link>
-            <Link href={author.social.twitter} target="_blank" rel="noopener noreferrer">
-              <IconButton size="small" sx={{ '&:hover': { color: '#709425' }, color: '#555555' }}>
-                <FaTwitter size={18} />
-              </IconButton>
-            </Link>
-            <Link href={author.social.email}>
-              <IconButton size="small" sx={{ '&:hover': { color: '#709425' }, color: '#555555' }}>
-                <FaEnvelope size={18} />
-              </IconButton>
-            </Link>
+            <Typography
+              component="h5"
+              sx={{
+                fontSize: '0.85em',
+                fontWeight: 300,
+                letterSpacing: '0.3em',
+                margin: '0 0 0.8em 0',
+                // Reproduction exacte des styles header du theme original
+                textAlign: 'center',
+                textTransform: 'uppercase',
+                width: '100%'
+              }}
+            >
+              built with:
+            </Typography>
+            <Box
+              sx={{
+                // Reproduction exacte des styles box du theme original
+                display: 'flex',
+                flexWrap: 'wrap',
+                justifyContent: 'center'
+              }}
+            >
+              {techStack.map((item) => {
+                const Icon = item.icon
+                return (
+                  <Link
+                    key={item.name}
+                    href={item.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      // Reproduction exacte des styles link du theme original
+                      display: 'inline-block',
+                      padding: '8px'
+                    }}
+                  >
+                    <Icon 
+                      size={22} 
+                      color={item.color}
+                      title={item.name}
+                      style={{
+                        height: '22px',
+                        transition: 'all 0.5s',
+                        // Reproduction exacte des styles svg du theme original
+                        width: '22px'
+                      }}
+                    />
+                  </Link>
+                )
+              })}
+            </Box>
           </Box>
         )}
       </Box>
-
-      {/* Section Stack */}
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          flexGrow: 1,
-          padding: '30px 40px'
-        }}
-      >
-        <Typography
-          variant="h6"
-          sx={{
-            color: '#333333',
-            fontFamily: '"Open Sans", Arial, sans-serif',
-            fontSize: '0.9rem',
-            fontWeight: 600,
-            marginBottom: '15px'
-          }}
-        >
-          Tech Stack
-        </Typography>
-        
-        <Typography
-          sx={{
-            color: '#888888',
-            fontFamily: '"Open Sans", Arial, sans-serif',
-            fontSize: '0.8rem',
-            marginBottom: 'auto'
-          }}
-        >
-          React • Next.js • TypeScript • Python • PostGIS • QGIS
-        </Typography>
-
-        {/* Bouton de collapse en bas */}
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            marginTop: '20px'
-          }}
-        >
-          <IconButton
-            onClick={() => setInfoBoxExpanded(false)}
-            sx={{
-              '&:hover': {
-                backgroundColor: '#eeeeee',
-                borderColor: '#999999'
-              },
-              backgroundColor: '#f8f8f8',
-              border: '1px solid #e0e0e0',
-              borderRadius: '50%',
-              color: '#666666',
-              height: '32px',
-              width: '32px'
-            }}
-            title="Collapse the box"
-          >
-            <ExpandLess fontSize="small" />
-          </IconButton>
-        </Box>
-      </Box>
-        </>
-      )}
-
-      {/* Mode collapsé - affichage simplifié */}
-      {!isInfoBoxCollapsed && !isInfoBoxExpanded && (
-        <Box
-          sx={{
-            alignItems: 'center',
-            display: 'flex',
-            flexDirection: 'column',
-            flexGrow: 1,
-            justifyContent: 'center',
-            padding: '20px',
-            textAlign: 'center'
-          }}
-        >
-          <Typography
-            sx={{
-              color: '#999999',
-              fontFamily: '"Open Sans", Arial, sans-serif',
-              fontSize: '0.75rem',
-              marginBottom: '20px'
-            }}
-          >
-            Click to expand
-          </Typography>
-          
-          <IconButton
-            onClick={() => setInfoBoxExpanded(true)}
-            sx={{
-              '&:hover': {
-                backgroundColor: '#eeeeee',
-                borderColor: '#999999'
-              },
-              backgroundColor: '#f8f8f8',
-              border: '1px solid #e0e0e0',
-              borderRadius: '50%',
-              color: '#666666',
-              height: '32px',
-              width: '32px'
-            }}
-            title="Expand the box"
-          >
-            <ExpandMore fontSize="small" />
-          </IconButton>
-        </Box>
-      )}
     </Box>
   )
 }
