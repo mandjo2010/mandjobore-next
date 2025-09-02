@@ -77,6 +77,36 @@ export default function ActionsBar({
     <Box
       component="aside"
       sx={{
+        // Small screens: moins de 600px = ActionsBar compacte en bas
+        '@media (max-width: 599px)': {
+          // Ligne de séparation en haut (comme l'original mobile)
+          '&::before': {
+            borderTop: '1px solid #e0e0e0',
+            content: '""',
+            height: 0,
+            left: '20px',
+            position: 'absolute',
+            right: '20px',
+            top: 0
+          },
+          backgroundColor: '#ffffff',
+          bottom: 0,
+          display: 'flex',
+          flexDirection: 'row',
+          height: '64px',
+          justifyContent: 'space-around',
+          left: 0,
+          padding: '10px 20px',
+          position: 'fixed',
+          right: 0,
+          width: '100%'
+        },
+        
+        // Medium screens: 600-1023px = ActionsBar masquée (mode compact)
+        '@media (min-width: 600px) and (max-width: 1023px)': {
+          display: 'none' // Masquée pour laisser place au Navigator pleine largeur
+        },
+        
         // Large screens: 1024px+ = Affichage complet de l'ActionsBar
         '@media (min-width: 1024px)': {
           // Ligne de séparation à gauche (reproduction exacte Gatsby)
@@ -102,36 +132,6 @@ export default function ActionsBar({
           right: 0,
           top: 0,
           width: '64px'
-        },
-        
-        // Medium screens: 600-1023px = ActionsBar masquée (mode compact)
-        '@media (min-width: 600px) and (max-width: 1023px)': {
-          display: 'none' // Masquée pour laisser place au Navigator pleine largeur
-        },
-        
-        // Small screens: moins de 600px = ActionsBar compacte en bas
-        '@media (max-width: 599px)': {
-          // Ligne de séparation en haut (comme l'original mobile)
-          '&::before': {
-            borderTop: '1px solid #e0e0e0',
-            content: '""',
-            height: 0,
-            left: '20px',
-            position: 'absolute',
-            right: '20px',
-            top: 0
-          },
-          backgroundColor: '#ffffff',
-          bottom: 0,
-          display: 'flex',
-          flexDirection: 'row',
-          height: '64px',
-          justifyContent: 'space-around',
-          left: 0,
-          padding: '10px 20px',
-          position: 'fixed',
-          right: 0,
-          width: '100%'
         },
         
         // Style de base (comme l'original)
@@ -210,7 +210,7 @@ export default function ActionsBar({
 
       {/* Filtres de catégories (seulement sur la page d'accueil) */}
       {isHomePage && categories.length > 0 && (
-        <Box sx={{ mt: 'auto', mb: 2 }}>
+        <Box sx={{ mb: 2, mt: 'auto' }}>
           <CategoryFilter categories={categories} />
         </Box>
       )}
@@ -218,188 +218,6 @@ export default function ActionsBar({
       {/* Réglage de la taille de police */}
       <Box sx={{ mt: 'auto' }}>
         <FontSetter />
-      </Box>
-    </Box>
-  )
-}
-
-  return (
-    <Box
-      component="aside"
-      sx={{
-        // Large screens: 1024px+ = Affichage complet de l'ActionsBar
-        '@media (min-width: 1024px)': {
-          // Ligne de séparation à gauche (reproduction exacte Gatsby)
-          '&::before': {
-            borderLeft: '1px solid #e0e0e0', // Couleur exacte du thème Gatsby (--base-lines)
-            borderTop: 'none',
-            bottom: '20px',
-            content: '""',
-            height: 'auto',
-            left: 0,
-            position: 'absolute',
-            right: 'auto',
-            top: '20px',
-            width: '1px'
-          },
-          backgroundColor: '#ffffff',
-          bottom: 0,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'flex-start',
-          padding: '20px 0',
-          position: 'fixed',
-          right: 0,
-          top: 0,
-          width: '64px'
-        },
-        
-        // Medium screens: 600-1023px = ActionsBar masquée (mode compact)
-        '@media (min-width: 600px) and (max-width: 1023px)': {
-          display: 'none' // Masquée pour laisser place au Navigator pleine largeur
-        },
-        
-        // Small screens: moins de 600px = ActionsBar compacte en bas
-        '@media (max-width: 599px)': {
-          // Ligne de séparation en haut (comme l'original mobile)
-          '&::before': {
-            borderTop: '1px solid #e0e0e0',
-            content: '""',
-            height: 0,
-            left: '20px',
-            position: 'absolute',
-            right: '20px',
-            top: 0
-          },
-          backgroundColor: '#ffffff',
-          bottom: 0,
-          display: 'flex',
-          flexDirection: 'row',
-          height: '64px',
-          justifyContent: 'space-around',
-          left: 0,
-          padding: '10px 20px',
-          position: 'fixed',
-          right: 0,
-          width: '100%'
-        },
-        
-        // Style de base (comme l'original)
-        display: 'none'
-      }}
-    >
-          width: '64px',
-          
-          zIndex: 200 // S'assurer que l'ActionsBar est au-dessus
-        },
-        background: '#ffffff',
-        bottom: 0,
-        display: 'flex',
-        flexDirection: 'row',
-        height: '80px',
-        justifyContent: 'space-between',
-        left: 0,
-        padding: '0 20px',
-        // Style de base reproduisant l'ancien actionsBar
-        position: 'absolute',
-        
-        width: '100%',
-
-        zIndex: 200 // S'assurer que l'ActionsBar est au-dessus
-      }}
-    >
-      {/* Groupe de boutons principaux */}
-      <Box
-        sx={{
-          '@media (min-width: 769px)': { // Breakpoint ajusté pour le zoom
-            flexDirection: 'column',
-            gap: 2
-          },
-          alignItems: 'center',
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 1
-        }}
-      >
-        {/* Bouton Home (retour à l'accueil) */}
-        <Tooltip title="Back to home" placement="top">
-          <IconButton
-            onClick={homeOnClick}
-            sx={{
-              '&:hover': { color: 'primary.main' },
-              color: 'text.secondary'
-            }}
-            size="small"
-          >
-            <Home fontSize="small" />
-          </IconButton>
-        </Tooltip>
-
-        {/* Bouton Search */}
-        <Tooltip title="Search" placement="top">
-          <IconButton
-            onClick={searchOnClick}
-            sx={{
-              '&:hover': { color: 'primary.main' },
-              color: 'text.secondary'
-            }}
-            size="small"
-          >
-            <Search fontSize="small" />
-          </IconButton>
-        </Tooltip>
-
-        {/* CategoryFilter */}
-        <CategoryFilter categories={categories} />
-      </Box>
-
-      {/* Groupe de boutons secondaires */}
-      <Box
-        sx={{
-          '@media (min-width: 1024px)': {
-            flexDirection: 'column',
-            gap: 2
-          },
-          alignItems: 'center',
-          display: 'flex',
-          flexDirection: 'row',
-          gap: 1
-        }}
-      >
-        {/* FontSetter - pas sur la page d'accueil */}
-        {!isHomePage && <FontSetter />}
-
-        {/* Bouton Scroll to top */}
-        <Tooltip title="Scroll to top" placement="top">
-          <IconButton
-            onClick={arrowUpOnClick}
-            sx={{
-              '&:hover': { color: 'primary.main' },
-              color: 'text.secondary'
-            }}
-            size="small"
-          >
-            <KeyboardArrowUp fontSize="small" />
-          </IconButton>
-        </Tooltip>
-
-        {/* Bouton Fullscreen */}
-        <Tooltip title={isFullscreen ? "Exit fullscreen" : "Fullscreen"} placement="top">
-          <IconButton
-            onClick={fullscreenOnClick}
-            sx={{
-              '&:hover': { color: 'primary.main' },
-              color: 'text.secondary'
-            }}
-            size="small"
-          >
-            {isFullscreen ? (
-              <FullscreenExit fontSize="small" />
-            ) : (
-              <Fullscreen fontSize="small" />
-            )}
-          </IconButton>
-        </Tooltip>
       </Box>
     </Box>
   )
