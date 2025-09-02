@@ -109,7 +109,22 @@ export default function SearchPage({ posts, pages, parts }: SearchPageProps) {
 										)}
 										{post.date}
 									</Typography>
-									<Typography variant="body2">
+									<Typography 
+										component="h2"
+										className="blog-subtitle article-subtitle post-subtitle"
+										sx={{
+											fontFamily: '"Open Sans" !important',
+											fontSize: '23px !important',
+											fontWeight: '300 !important',
+											lineHeight: '27px !important',
+											color: 'rgb(85, 85, 85) !important',
+											fontStyle: 'normal !important',
+											cursor: 'pointer',
+											'&:hover': {
+												color: 'rgb(112, 148, 37) !important'
+											}
+										}}
+									>
 										{post.excerpt}
 									</Typography>
 								</Link>

@@ -10,13 +10,7 @@ import Link from 'next/link'
 import React, { useState } from 'react'
 
 import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
-
-// Configuration comme InfoBox
-const author = {
-  avatar: '/images/jpg/avatar.jpg',
-  name: 'Mandjo Béa Boré',
-  tagline: 'Data Analyst & Developer'
-}
+import authorConfig from '@/config/author'
 
 interface Page {
   slug: string
@@ -66,19 +60,34 @@ export default function InfoBar({ pages }: InfoBarProps) {
           position: 'absolute',
           right: 'var(--lines-margin)'
         },
-        // Masqué sur desktop comme dans l'original
+        // Visible en mode horizontal (moins de 1024px) comme dans l'original
         '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
-          display: 'none'
+          display: 'none' // Masqué en mode vertical (3 colonnes)
+        },
+        '@media (max-width: 1023px)': {
+          // Barre de séparation horizontale en bas (mode horizontal)
+          '&::before': {
+            borderTop: '1px solid var(--lines-color, #e0e0e0)',
+            bottom: 0,
+            content: '""',
+            height: 0,
+            left: 'var(--lines-margin, 20px)',
+            position: 'absolute',
+            right: 'var(--lines-margin, 20px)'
+          },
+          display: 'block' // Visible en mode horizontal (2 barres)
         },
         background: 'var(--bars-background)', // theme.bars.colors.background
-        height: 'var(--layout-infobar-height)', // theme.bars.sizes.infoBar = 48px
+        height: 'var(--layout-infobar-height)', // theme.bars.sizes.infoBar = 60px
         left: 0,
         // Reproduction exacte des styles infoBar du theme original
-        position: 'absolute',
+        position: 'fixed', // Fixed pour rester en haut
         
         top: 0,
         
-        width: '100%'
+        width: '100%',
+        
+        zIndex: 300 // Au-dessus du Navigator
       }}
     >
       {/* Avatar avec lien Home - styles exacts du theme original */}
@@ -89,12 +98,12 @@ export default function InfoBar({ pages }: InfoBarProps) {
           // Reproduction exacte des styles avatarLink du theme original
           display: 'block',
           float: 'left',
-          margin: '13px 0 0 30px'
+          margin: '18px 0 0 30px'
         }}
       >
         <Avatar
-          src={author.avatar}
-          alt={author.name}
+          src={authorConfig.avatar}
+          alt={authorConfig.authorName}
           sx={{
             border: '1px solid #ddd',
             borderRadius: '65% 75%',
@@ -105,24 +114,32 @@ export default function InfoBar({ pages }: InfoBarProps) {
         />
       </Link>
 
-      {/* Titre avec nom et tagline - styles exacts du theme original */}
+      {/* Titre avec nom et tagline selon spécifications exactes */}
       <Typography
         component="h3"
         sx={{
           '& small': {
+            // Titre auteur selon spécifications: Open Sans 300, 16px/16px, color #555
+            color: '#555555',
             display: 'block',
-            fontSize: '0.65em',
+            fontFamily: '"Open Sans"',
+            fontSize: '16px',
+            fontWeight: 300,
+            lineHeight: '16px',
             margin: '2px 0 0 0'
           },
-          color: 'var(--bars-icon-color)', // theme.bars.colors.text
-          // Reproduction exacte des styles title du theme original
+          // Nom auteur selon spécifications: Open Sans 300, 27px/27px, color #555
+          color: '#555555',
+          fontFamily: '"Open Sans"',
+          fontSize: '27px',
+          fontWeight: 300,
+          lineHeight: '27px',
           float: 'left',
-          
-          margin: '10px 0 0 15px'
+          margin: '15px 0 0 15px'
         }}
       >
-        {author.name}
-        <small>{author.tagline}</small>
+        {authorConfig.infoTitle}
+        <small>{authorConfig.infoTitleNote}</small>
       </Typography>
 
       {/* Menu mobile - styles exacts du theme original */}
@@ -134,7 +151,7 @@ export default function InfoBar({ pages }: InfoBarProps) {
           // Reproduction exacte des styles topMenu du theme original
           float: 'right',
           
-          margin: '5px 10px 0 0'
+          margin: '17px 10px 0 0'
         }}
       >
         <IconButton

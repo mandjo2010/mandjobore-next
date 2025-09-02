@@ -130,10 +130,7 @@ export default function NavigatorNew({ posts = [], className }: NavigatorProps) 
                   alignItems: 'flex-start',
                   padding: '30px 0',
                   borderBottom: index < filteredPosts.length - 1 ? '1px solid #eeeeee' : 'none',
-                  cursor: 'pointer',
-                  '&:hover': {
-                    backgroundColor: '#fafafa'
-                  }
+                  cursor: 'pointer'
                 }}
               >
                 <Box
@@ -176,12 +173,20 @@ export default function NavigatorNew({ posts = [], className }: NavigatorProps) 
                   </Typography>
                   
                   <Typography
+                    component="h2"
+                    className="blog-subtitle article-subtitle post-subtitle"
                     sx={{
-                      fontSize: '0.85rem',
-                      color: '#555555',
-                      fontFamily: '"Open Sans", Arial, sans-serif',
-                      lineHeight: '1.5',
-                      marginBottom: '8px'
+                      fontFamily: '"Open Sans" !important',
+                      fontSize: '23px !important',
+                      fontWeight: '300 !important',
+                      lineHeight: '27px !important',
+                      color: 'rgb(85, 85, 85) !important',
+                      fontStyle: 'normal !important',
+                      marginBottom: '8px',
+                      cursor: 'pointer',
+                      '&:hover': {
+                        color: 'rgb(112, 148, 37) !important'
+                      }
                     }}
                   >
                     {post.excerpt}

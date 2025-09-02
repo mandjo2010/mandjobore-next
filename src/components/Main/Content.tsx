@@ -70,16 +70,21 @@ export default function Content({ children, html }: ContentProps) {
     
     // Headings
     '& h2, & h3': {
-      color: '#2a2a2a', // contentHeading color
-      fontSize: '1.6em', // h2Size
-      fontWeight: 600,
+      color: 'rgb(85, 85, 85) !important', // Couleur sous-titre exacte
+      fontFamily: '"Open Sans" !important',
+      fontSize: '23px !important', // Taille exacte WhatFont
+      fontWeight: '300 !important', // Poids exact WhatFont
       letterSpacing: '-0.02em',
-      lineHeight: 1.3,
+      lineHeight: '27px !important', // Line height exacte WhatFont
       margin: '2em 0 1em'
     },
     
     '& h3': {
-      fontSize: '1.3em' // h3Size
+      fontSize: '20px !important', // Taille réduite pour h3
+      fontWeight: '400 !important',
+      color: 'rgb(85, 85, 85) !important',
+      fontFamily: '"Open Sans" !important',
+      lineHeight: '24px !important'
     },
     
     '& li': {

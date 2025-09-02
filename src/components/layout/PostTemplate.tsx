@@ -4,7 +4,7 @@ import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
 import ActionsBar from '@/components/layout/ActionsBar';
-import LeftSidebar from '../../../components/Sidebar/LeftSidebar';
+import LeftSidebar from '../sidebar/LeftSidebarLegacy';
 
 import BaseTemplate from './BaseTemplate';
 

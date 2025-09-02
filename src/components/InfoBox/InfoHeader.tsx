@@ -22,12 +22,7 @@ import { styled } from '@mui/material/styles';
 import Link from 'next/link';
 import React from 'react';
 
-// Configuration temporaire (sera remplacée par des vraies données)
-const CONFIG = {
-  authorName: 'Mandjo Béa Boré',
-  infoTitle: 'Mandjo Béa Boré',
-  infoTitleNote: 'Data analyst - Developer',
-};
+import authorConfig from '@/config/author';
 
 interface InfoHeaderProps {
   info?: {
@@ -110,19 +105,25 @@ const Avatar = styled(Box)(({ theme }) => ({
   width: '36px',
 }));
 
-// Titre avec transitions complexes
+// Titre avec transitions complexes et styles exacts selon spécifications
 const Title = styled('h1')(({ theme }) => ({
   '& small': {
-    color: theme.info?.colors?.text || '#555',
+    // Titre auteur selon spécifications: Open Sans 300, 16px/16px, color #555
+    color: '#555555',
     display: 'block',
-    fontSize: '.6em',
+    fontFamily: '"Open Sans"',
+    fontSize: '16px',
     fontWeight: 300,
+    lineHeight: '16px',
     marginTop: '.3em',
   },
-  color: theme.info?.colors?.text || '#555',
+  // Nom auteur selon spécifications: Open Sans 300, 27px/27px, color #555
+  color: '#555555',
   float: 'left',
-  fontSize: `${theme.info?.fonts?.boxTitleSize || 1.3}em`,
-  fontWeight: 600,
+  fontFamily: '"Open Sans"',
+  fontSize: '27px',
+  fontWeight: 300,
+  lineHeight: '27px',
   margin: 0,
   [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
     '.is-aside.open &': {
@@ -130,7 +131,7 @@ const Title = styled('h1')(({ theme }) => ({
       textAlign: 'left',
       top: `${1.9 - (theme.info?.fonts?.boxTitleSizeL || 1.7)}em`,
     },
-    fontSize: `${theme.info?.fonts?.boxTitleSizeL || 1.7}em`,
+    fontSize: '27px', // Garder la même taille sur desktop
     left: '50%',
     position: 'absolute',
     textAlign: 'center',
@@ -141,7 +142,7 @@ const Title = styled('h1')(({ theme }) => ({
   },
   
   [theme.breakpoints?.up('md') || '@media (min-width: 600px)']: {
-    fontSize: `${theme.info?.fonts?.boxTitleSizeM || 1.5}em`,
+    fontSize: '27px', // Garder la même taille sur tablet
   },
   
   transitionTimingFunction: 'ease',
@@ -190,8 +191,8 @@ const InfoHeader: React.FC<InfoHeaderProps> = ({
       >
         <Avatar>
           <img 
-            src="/images/jpg/avatar.jpg" 
-            alt={CONFIG.authorName}
+            src={authorConfig.avatar} 
+            alt={authorConfig.authorName}
             onError={(e) => {
               // Fallback si l'image n'existe pas
               const target = e.target as HTMLImageElement;
@@ -203,8 +204,8 @@ const InfoHeader: React.FC<InfoHeaderProps> = ({
       
       {/* Titre avec nom et description */}
       <Title>
-        {CONFIG.infoTitle.replace(/ /g, '\u00a0')}
-        <small>{CONFIG.infoTitleNote}</small>
+        {authorConfig.infoTitle.replace(/ /g, '\u00a0')}
+        <small>{authorConfig.infoTitleNote}</small>
       </Title>
       
       {/* Bouton d'expansion (visible selon l'état) */}

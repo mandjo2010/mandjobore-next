@@ -1,0 +1,227 @@
+/**
+ * FORCE ABSOLUE - Styles de sous-titres avec spécificité maximale
+ * Ne peut être surchargé par aucun autre style
+ */
+
+/* SPÉCIFICITÉ ABSOLUE MAXIMALE */
+html body div main article h2,
+html body div main section h2,
+html body div main div h2,
+html body main h2,
+html body article h2,
+html body section h2,
+html body h2,
+h2 {
+  font-family: "Open Sans" !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 23px !important;
+  line-height: 27px !important;
+  color: rgb(85, 85, 85) !important;
+  cursor: pointer !important;
+  transition: color 0.3s ease !important;
+}
+
+/* Effet de survol pour h2 */
+html body div main article h2:hover,
+html body div main section h2:hover,
+html body div main div h2:hover,
+html body main h2:hover,
+html body article h2:hover,
+html body section h2:hover,
+html body h2:hover,
+h2:hover {
+  color: rgb(112, 148, 37) !important;
+}
+
+/* MUI Typography avec spécificité maximale */
+html body div main .MuiTypography-h2,
+html body div main .MuiTypography-root[data-variant="h2"],
+html body div .MuiTypography-h2,
+html body .MuiTypography-h2,
+.MuiTypography-h2 {
+  font-family: "Open Sans" !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 23px !important;
+  line-height: 27px !important;
+  color: rgb(85, 85, 85) !important;
+  cursor: pointer !important;
+  transition: color 0.3s ease !important;
+}
+
+/* MUI Typography hover */
+html body div main .MuiTypography-h2:hover,
+html body div main .MuiTypography-root[data-variant="h2"]:hover,
+html body div .MuiTypography-h2:hover,
+html body .MuiTypography-h2:hover,
+.MuiTypography-h2:hover {
+  color: rgb(112, 148, 37) !important;
+}
+
+/* Classes personnalisées avec spécificité maximale */
+html body div main .blog-subtitle,
+html body div main .article-subtitle,
+html body div main .post-subtitle,
+html body div .blog-subtitle,
+html body div .article-subtitle,
+html body div .post-subtitle,
+html body .blog-subtitle,
+/* Classes personnalisées avec spécificité maximale */
+html body div main .blog-subtitle,
+html body div main .article-subtitle,
+html body div main .post-subtitle,
+html body div .blog-subtitle,
+html body div .article-subtitle,
+html body div .post-subtitle,
+html body .blog-subtitle,
+html body .article-subtitle,
+html body .post-subtitle,
+.blog-subtitle,
+.article-subtitle,
+.post-subtitle {
+  font-family: "Open Sans" !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 23px !important;
+  line-height: 27px !important;
+  color: rgb(85, 85, 85) !important;
+  cursor: pointer !important;
+  transition: color 0.3s ease !important;
+}
+
+/* Effet de survol avec spécificité maximale - même dans les liens */
+html body div main a .blog-subtitle:hover,
+html body div main a .article-subtitle:hover,
+html body div main a .post-subtitle:hover,
+html body div main .blog-subtitle:hover,
+html body div main .article-subtitle:hover,
+html body div main .post-subtitle:hover,
+html body div a .blog-subtitle:hover,
+html body div a .article-subtitle:hover,
+html body div a .post-subtitle:hover,
+html body div .blog-subtitle:hover,
+html body div .article-subtitle:hover,
+html body div .post-subtitle:hover,
+html body a .blog-subtitle:hover,
+html body a .article-subtitle:hover,
+html body a .post-subtitle:hover,
+html body .blog-subtitle:hover,
+html body .article-subtitle:hover,
+html body .post-subtitle:hover,
+a .blog-subtitle:hover,
+a .article-subtitle:hover,
+a .post-subtitle:hover,
+.blog-subtitle:hover,
+.article-subtitle:hover,
+.post-subtitle:hover {
+  color: rgb(112, 148, 37) !important;
+}
+
+/* PostHeader spécifique */
+html body div main article header h2,
+html body div article header h2,
+html body article header h2 {
+  font-family: "Open Sans" !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 23px !important;
+  line-height: 27px !important;
+  color: rgb(85, 85, 85) !important;
+  cursor: pointer !important;
+  transition: color 0.3s ease !important;
+} 
+
+/* PostHeader hover */
+html body div main article header h2:hover,
+html body div article header h2:hover,
+html body article header h2:hover {
+  color: rgb(112, 148, 37) !important;
+}
+
+/* Règles ultra-spécifiques pour les liens */
+html body div main a h2:hover,
+html body div a h2:hover,
+html body a h2:hover,
+a h2:hover {
+  color: rgb(112, 148, 37) !important;
+}
+
+/* Règles pour MUI Typography dans des liens */
+html body div main a .MuiTypography-h2:hover,
+html body div a .MuiTypography-h2:hover,
+html body a .MuiTypography-h2:hover,
+a .MuiTypography-h2:hover {
+  color: rgb(112, 148, 37) !important;
+}
+
+/* Règles pour postSubtitle et postExcerpt */
+html body div main .postSubtitle:hover,
+html body div main .postExcerpt:hover,
+html body div .postSubtitle:hover,
+html body div .postExcerpt:hover,
+html body .postSubtitle:hover,
+html body .postExcerpt:hover,
+.postSubtitle:hover,
+.postExcerpt:hover {
+  color: rgb(112, 148, 37) !important;
+}
+
+/* Règles pour postSubtitle et postExcerpt dans des liens */
+html body div main a .postSubtitle:hover,
+html body div main a .postExcerpt:hover,
+html body div a .postSubtitle:hover,
+html body div a .postExcerpt:hover,
+html body a .postSubtitle:hover,
+html body a .postExcerpt:hover,
+a .postSubtitle:hover,
+a .postExcerpt:hover {
+  color: rgb(112, 148, 37) !important;
+}
+
+/* Règle universelle de secours - applique l'effet à TOUS les éléments ayant ces classes */
+*:hover.blog-subtitle,
+*:hover.article-subtitle,
+*:hover.post-subtitle,
+*:hover.postSubtitle,
+*:hover.postExcerpt {
+  color: rgb(112, 148, 37) !important;
+}
+
+/* ULTRA SPÉCIFIQUE - Surcharge TOUTES les règles a:hover */
+html body div main a:hover h2,
+html body div a:hover h2,
+html body a:hover h2,
+a:hover h2 {
+  color: rgb(112, 148, 37) !important;
+}
+
+html body div main a:hover .MuiTypography-h2,
+html body div a:hover .MuiTypography-h2,
+html body a:hover .MuiTypography-h2,
+a:hover .MuiTypography-h2 {
+  color: rgb(112, 148, 37) !important;
+}
+
+html body div main a:hover .blog-subtitle,
+html body div main a:hover .article-subtitle,
+html body div main a:hover .post-subtitle,
+html body div main a:hover .postSubtitle,
+html body div main a:hover .postExcerpt,
+html body div a:hover .blog-subtitle,
+html body div a:hover .article-subtitle,
+html body div a:hover .post-subtitle,
+html body div a:hover .postSubtitle,
+html body div a:hover .postExcerpt,
+html body a:hover .blog-subtitle,
+html body a:hover .article-subtitle,
+html body a:hover .post-subtitle,
+html body a:hover .postSubtitle,
+html body a:hover .postExcerpt,
+a:hover .blog-subtitle,
+a:hover .article-subtitle,
+a:hover .post-subtitle,
+a:hover .postSubtitle,
+a:hover .postExcerpt {
+  color: rgb(112, 148, 37) !important;
+}

@@ -65,12 +65,12 @@ export const theme = createTheme({
     },
     fonts: {
       content: { lineHeight: 1.6, size: 1.0, sizeL: 1.1, sizeM: 1.15 },
-      contentHeading: {
-        h2Size: 1.5,
-        h3Size: 1.3,
-        lineHeight: 1.3,
-        weight: 600,
-      },
+      		contentHeading: {
+			h2Size: 1.44, // 23px / 16px = 1.44rem pour correspondre à 23px
+			h3Size: 1.25, // 20px / 16px = 1.25rem pour h3
+			lineHeight: 1.69, // 27px / 16px = 1.69rem
+			weight: 300, // Poids exact pour sous-titres
+		},
       footer: { lineHeight: 1.4, size: 1 },
       meta: { size: 0.9, weight: 600 },
       subTitle: {

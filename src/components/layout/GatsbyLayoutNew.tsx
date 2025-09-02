@@ -11,7 +11,7 @@ import React, { ReactNode } from 'react'
 import InfoBar from '@/components/InfoBar'
 // Import des composants fidèles
 import InfoBox from '@/components/InfoBox'
-import ActionsBar from '@/components/layout/ActionsBar'
+import ActionsBar from '@/components/layout/ActionsBar-fixed'
 import LayoutWrapper from '@/components/LayoutWrapper'
 import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 import { extendedGatsbyTheme } from '@/theme/gatsby-theme'
@@ -96,15 +96,33 @@ const globalStyles = (
         '--actions-width': '64px',
         '--info-width': '320px',
         '--lines-color': '#e0e0e0',
+        '--lines-margin': '20px', // Marge pour les barres de séparation
         '--navigator-closed-height': '80px',
         '--text-color': '#333333'
       },
       
-      // Responsive comme dans Gatsby
+      // Responsive comme dans Gatsby - Breakpoints exacts
+      // Large screens: 1024px+ = Full 3-column layout (vertical)
+      '@media (min-width: 1024px)': {
+        '.is-aside .navigator, .is-featured .navigator, .is-three-columns .navigator': {
+          left: 'var(--info-width) !important',
+          width: 'calc(100% - var(--info-width) - var(--actions-width)) !important'
+        }
+      },
+      
+      // Medium/Small screens: moins de 1024px = 2 barres horizontales (zoom 175%+)
       '@media (max-width: 1023px)': {
-        '.is-aside .navigator, .is-featured .navigator': {
+        '.is-aside .navigator, .is-featured .navigator, .is-three-columns .navigator': {
           left: '0 !important',
+          right: '0 !important',
+          top: '72px !important', // Espace pour InfoBar en haut (hauteur augmentée)
+          bottom: '64px !important', // Espace pour ActionsBar en bas (restaurée)
           width: '100% !important'
+        },
+        // Passage en mode horizontal : InfoBar visible, InfoBox masquée
+        ':root': {
+          '--info-width': '0px',
+          '--actions-width': '0px'
         }
       },
       
@@ -183,15 +201,35 @@ export default function GatsbyLayoutNew({
         <Box
           className="navigator"
           sx={{
+            // Large screens: 1024px+ = Position entre InfoBox et ActionsBar (vertical)
+            '@media (min-width: 1024px)': {
+              left: '320px !important',
+              right: '64px !important',
+              top: '0 !important',
+              bottom: '0 !important'
+            },
+            // Medium/Small screens: moins de 1024px = Pleine largeur entre barres horizontales (zoom 175%+)
             '@media (max-width: 1023px)': {
-              left: 0,
-              right: 0
+              left: '0 !important',
+              right: '0 !important',
+              top: '72px !important', // Espace pour InfoBar en haut (hauteur augmentée)
+              bottom: '64px !important' // Espace pour ActionsBar en bas (restaurée)
             },
             backgroundColor: '#ffffff',
             bottom: 0,
             left: '320px',
-            // Pas de borderRight pour laisser la ligne de l'ActionsBar être visible
-            overflow: 'hidden',
+            // Barre de séparation droite (vers ActionsBar)
+            '&::after': {
+              content: '""',
+              position: 'absolute',
+              right: 0,
+              top: '20px',
+              bottom: '20px',
+              width: '1px',
+              borderRight: '1px solid var(--lines-color, #e0e0e0)'
+            },
+            overflowX: 'hidden', // Masquer seulement le défilement horizontal
+            overflowY: 'visible', // Permettre le défilement vertical et sa barre
             position: 'fixed',
             right: '64px',
             top: 0
@@ -199,20 +237,32 @@ export default function GatsbyLayoutNew({
         >
           <Box
             sx={{
-              '&::-webkit-scrollbar': {
-                background: 'transparent',
-                display: 'none',
-                height: 0,
-                width: 0
-              },
               height: '100%',
-              msOverflowStyle: 'none',
               overflowX: 'hidden',
-              
-              overflowY: 'auto',
+              overflowY: 'auto', // Retour à auto pour comportement natif
               padding: '40px 40px 40px 40px',
-              // Masquage complet de la barre de défilement comme Gatsby original
-              scrollbarWidth: 'none'
+              
+              // Barre de défilement simple et visible
+              '&::-webkit-scrollbar': {
+                width: '8px'
+              },
+              
+              '&::-webkit-scrollbar-track': {
+                background: '#f1f1f1'
+              },
+              
+              '&::-webkit-scrollbar-thumb': {
+                background: '#c1c1c1',
+                borderRadius: '4px',
+                
+                '&:hover': {
+                  background: '#a8a8a8'
+                }
+              },
+              
+              // Pour Firefox
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#c1c1c1 #f1f1f1'
             }}
           >
             {posts.map((post, index) => (
@@ -223,39 +273,60 @@ export default function GatsbyLayoutNew({
               >
                 <Box
                   sx={{
-                    '&:hover': {
-                      backgroundColor: '#fafafa'
-                    },
                     alignItems: 'flex-start',
-                    borderBottom: index < posts.length - 1 ? '1px solid #e0e0e0' : 'none',
                     cursor: 'pointer',
                     display: 'flex',
-                    padding: '30px 0'
+                    padding: '15px 0'
                   }}
                 >
                   <Box
                     sx={{
                       alignItems: 'center',
                       background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-                      border: '2px solid #e0e0e0',
-                      borderRadius: '50%',
+                      border: '1px solid #ddd', // Bordure fine comme NavigatorItem
+                      borderRadius: '75% 65%', // Forme organique comme NavigatorItem
                       display: 'flex',
                       flexShrink: 0,
-                      height: '60px',
+                      // Tailles responsives exactes comme NavigatorItem
+                      height: {
+                        xs: '30px',      // Mobile (moins de 600px)
+                        sm: '60px',      // Tablet (600-900px)
+                        md: '80px',      // Desktop (900-1200px)
+                        lg: '90px'       // Large (1200px+)
+                      },
+                      width: {
+                        xs: '30px',      // Mobile (moins de 600px)
+                        sm: '60px',      // Tablet (600-900px)
+                        md: '80px',      // Desktop (900-1200px)
+                        lg: '90px'       // Large (1200px+)
+                      },
                       justifyContent: 'center',
                       marginRight: '20px',
                       overflow: 'hidden',
-                      width: '60px'
+                      cursor: 'pointer',
+                      // Animation au hover comme NavigatorItem
+                      transition: {
+                        xs: '0.3s ease-out', // Mobile : transition plus rapide
+                        sm: '0.5s ease-out'  // Desktop : transition plus lente
+                      },
+                      // Hover effects organiques comme NavigatorItem
+                      '&:hover': {
+                        borderRadius: '65% 75%', // Inversion du borderRadius
+                        transform: 'scale(1.05)',   // Scaling subtil
+                        border: '1px solid #ccc'    // Bordure légèrement plus foncée
+                      }
                     }}
                   >
                     <img 
                       src={getArticleAvatar(post.slug, post.category, post.title, index)}
                       alt={`Illustration pour ${post.title}`}
                       style={{
-                        borderRadius: '50%',
+                        borderRadius: 'inherit', // Hérite du borderRadius du parent
                         height: '100%',
                         objectFit: 'cover',
-                        width: '100%'
+                        width: '100%',
+                        // Même transition que le parent
+                        transition: 'inherit'
                       }}
                       onError={(e) => {
                         // Fallback vers un pattern SVG en cas d'erreur de chargement
@@ -267,12 +338,14 @@ export default function GatsbyLayoutNew({
 
                   <Box sx={{ flexGrow: 1 }}>
                     <Typography
+                      className="post-list-title"
                       sx={{
-                        color: '#333333',
-                        fontFamily: '"Open Sans", Arial, sans-serif',
-                        fontSize: '1.1rem',
+                        color: 'rgb(85, 85, 85)',
+                        fontFamily: '"Open Sans"',
+                        fontSize: '27px',
                         fontWeight: 600,
-                        lineHeight: '1.3',
+                        letterSpacing: '-0.04em',
+                        lineHeight: '31px',
                         marginBottom: '6px'
                       }}
                     >
@@ -280,12 +353,20 @@ export default function GatsbyLayoutNew({
                     </Typography>
                     
                     <Typography
+                      component="h2"
+                      className="blog-subtitle article-subtitle post-subtitle"
                       sx={{
-                        color: '#555555',
-                        fontFamily: '"Open Sans", Arial, sans-serif',
-                        fontSize: '0.85rem',
-                        lineHeight: '1.5',
-                        marginBottom: '8px'
+                        color: 'rgb(85, 85, 85) !important',
+                        fontFamily: '"Open Sans" !important',
+                        fontSize: '23px !important',
+                        fontWeight: '300 !important',
+                        lineHeight: '27px !important',
+                        fontStyle: 'normal !important',
+                        marginBottom: '8px',
+                        cursor: 'pointer',
+                        '&:hover': {
+                          color: 'rgb(112, 148, 37) !important'
+                        }
                       }}
                     >
                       {post.excerpt}
@@ -309,6 +390,32 @@ export default function GatsbyLayoutNew({
                 </Box>
               </Link>
             ))}
+            
+            {/* Contenu de test pour voir la barre de défilement */}
+            <Box sx={{ padding: '20px 0' }}>
+              <Typography variant="h6" sx={{ marginBottom: '20px', color: '#666' }}>
+                📍 Contenu de test pour la barre de défilement
+              </Typography>
+              {Array.from({ length: 15 }, (_, i) => (
+                <Box
+                  key={`test-scroll-${i}`}
+                  sx={{
+                    padding: '20px',
+                    marginBottom: '10px',
+                    backgroundColor: '#f9f9f9',
+                    border: '1px solid #eee',
+                    borderRadius: '4px'
+                  }}
+                >
+                  <Typography sx={{ fontSize: '16px', marginBottom: '8px' }}>
+                    📝 Article de test #{i + 1}
+                  </Typography>
+                  <Typography sx={{ fontSize: '14px', color: '#666' }}>
+                    Ceci est du contenu de test pour forcer le défilement vertical et voir apparaître la barre de défilement personnalisée. La barre devrait être visible sur le côté droit avec un style gris.
+                  </Typography>
+                </Box>
+              ))}
+            </Box>
           </Box>
         </Box>
         

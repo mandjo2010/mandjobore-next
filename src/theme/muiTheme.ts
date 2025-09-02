@@ -20,16 +20,19 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Open Sans", "Roboto", "Helvetica", "Arial", sans-serif',
     h1: {
-      fontSize: '2.5rem',
-      fontWeight: 300,
-      lineHeight: 1.2,
+      fontSize: '27px',
+      fontWeight: 600,
+      lineHeight: '31px',
+      fontFamily: '"Open Sans"',
     },
     h2: {
-      fontSize: '2rem',
-      fontWeight: 400,
-      lineHeight: 1.3,
+      fontSize: '23px',
+      fontWeight: 300,
+      lineHeight: '27px',
+      fontFamily: '"Open Sans"',
+      color: 'rgb(85, 85, 85)',
     },
     h3: {
       fontSize: '1.75rem',

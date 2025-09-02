@@ -11,7 +11,7 @@ export const theme = createTheme({
 			text: '#333333',
 		},
 		fonts: {
-			styledFamily: '"Open Sans", sans-serif',
+			styledFamily: '"Open Sans"',
 			styledFonts: '300,400,600',
 			unstyledFamily: 'system-ui, sans-serif',
 		},
@@ -30,15 +30,15 @@ export const theme = createTheme({
 		fonts: {
 			content: { lineHeight: 1.6, size: 1.0, sizeL: 1.1, sizeM: 1.15 },
 			contentHeading: {
-				h2Size: 1.5,
-				h3Size: 1.3,
-				lineHeight: 1.3,
-				weight: 600,
+				h2Size: 1.44, // 23px / 16px = 1.44rem pour correspondre à 23px
+				h3Size: 1.25, // 20px / 16px = 1.25rem pour h3
+				lineHeight: 1.69, // 27px / 16px = 1.69rem
+				weight: 300, // Poids exact pour sous-titres
 			},
 			// Configuration exacte selon spécifications - CORRECTION TAILLES
 			subTitle: { 
 				color: 'rgb(85, 85, 85)',
-				fontFamily: '"Open Sans", sans-serif',
+				fontFamily: '"Open Sans"',
 				lineHeight: 27, 
 				size: 23, 
 				sizeL: 23, // FORCÉ À 23px
@@ -47,7 +47,7 @@ export const theme = createTheme({
 			},
 			title: { 
 				color: 'rgb(51, 51, 51)',
-				fontFamily: '"Open Sans", sans-serif',
+				fontFamily: '"Open Sans"',
 				lineHeight: 31, 
 				size: 27, 
 				sizeL: 27, // FORCÉ À 27px

@@ -21,7 +21,7 @@ export default function PostDetail({ post }) {
 						component='h1'
 						className='blog-title'
 						sx={{ 
-							fontFamily: '"Open Sans", sans-serif !important',
+							fontFamily: '"Open Sans" !important',
 							fontStyle: 'normal !important',
 							fontWeight: '600 !important',
 							fontSize: '27px !important',
@@ -37,7 +37,7 @@ export default function PostDetail({ post }) {
 							component='h2'
 							className='blog-subtitle'
 							sx={{ 
-								fontFamily: '"Open Sans", sans-serif !important',
+								fontFamily: '"Open Sans" !important',
 								fontStyle: 'normal !important',
 								fontWeight: '300 !important',
 								fontSize: '23px !important',

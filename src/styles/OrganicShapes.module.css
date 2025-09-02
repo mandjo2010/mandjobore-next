@@ -142,18 +142,25 @@
 }
 
 .profileName {
-  font-size: 1.05rem; /* Légèrement augmenté de 1rem */
-  font-weight: 600;
+  /* Nom auteur selon spécifications: Open Sans 300, 27px/27px, color white */
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 27px;
+  line-height: 27px;
   color: white !important;
   margin: 0;
-  line-height: 1.2;
 }
 
 .profileRole {
-  font-size: 0.85rem; /* Légèrement augmenté de 0.8rem */
+  /* Titre auteur selon spécifications: Open Sans 300, 16px/16px, color white translucide */
+  font-family: "Open Sans", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+  font-size: 16px;
+  line-height: 16px;
   color: rgba(255, 255, 255, 0.9) !important;
   margin: 0;
-  line-height: 1.2;
 }
 
 /* Navigation styles */
@@ -274,11 +281,21 @@
   }
   
   .profileName {
-    font-size: 0.95rem;
+    /* Nom auteur mobile: Open Sans 300, 24px/24px pour éviter débordement */
+    font-family: "Open Sans", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 24px;
   }
   
   .profileRole {
-    font-size: 0.8rem;
+    /* Titre auteur mobile: Open Sans 300, 14px/14px pour éviter débordement */
+    font-family: "Open Sans", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+    font-size: 14px;
+    line-height: 14px;
   }
   
   .actionsList {

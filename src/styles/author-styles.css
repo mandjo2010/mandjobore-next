@@ -1,0 +1,204 @@
+/**
+ * Styles d'auteur selon les spécifications exactes 
+ * Basé sur l'analyse du code Gatsby v1 et les spécifications typographiques
+ */
+
+/* ========================================
+   STYLES AUTEUR - SPÉCIFICATIONS EXACTES
+   ======================================== */
+
+/* Nom auteur: Open Sans 300, 27px/27px, color #555 */
+.author-name,
+.authorName {
+  color: #555555 !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 27px !important;
+  line-height: 27px !important;
+  margin: 8px 0 0 0 !important;
+  padding: 0 !important;
+}
+
+/* Override ultra-spécifique pour empêcher tout style gras sur le nom, même si c'est un titre */
+h1.author-name,
+h1.authorName,
+h2.author-name,
+h2.authorName,
+h3.author-name,
+h3.authorName,
+.author-name h1,
+.author-name h2,
+.author-name h3,
+.authorName h1,
+.authorName h2,
+.authorName h3,
+.profileHeader .authorName,
+.profileHeader h1.authorName,
+.profileHeader .author-name {
+  color: #555555 !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 27px !important;
+  line-height: 27px !important;
+  margin: 8px 0 0 0 !important;
+  padding: 0 !important;
+}
+
+/* Titre auteur: Open Sans 300, 16px/16px, color #555 */
+.author-role,
+.authorRole,
+.author-title {
+  color: #555555 !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 16px !important;
+  line-height: 18px !important;
+  margin: 8px 0 0 0 !important;
+  padding: 0 !important;
+}
+
+/* Bio auteur: Open Sans 300, 15px/23px, color #555 */
+.author-bio,
+.bioText,
+.author-description {
+  color: #555555 !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 15px !important;
+  line-height: 23px !important;
+  margin: 0 0 20px 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+}
+
+/* Liens sociaux auteur: Open Sans 300, 16px/18px, color vert */
+.author-social,
+.profileSocial,
+.social-links {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.8em !important;
+  justify-content: center !important;
+  padding: 1em 0 !important;
+}
+
+.author-social a,
+.profileSocial a,
+.social-links a {
+  color: #709425 !important;
+  display: block !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 16px !important;
+  line-height: 18px !important;
+  padding: 5px !important;
+  text-decoration: none !important;
+  transition: all 0.5s ease !important;
+}
+
+/* Effet hover vert selon spécifications */
+.author-social a:hover,
+.profileSocial a:hover,
+.social-links a:hover {
+  color: rgb(112, 148, 37) !important;
+  transform: scale(1.1) !important;
+}
+
+/* ========================================
+   STYLES POUR LES COMPOSANTS ORGANIQUES
+   ======================================== */
+
+/* Mode horizontal (barres organiques) - version blanche pour fond rouge */
+.organic-author-name {
+  color: white !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 27px !important;
+  line-height: 27px !important;
+  margin: 0 !important;
+}
+
+.organic-author-role {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 16px !important;
+  line-height: 16px !important;
+  margin: 0 !important;
+}
+
+/* ========================================
+   STYLES RESPONSIVES
+   ======================================== */
+
+/* Mobile: réduction légère des tailles pour éviter débordement */
+@media (max-width: 600px) {
+  .author-name,
+  .authorName,
+  .organic-author-name {
+    font-size: 24px !important;
+    line-height: 24px !important;
+  }
+  
+  .author-role,
+  .authorRole,
+  .author-title,
+  .organic-author-role {
+    font-size: 14px !important;
+    line-height: 14px !important;
+  }
+  
+  .author-bio,
+  .bioText,
+  .author-description {
+    font-size: 14px !important;
+    line-height: 21px !important;
+  }
+}
+
+/* ========================================
+   FORCE APPLICATION DES STYLES
+   ======================================== */
+
+/* S'assurer que les styles sont appliqués même avec des spécificités élevées */
+h1.author-name,
+h1.authorName,
+h2.author-name,
+h2.authorName,
+h3.author-name,
+h3.authorName {
+  color: #555555 !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-weight: 300 !important;
+  font-size: 27px !important;
+  line-height: 27px !important;
+}
+
+p.author-role,
+p.authorRole,
+small.author-role,
+small.authorRole {
+  color: #555555 !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-weight: 300 !important;
+  font-size: 16px !important;
+  line-height: 16px !important;
+}
+
+p.author-bio,
+p.bioText,
+div.author-bio,
+div.bioText {
+  color: #555555 !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-weight: 300 !important;
+  font-size: 15px !important;
+  line-height: 23px !important;
+}

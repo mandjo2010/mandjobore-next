@@ -15,12 +15,16 @@ import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 const ItemContainer = styled(motion.div)(({ theme: _theme }) => ({
   '&:hover': {
     '& .item-cover': {
-      borderRadius: '75% 65%', // Inverse du borderRadius au hover
-      transform: 'scale(1.05)'
+      borderRadius: '65% 75%', // Inversion exacte du borderRadius au hover (Gatsby v1)
+      transform: 'scale(1.02)' // Scaling plus subtil
     },
     
     '& .item-title': {
       color: '#709425' // Couleur accent Gatsby
+    },
+    
+    '& .item-subtitle': {
+      color: '#709425 !important' // Couleur accent pour le sous-titre aussi
     }
   },
   '&:last-child': {
@@ -37,18 +41,42 @@ const ItemContainer = styled(motion.div)(({ theme: _theme }) => ({
 }))
 
 const CoverContainer = styled(Box)({
+  // Responsive selon breakpoints Gatsby v1 exacts
+  '@media (min-width: 600px)': { // theme.mediaQueryTresholds.M
+    height: '80px',
+    marginRight: '0.5em',
+    width: '80px'
+  },
+  '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L  
+    height: '90px',
+    marginRight: '0.8em',
+    width: '90px'
+  },
+  // Mode aside/featured (navigation compacte)
+  '.moving-featured &, .is-aside &': {
+    height: '30px !important',
+    marginRight: '0.5em !important',
+    width: '30px !important'
+  },
   flexShrink: 0,
-  height: '60px',
+  height: '60px', // Base mobile selon Gatsby v1
   marginRight: '1rem',
+  position: 'relative',
   width: '60px'
 })
 
 const CoverImage = styled(Image)({
+  '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+    transition: 'all 0.3s ease' // Plus rapide sur desktop comme Gatsby v1
+  },
   backgroundColor: '#f5f5f5',
-  borderRadius: '65% 75%', // Forme organique caractéristique
+  border: '1px solid #ddd', // Bordure grise très fine comme dans votre description
+  borderRadius: '75% 65%', // Forme organique par défaut (Gatsby v1)
   height: '100%',
   objectFit: 'cover',
-  transition: 'all 0.3s ease',
+  overflow: 'hidden',
+  position: 'relative',
+  transition: 'all 0.5s ease', // Transition lente comme Gatsby v1 original
   width: '100%'
 })
 
@@ -58,12 +86,13 @@ const ContentContainer = styled(Box)({
 })
 
 const ItemTitle = styled(Typography)(({ theme: _theme }) => ({
-  color: '#333',
+  color: 'rgb(85, 85, 85)',
   display: '-webkit-box',
-  fontSize: '1.2rem',
+  fontFamily: '"Open Sans"',
+  fontSize: '27px',
   fontWeight: 600,
-  letterSpacing: '-0.03em',
-  lineHeight: '1.2em',
+  letterSpacing: '-0.04em',
+  lineHeight: '31px',
   marginBottom: '0.3rem',
   
   // Ellipsis pour longs titres
@@ -79,14 +108,14 @@ const ItemSubtitle = styled(Typography)(({ theme: _theme }) => ({
   '.is-aside &': {
     display: 'none'
   },
-  color: '#888',
+  // S'appuie sur les styles globaux .post-subtitle pour taille/couleur/line-height exacts
+  fontFamily: '"Open Sans" !important',
+  fontSize: '23px !important',
+  fontWeight: '300 !important',
+  lineHeight: '27px !important',
+  color: 'rgb(85, 85, 85) !important',
   display: '-webkit-box',
-  fontSize: '0.9rem',
-  
-  fontWeight: 300,
-  
-  lineHeight: '1.3em',
-  // Ellipsis
+  margin: 0,
   overflow: 'hidden',
   textOverflow: 'ellipsis',
   WebkitBoxOrient: 'vertical',
@@ -142,11 +171,21 @@ export default function NavigatorItem({ post }: NavigatorItemProps) {
         </CoverContainer>
         
         <ContentContainer>
-          <ItemTitle className="item-title">
+          <ItemTitle className="item-title post-list-title">
             {post.title}
           </ItemTitle>
           
-          <ItemSubtitle className="item-subtitle">
+          <ItemSubtitle 
+            className="item-subtitle post-subtitle blog-subtitle"
+            sx={{
+              color: 'rgb(85, 85, 85) !important',
+              fontFamily: '"Open Sans" !important',
+              fontSize: '23px !important',
+              fontWeight: '300 !important',
+              lineHeight: '27px !important',
+              transition: 'color 0.2s ease',
+            }}
+          >
             {post.excerpt}
           </ItemSubtitle>
           

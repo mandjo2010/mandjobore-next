@@ -5,6 +5,7 @@ import { MoreVert } from '@mui/icons-material';
 
 import organicStyles from '@/styles/OrganicShapes.module.css';
 import animations from '@/styles/AdvancedAnimations.module.css';
+import authorConfig from '@/config/author';
 import InfoMenu from './InfoMenu';
 
 interface OrganicProfileBarProps {
@@ -38,16 +39,16 @@ export default function OrganicProfileBar({ isVisible = true }: OrganicProfileBa
             <div className={organicStyles.profileInfo}>
               <div className={`${organicStyles.profileAvatar} ${animations.avatarInteractive}`}>
                 <Image 
-                  src="/images/avatar.svg" 
-                  alt="Mandjo Béa Boré" 
+                  src={authorConfig.avatar} 
+                  alt={authorConfig.authorName} 
                   fill 
                   sizes="42px"
                   style={{ objectFit: 'cover' }}
                 />
               </div>
               <div className={organicStyles.profileText}>
-                <h1 className={`${organicStyles.profileName} ${animations.responsiveTypography}`}>Mandjo Béa Boré</h1>
-                <p className={`${organicStyles.profileRole} ${animations.responsiveTypography}`}>Data analyst - Developer</p>
+                <h1 className={`${organicStyles.profileName} ${animations.responsiveTypography}`}>{authorConfig.infoTitle}</h1>
+                <p className={`${organicStyles.profileRole} ${animations.responsiveTypography}`}>{authorConfig.infoTitleNote}</p>
               </div>
             </div>
           </div>

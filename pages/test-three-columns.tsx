@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box } from '@mui/material'
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
 import * as React from 'react'

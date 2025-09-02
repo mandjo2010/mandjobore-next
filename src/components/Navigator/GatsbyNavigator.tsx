@@ -141,8 +141,7 @@ export default function GatsbyNavigator({ categories: _categories, className, po
                 '&:hover': {
                   '& .post-title': {
                     color: '#709425'
-                  },
-                  backgroundColor: '#fafafa'
+                  }
                 },
                 alignItems: 'flex-start',
                 borderBottom: index < filteredPosts.length - 1 ? '1px solid #eeeeee' : 'none',
@@ -210,11 +209,17 @@ export default function GatsbyNavigator({ categories: _categories, className, po
                 {post.subTitle && (
                   <Typography
                     sx={{
-                      color: '#888888',
-                      fontFamily: '"Open Sans", Arial, sans-serif',
-                      fontSize: '0.9rem',
-                      lineHeight: '1.4',
-                      marginBottom: '8px'
+                      color: 'rgb(85, 85, 85) !important',
+                      fontFamily: '"Open Sans" !important',
+                      fontSize: '23px !important',
+                      fontWeight: '300 !important',
+                      lineHeight: '27px !important',
+                      marginBottom: '8px',
+                      display: '-webkit-box',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      WebkitBoxOrient: 'vertical',
+                      WebkitLineClamp: 2,
                     }}
                   >
                     {post.subTitle}
@@ -222,12 +227,20 @@ export default function GatsbyNavigator({ categories: _categories, className, po
                 )}
                 
                 <Typography
+                  component="h2"
+                  className="blog-subtitle article-subtitle post-subtitle"
                   sx={{
-                    color: '#555555',
-                    fontFamily: '"Open Sans", Arial, sans-serif',
-                    fontSize: '0.85rem',
-                    lineHeight: '1.5',
-                    marginBottom: '8px'
+                    fontFamily: '"Open Sans" !important',
+                    fontSize: '23px !important',
+                    fontWeight: '300 !important',
+                    lineHeight: '27px !important',
+                    color: 'rgb(85, 85, 85) !important',
+                    fontStyle: 'normal !important',
+                    marginBottom: '8px',
+                    cursor: 'pointer',
+                    '&:hover': {
+                      color: 'rgb(112, 148, 37) !important'
+                    }
                   }}
                 >
                   {post.excerpt}

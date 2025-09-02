@@ -60,7 +60,6 @@ export default function TestScrollbar() {
 			</Head>
 			
 			<GatsbyLayoutNew 
-				location={{ pathname: '/test-scrollbar' }}
 				posts={[]}
 				pages={[]}
 				parts={[]}

@@ -46,7 +46,7 @@ const author = {
     github: 'https://github.com/mandjo2010',
     instagram: 'https://www.instagram.com/mandjo_bb/', // Nouveau Instagram
     linkedin: 'https://fr.linkedin.com/in/mandjobb',
-    x: 'https://x.com/mandjobore' // Nouveau X (ex-Twitter)
+    x: 'https://x.com/kozoubea' // Lien X mis à jour
   },
   tagline: 'Data Analyst & Developer'
 }
@@ -134,6 +134,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
       component="aside"
       className={`${navigatorPosition} ${navigatorShape}`}
       sx={{
+        // Large screens: 1024px+ = Affichage complet de l'InfoBox (mode vertical)
         '@media (min-width: 1024px)': {
           // Border right comme dans le original avec theme.base.colors.lines
           '&::after': {
@@ -155,6 +156,11 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
           top: 0,
           
           width: 'var(--layout-infobox-width)' // theme.info.sizes.width = 300px
+        },
+        
+        // Medium/Small screens: moins de 1024px = InfoBox masquée (InfoBar prend le relais)
+        '@media (max-width: 1023px)': {
+          display: 'none' // Masquée pour laisser place au mode horizontal
         },
         
         // Style de base du container infoBox (reproduction exacte du theme Gatsby)
@@ -245,42 +251,51 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
           />
         </Box>
 
-        {/* Titre avec nom et tagline - styles exacts du theme original */}
+        {/* Titre avec nom et tagline - styles selon spécifications exactes */}
         <Typography
           component="h1"
           sx={{
             '& small': {
+              // Titre auteur selon spécifications: Open Sans 300, 16px/16px, color #555
+              color: '#555555 !important',
               display: 'block',
-              fontSize: '0.6em',
-              marginTop: '0.3em'
+              fontFamily: '"Open Sans", sans-serif !important',
+              fontSize: '16px !important',
+              fontWeight: '300 !important',
+              lineHeight: '18px !important',
+              margin: '4px 0 0 0 !important', // Réduit l'espacement pour garder dans la même box
             },
             '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
-              fontSize: '1.2em' // theme.info.fonts.boxTitleSizeM
+              fontSize: '27px !important', // Taille selon spécifications
+              // Garde les éléments groupés même sur tablet
+              position: 'relative',
+              textAlign: 'left'
             },
             '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
               // Position selon l'état du navigator (.is-aside.open &)
               '.is-aside.open &': {
                 left: '60%',
                 textAlign: 'left',
-                top: '0.5em', // Calcul: 1.9 - theme.info.fonts.boxTitleSizeL
+                top: '0.5em',
                 transform: 'none'
               },
-              fontSize: '1.3em', // theme.info.fonts.boxTitleSizeL
+              fontSize: '27px !important', // Nom auteur selon spécifications: 27px
               left: '50%',
               position: 'absolute',
               textAlign: 'center',
               top: '85px',
               transform: 'translate(-50%)',
-              
               transition: 'all 0.5s ease'
             },
+            // Nom auteur selon spécifications exactes: Open Sans 300, 27px/27px, color #555
+            color: '#555555 !important',
+            fontFamily: '"Open Sans", sans-serif !important',
+            fontSize: '27px !important',
+            fontWeight: '300 !important',
+            lineHeight: '27px !important',
             float: 'left',
-            fontSize: '1.1em', // theme.info.fonts.boxTitleSize
-            
-            margin: 0,
-            
+            margin: '0 !important',
             transition: 'all 0.5s ease',
-            
             // Reproduction exacte des styles title du theme original
             willChange: 'transform, left, top'
           }}
@@ -341,7 +356,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
           
           // Masquage complet de la barre de défilement comme Gatsby original
           scrollbarWidth: 'none',
-          top: '140px', // theme.info.sizes.headerHeight
+          top: '130px', // theme.info.sizes.headerHeight (ajusté pour notre structure)
           transition: 'bottom 0.5s ease',
           
           width: '100%',
@@ -371,6 +386,8 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
                 lineHeight: 1.5,
                 
                 marginBottom: '0.8em',
+                // Espacement optimal entre titre et bio : ni trop serré, ni trop espacé
+                marginTop: '40px', 
                 textAlign: 'left'
               }}
             >
@@ -394,7 +411,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
                 flexWrap: 'wrap',
                 gap: '0.5em', // Espacement léger entre les icônes
                 justifyContent: 'center',
-                marginBottom: '2em'
+                marginBottom: '1.2em' // Réduit l'espacement vers le menu de navigation
               }}
             >
               <Link href={author.social.github} target="_blank" rel="noopener noreferrer">
@@ -638,7 +655,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
                 width: '100%'
               }}
             >
-              built with:
+              BUILT WITH:
             </Typography>
             <Box
               sx={{

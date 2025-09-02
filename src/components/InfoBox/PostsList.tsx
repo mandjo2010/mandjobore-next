@@ -5,7 +5,7 @@
 'use client'
 
 import { ExpandMore } from '@mui/icons-material'
-import { Box, Typography, List, ListItem, ListItemButton, Avatar } from '@mui/material'
+import { Box, Typography, List, ListItem, ListItemButton, Avatar, IconButton } from '@mui/material'
 import Link from 'next/link'
 import React from 'react'
 
@@ -96,15 +96,17 @@ export default function PostsList({ posts }: PostsListProps) {
         </Typography>
         
         {navigatorShape === 'closed' && (
-          <ExpandMore
+          <IconButton
             onClick={expandOnClick}
+            aria-label="Expand the list"
+            size="small"
             sx={{
-              '&:hover': { color: 'primary.main' },
               color: 'text.secondary',
-              cursor: 'pointer'
+              '&:hover': { color: 'primary.main' },
             }}
-            title="Expand the list"
-          />
+          >
+            <ExpandMore titleAccess="Expand the list" />
+          </IconButton>
         )}
       </Box>
 
@@ -135,7 +137,11 @@ export default function PostsList({ posts }: PostsListProps) {
               <ListItemButton
                 sx={{
                   '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.04)'
+                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
+                    // Animation hover exacte Gatsby v1 : inversion borderRadius
+                    '& .post-image': {
+                      borderRadius: '65% 75% !important'
+                    }
                   },
                   alignItems: 'flex-start',
                   borderRadius: 1,
@@ -151,18 +157,23 @@ export default function PostsList({ posts }: PostsListProps) {
                     alt=""
                     className="post-image"
                     sx={{
-                      '@media (min-width: 900px)': {
+                      // Breakpoints exacts Gatsby v1
+                      '@media (min-width: 600px)': { // theme.mediaQueryTresholds.M
                         height: 80,
                         width: 80,
                       },
-                      '@media (min-width: 1200px)': {
+                      '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
                         height: 90,
+                        transition: 'all 0.3s ease', // Plus rapide sur desktop
                         width: 90,
                       },
-                      borderRadius: '75% 65%',
+                      border: '1px solid #ddd', // Bordure grise fine comme l'original
+                      borderRadius: '75% 65%', // Forme par défaut Gatsby v1
                       flexShrink: 0,
-                      height: 60,
-                      transition: 'all .3s',
+                      height: 60, // Base mobile Gatsby v1
+                      overflow: 'hidden',
+                      position: 'relative',
+                      transition: 'all 0.5s ease', // Transition lente comme Gatsby v1
                       width: 60
                     }}
                   />
@@ -178,21 +189,17 @@ export default function PostsList({ posts }: PostsListProps) {
                   }}
                 >
                   <Typography
-                    className="post-title"
-                    variant="h6"
+                    className="post-title post-list-title"
+                    component="h3"
                     sx={{
-                      '@media (min-width: 900px)': {
-                        fontSize: '1.2em',
-                      },
-                      '@media (min-width: 1200px)': {
-                        fontSize: '1.3em',
-                      },
-                      display: '-webkit-box',
-                      fontSize: '1.1em',
+                      color: 'rgb(85, 85, 85)',
+                      fontFamily: '"Open Sans"',
+                      fontSize: '27px',
                       fontWeight: 600,
-                      letterSpacing: '-0.03em',
-                      lineHeight: 1.15,
+                      letterSpacing: '-0.04em',
+                      lineHeight: '31px',
                       m: 0,
+                      display: '-webkit-box',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       WebkitBoxOrient: 'vertical',
@@ -204,19 +211,14 @@ export default function PostsList({ posts }: PostsListProps) {
                   
                   {post.subtitle && (
                     <Typography
-                      className="post-subtitle"
                       variant="body2"
-                      color="text.secondary"
                       sx={{
-                        '@media (min-width: 900px)': {
-                          fontSize: '1em',
-                        },
-                        '@media (min-width: 1200px)': {
-                          fontSize: '1.1em',
-                        },
+                        color: 'rgb(85, 85, 85) !important', // Exact selon styles.txt
                         display: '-webkit-box',
-                        fontSize: '0.9em',
-                        lineHeight: 1.2,
+                        fontFamily: '"Open Sans" !important', // Exact selon styles.txt
+                        fontSize: '23px !important', // Exact selon styles.txt
+                        fontWeight: '300 !important', // Exact selon styles.txt
+                        lineHeight: '27px !important', // Exact selon styles.txt
                         mt: 0.3,
                         overflow: 'hidden',
                         textOverflow: 'ellipsis',

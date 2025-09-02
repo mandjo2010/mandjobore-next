@@ -3,7 +3,7 @@
 import React from 'react';
 
 import ActionsBar from '@/components/layout/ActionsBar';
-import LeftSidebar from '../../../components/Sidebar/LeftSidebar';
+import LeftSidebar from '../sidebar/LeftSidebarLegacy';
 
 import BaseTemplate from './BaseTemplate';
 

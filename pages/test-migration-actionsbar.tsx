@@ -3,7 +3,7 @@ import React from 'react';
 
 import ActionsBar from '@/components/layout/ActionsBar';
 import MainLayout from '@/components/layout/MainLayout';
-import LeftSidebar from '../components/Sidebar/LeftSidebar';
+import LeftSidebar from '@/components/sidebar/LeftSidebarLegacy';
 
 /**
  * Page de test pour la migration ActionsBar - Style "This.png"

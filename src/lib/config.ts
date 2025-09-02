@@ -41,7 +41,7 @@ export const siteConfig: SiteConfig = {
 		email: 'mailto:boremandjo@gmail.com',
 		github: 'https://github.com/mandjo2010',
 		linkedin: 'https://www.linkedin.com/in/mandjobore/',
-		twitter: 'https://twitter.com/mandjobore',
+		twitter: 'https://x.com/kozoubea',
 	},
 	name: 'Mandjo Béa Boré',
 	siteUrl: SITE_URL,

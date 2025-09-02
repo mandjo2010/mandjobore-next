@@ -53,27 +53,27 @@ const sizes = {
 const fonts = {
   // Open Sans utilisé dans Gatsby
   base: {
-    family: '"Open Sans", Arial, sans-serif',
+    family: '"Open Sans"',
     size: '16px',
     lineHeight: 1.6
   },
   
-  // Titres d'articles
+  // Titres d'articles - WhatFont exact
   title: {
-    family: '"Open Sans", Arial, sans-serif',
-    size: '1.5em',
-    lineHeight: '1.1em',
+    family: '"Open Sans"',
+    size: '27px',
+    lineHeight: '31px',
     letterSpacing: '-0.03em',
     fontWeight: 600
   },
   
-  // Sous-titres
+  // Sous-titres - WhatFont exact
   subtitle: {
-    family: '"Open Sans", Arial, sans-serif', 
-    size: '1.1em',
-    lineHeight: '1.3em',
+    family: '"Open Sans"', 
+    size: '23px',
+    lineHeight: '27px',
     fontWeight: 300,
-    color: '#888888'
+    color: 'rgb(85, 85, 85)'
   }
 }
 

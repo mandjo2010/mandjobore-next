@@ -20,6 +20,8 @@ import React from 'react';
 import { styled } from '@mui/material/styles';
 import { Box } from '@mui/material';
 
+import authorConfig from '@/config/author';
+
 interface InfoTextProps {
   info?: {
     title: string;
@@ -27,15 +29,17 @@ interface InfoTextProps {
   };
 }
 
-// Container du texte avec styles de l'ancien Gatsby
+// Container du texte avec styles selon spécifications exactes
 const TextContainer = styled(Box)(({ theme }) => ({
+  // Bio auteur selon spécifications: Open Sans 300, 15px/23px, color #555
+  color: '#555555',
   display: 'block',
+  fontFamily: '"Open Sans"',
+  fontSize: '15px',
   fontWeight: 300,
-  lineHeight: 1.5,
-  fontSize: '.95em',
+  lineHeight: '23px',
+  marginBottom: '0.8em',
   textAlign: 'left',
-  marginBottom: '.8em',
-  color: theme.info?.colors?.text || '#555',
   
   // Styles pour les paragraphes HTML
   '& p:first-of-type': {
@@ -45,8 +49,12 @@ const TextContainer = styled(Box)(({ theme }) => ({
     marginBottom: 0,
   },
   '& p': {
+    color: '#555555',
+    fontFamily: '"Open Sans"',
+    fontSize: '15px',
+    fontWeight: 300,
+    lineHeight: '23px',
     margin: '0 0 1em 0',
-    lineHeight: 1.5,
   },
   
   // Styles pour autres éléments HTML potentiels
@@ -70,13 +78,8 @@ const TextContainer = styled(Box)(({ theme }) => ({
 }));
 
 const InfoText: React.FC<InfoTextProps> = ({ info }) => {
-  // Texte par défaut si pas d'info fournie
-  const defaultText = `
-    <p>I am a data analyst and developer specializing in spatial and geospatial applications. 
-    I design and build applications to support data analysis including GIS and mapping solutions.</p>
-  `;
-  
-  const htmlContent = info?.html || defaultText;
+  // Utilise la bio de la configuration centralisée si pas d'info fournie
+  const htmlContent = info?.html || `<p>${authorConfig.bio}</p>`;
   
   return (
     <TextContainer 

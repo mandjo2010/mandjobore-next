@@ -1,0 +1,832 @@
+//src/layouts/index.js
+
+import React from "react";
+import injectSheet from "react-jss";
+import { MuiThemeProvider } from "@material-ui/core/styles";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+
+import withRoot from "../withRoot";
+
+import theme from "../styles/theme";
+import globals from "../styles/globals";
+
+import { setFontSizeIncrease, setIsWideScreen } from "../state/store";
+
+import asyncComponent from "../components/common/AsyncComponent/";
+import Loading from "../components/common/Loading/";
+import Navigator from "../components/Navigator/";
+import ActionsBar from "../components/ActionsBar/";
+import InfoBar from "../components/InfoBar/";
+import LayoutWrapper from "../components/LayoutWrapper/";
+
+import { isWideScreen, timeoutThrottlerHandler } from "../utils/helpers";
+
+const InfoBox = asyncComponent(
+  () =>
+    import("../components/InfoBox/")
+      .then(module => {
+        return module;
+      })
+      .catch(error => {}),
+  <Loading
+    overrides={{ width: `${theme.info.sizes.width}px`, height: "100vh", right: "auto" }}
+    afterRight={true}
+  />
+);
+
+class Layout extends React.Component {
+  timeouts = {};
+  categories = [];
+
+  componentDidMount() {
+    this.props.setIsWideScreen(isWideScreen());
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", this.resizeThrottler, false);
+    }
+  }
+
+  componentWillMount() {
+    if (typeof localStorage !== "undefined") {
+      const inLocal = +localStorage.getItem("font-size-increase");
+
+      const inStore = this.props.fontSizeIncrease;
+
+      if (inLocal && inLocal !== inStore && inLocal >= 1 && inLocal <= 1.5) {
+        this.props.setFontSizeIncrease(inLocal);
+      }
+    }
+
+    this.getCategories();
+  }
+
+  getCategories = () => {
+    this.categories = this.props.data.posts.edges.reduce((list, edge, i) => {
+      const category = edge.node.frontmatter.category;
+      if (category && !~list.indexOf(category)) {
+        return list.concat(edge.node.frontmatter.category);
+      } else {
+        return list;
+      }
+    }, []);
+  };
+
+  resizeThrottler = () => {
+    return timeoutThrottlerHandler(this.timeouts, "resize", 500, this.resizeHandler);
+  };
+
+  resizeHandler = () => {
+    this.props.setIsWideScreen(isWideScreen());
+  };
+
+  render() {
+    const { children, data } = this.props;
+
+    // TODO: dynamic management of tabindexes for keybord navigation
+    return (
+      <LayoutWrapper>
+        {children()}
+        <Navigator posts={data.posts.edges} />
+        <ActionsBar categories={this.categories} />
+        <InfoBar pages={data.pages.edges} parts={data.parts.edges} />
+        {this.props.isWideScreen && <InfoBox pages={data.pages.edges} parts={data.parts.edges} />}
+      </LayoutWrapper>
+    );
+  }
+}
+
+Layout.propTypes = {
+  data: PropTypes.object.isRequired,
+  children: PropTypes.func.isRequired,
+  setIsWideScreen: PropTypes.func.isRequired,
+  isWideScreen: PropTypes.bool.isRequired,
+  fontSizeIncrease: PropTypes.number.isRequired,
+  setFontSizeIncrease: PropTypes.func.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    pages: state.pages,
+    isWideScreen: state.isWideScreen,
+    fontSizeIncrease: state.fontSizeIncrease
+  };
+};
+
+const mapDispatchToProps = {
+  setIsWideScreen,
+  setFontSizeIncrease
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(withRoot(injectSheet(globals)(Layout)));
+
+//eslint-disable-next-line no-undef
+export const guery = graphql`
+  query LayoutQuery {
+    posts: allMarkdownRemark(
+      filter: { id: { regex: "//posts//" } }
+      sort: { fields: [fields___prefix], order: DESC }
+    ) {
+      edges {
+        node {
+          excerpt
+          fields {
+            slug
+            prefix
+          }
+          frontmatter {
+            title
+            subTitle
+            category
+            cover {
+              children {
+                ... on ImageSharp {
+                  resolutions(width: 90, height: 90) {
+                    ...GatsbyImageSharpResolutions_withWebp_noBase64
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+    pages: allMarkdownRemark(
+      filter: { id: { regex: "//pages//" }, fields: { prefix: { regex: "/^\\d+$/" } } }
+      sort: { fields: [fields___prefix], order: ASC }
+    ) {
+      edges {
+        node {
+          fields {
+            slug
+            prefix
+          }
+          frontmatter {
+            title
+            menuTitle
+          }
+        }
+      }
+    }
+    parts: allMarkdownRemark(filter: { id: { regex: "//parts//" } }) {
+      edges {
+        node {
+          html
+          frontmatter {
+            title
+          }
+        }
+      }
+    }
+  }
+`;
+
+
+
+//src/components/Post/Post.js
+import React from "react";
+import PropTypes from "prop-types";
+
+import Article from "../Main/Article";
+import PostHeader from "./PostHeader";
+import Content from "../Main/Content";
+import PostFooter from "./PostFooter";
+
+const Post = props => {
+  const { post, author, slug, facebook } = props;
+  const frontmatter = (post || {}).frontmatter;
+  const title = ((post || {}).frontmatter || {}).title;
+  const subTitle = ((post || {}).frontmatter || {}).subTitle;
+  const date = ((post || {}).fields || {}).prefix;
+  const html = (post || {}).html;
+  const htmlAst = (post || {}).htmlAst;
+
+  //console.log(htmlAst);
+
+  return (
+    <Article>
+      <PostHeader title={title} subTitle={subTitle} date={date} />
+      <Content html={html} />
+      <PostFooter author={author} post={post} slug={slug} facebook={facebook} />
+    </Article>
+  );
+};
+
+Post.propTypes = {
+  post: PropTypes.object.isRequired,
+  author: PropTypes.object.isRequired,
+  slug: PropTypes.string.isRequired,
+  facebook: PropTypes.object.isRequired
+};
+
+export default Post;
+
+
+//src/components/Post/PostAuthor.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import Avatar from "@material-ui/core/Avatar";
+
+import config from "../../../content/meta/config";
+import avatar from "../../images/jpg/avatar.jpg";
+
+const styles = theme => ({
+  author: {
+    margin: "3em 0 0",
+    padding: "3em 0 0",
+    borderTop: "1px solid #ddd",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    "& a": {
+      color: theme.base.colors.link
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      flexDirection: "row",
+      justifyContent: "center"
+    }
+  },
+  avatar: {
+    margin: "0 1em 1em",
+    borderRadius: "75% 65%",
+    width: "60px",
+    height: "60px",
+    border: "1px solid #ddd",
+    flexShrink: 0,
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      margin: "0 1em 0"
+    }
+  },
+  box: {
+    display: "flex",
+    flexDirection: "column",
+    minHeight: "50px",
+    alignItems: "center"
+  }
+});
+
+const PostAuthor = props => {
+  const { classes, author } = props;
+
+  return (
+    <div className={classes.author}>
+      <Avatar src={avatar} className={classes.avatar} alt={config.authorName} />
+      <div className={classes.box} dangerouslySetInnerHTML={{ __html: author.html }} />
+    </div>
+  );
+};
+
+PostAuthor.propTypes = {
+  classes: PropTypes.object.isRequired,
+  author: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(PostAuthor);
+
+
+
+//src/components/Post/PostComments.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import FacebookProvider, { Comments } from "react-facebook";
+require("core-js/fn/array/find");
+
+import config from "../../../content/meta/config";
+
+const styles = theme => ({
+  postComments: {
+    margin: "3em 0 0",
+    padding: "3em 0 0",
+    borderTop: "1px solid #ddd"
+  }
+});
+
+const PostComments = props => {
+  const { classes, slug, facebook } = props;
+
+  return (
+    <div id="post-comments" className={classes.postComments}>
+      <FacebookProvider appId={facebook}>
+        <Comments
+          href={`${config.siteUrl}${slug}`}
+          width="100%"
+          colorScheme={props.theme.main.colors.fbCommentsColorscheme}
+        />
+      </FacebookProvider>
+    </div>
+  );
+};
+
+PostComments.propTypes = {
+  classes: PropTypes.object.isRequired,
+  post: PropTypes.object.isRequired,
+  slug: PropTypes.string.isRequired,
+  theme: PropTypes.object.isRequired,
+  facebook: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(PostComments);
+
+
+//src/components/Post/PostFooter.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+require("core-js/fn/array/find");
+
+import asyncComponent from "../common/AsyncComponent/";
+import PostAuthor from "./PostAuthor";
+import PostComments from "./PostComments";
+
+const styles = theme => ({
+  footer: {
+    color: theme.main.colors.footer,
+    fontSize: `${theme.main.fonts.footer.size}em`,
+    lineHeight: theme.main.fonts.footer.lineHeight,
+    "& p": {
+      margin: 0
+    }
+  }
+});
+
+const PostShare = asyncComponent(() =>
+  import("./PostShare")
+    .then(module => {
+      return module;
+    })
+    .catch(error => {})
+);
+
+const PostFooter = ({ classes, author, post, slug, facebook }) => {
+  return (
+    <footer className={classes.footer}>
+      <PostShare post={post} slug={slug} />
+      <PostAuthor author={author} />
+      <PostComments post={post} slug={slug} facebook={facebook} />
+    </footer>
+  );
+};
+
+PostFooter.propTypes = {
+  classes: PropTypes.object.isRequired,
+  author: PropTypes.object.isRequired,
+  post: PropTypes.object.isRequired,
+  slug: PropTypes.string.isRequired,
+  facebook: PropTypes.object.isRequired
+};
+
+export default injectSheet(styles)(PostFooter);
+
+
+//src/components/Post/PostHeader.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+const styles = theme => ({
+  header: {
+    margin: "0 0 3em"
+  },
+  title: {
+    color: theme.main.colors.title,
+    fontSize: `${theme.main.fonts.title.size}em`,
+    letterSpacing: "-0.04em",
+    fontWeight: theme.main.fonts.title.weight,
+    lineHeight: theme.main.fonts.title.lineHeight,
+    margin: "0 0 0.4em",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      fontSize: `${theme.main.fonts.title.sizeM}em`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      fontSize: `${theme.main.fonts.title.sizeL}em`,
+      letterSpacing: "-0.05em"
+    }
+  },
+  subTitle: {
+    color: theme.main.colors.subTitle,
+    fontSize: `${theme.main.fonts.subTitle.size}em`,
+    lineHeight: theme.main.fonts.subTitle.lineHeight,
+    fontWeight: theme.main.fonts.subTitle.weight,
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      fontSize: `${theme.main.fonts.subTitle.sizeM}em`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      fontSize: `${theme.main.fonts.subTitle.sizeL}em`
+    }
+  },
+  meta: {
+    fontSize: `${theme.main.fonts.meta.size}em`,
+    fontWeight: theme.main.fonts.meta.weight,
+    color: theme.main.colors.meta
+  }
+});
+
+const PostHeader = props => {
+  const { classes, title, subTitle, date } = props;
+
+  function myDate(dateString) {
+    const dateObj = new Date(dateString).toUTCString();
+    const dateToShow = dateObj
+      .split(" ")
+      .slice(0, 4)
+      .join(" ");
+
+    return dateToShow;
+  }
+
+  return (
+    <header className={classes.header}>
+      <h1 className={classes.title}>{title}</h1>
+      <h2 className={classes.subTitle}>{subTitle}</h2>
+      <div className={classes.meta}>{myDate(date)}</div>
+    </header>
+  );
+};
+
+PostHeader.propTypes = {
+  classes: PropTypes.object.isRequired,
+  title: PropTypes.string.isRequired,
+  subTitle: PropTypes.string,
+  date: PropTypes.string.isRequired
+};
+
+export default injectSheet(styles)(PostHeader);
+
+//src/components/Post/PostShare.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import {
+  FacebookShareButton,
+  GooglePlusShareButton,
+  LinkedinShareButton,
+  TwitterShareButton,
+  FacebookShareCount,
+  GooglePlusShareCount,
+  LinkedinShareCount,
+  FacebookIcon,
+  TwitterIcon,
+  GooglePlusIcon,
+  LinkedinIcon
+} from "react-share";
+
+import config from "../../../content/meta/config";
+
+const styles = theme => ({
+  share: {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    padding: "1em 0 0",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      flexDirection: "row"
+    }
+  },
+  links: {
+    display: "flex",
+    flexDirection: "row",
+    "& .SocialMediaShareButton": {
+      margin: "0 .8em",
+      cursor: "pointer"
+    }
+  },
+  label: {
+    fontSize: "1.2em",
+    margin: "0 1em 1em",
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      margin: "0 1em"
+    }
+  }
+});
+
+class PostShare extends React.Component {
+  render() {
+    const { post, classes, slug } = this.props;
+    const { excerpt, frontmatter } = post;
+    const { title } = frontmatter;
+    const url = config.siteUrl + config.pathPrefix + slug;
+
+    const iconSize = 36;
+    const filter = count => (count > 0 ? count : "");
+
+    return (
+      <div className={classes.share}>
+        <span className={classes.label}>SHARE</span>
+        <div className={classes.links}>
+          <TwitterShareButton url={url} title={title}>
+            <TwitterIcon round size={iconSize} />
+          </TwitterShareButton>
+          <GooglePlusShareButton url={url}>
+            <GooglePlusIcon round size={iconSize} />
+            <GooglePlusShareCount url={url}>
+              {count => <div className="share-count">{filter(count)}</div>}
+            </GooglePlusShareCount>
+          </GooglePlusShareButton>
+          <FacebookShareButton
+            url={url}
+            quote={`${title} - ${excerpt}`}
+            aria-label="Facebook share"
+          >
+            <FacebookIcon round size={iconSize} />
+            <FacebookShareCount url={url}>
+              {count => <div className="share-count">{filter(count)}</div>}
+            </FacebookShareCount>
+          </FacebookShareButton>
+          <LinkedinShareButton url={url} title={title} description={excerpt}>
+            <LinkedinIcon round size={iconSize} />
+            <LinkedinShareCount url={url}>
+              {count => <div className="share-count">{filter(count)}</div>}
+            </LinkedinShareCount>
+          </LinkedinShareButton>
+        </div>
+      </div>
+    );
+  }
+}
+
+PostShare.propTypes = {
+  post: PropTypes.object.isRequired,
+  classes: PropTypes.object.isRequired,
+  slug: PropTypes.string.isRequired
+};
+
+export default injectSheet(styles)(PostShare);
+
+
+//src/components/Post/index.js
+export { default } from "./Post";
+
+
+
+
+
+
+//src/components/Main/Article.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+
+const styles = theme => ({
+  article: {
+    background: theme.main.colors.background,
+    maxWidth: theme.main.sizes.articleMaxWidth,
+    margin: "0 auto",
+    padding: `calc(${theme.bars.sizes.infoBar}px + 1.5rem) 1.5rem  1.5rem 1.5rem`,
+    "& strong, & b": {
+      letterSpacing: "-.02em"
+    },
+    "& a": {
+      fontWeight: "bold",
+      letterSpacing: "-.02em",
+      textDecoration: "underline",
+      transition: "0.3s",
+      "&:hover": {
+        color: theme.base.colors.linkHover
+      }
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      padding: `calc(2.5rem + ${theme.bars.sizes.infoBar}px) 3.5rem 2.5rem`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      padding: "3.5rem"
+    }
+  }
+});
+
+const Article = props => {
+  const { children, classes } = props;
+
+  return <article className={classes.article}>{children}</article>;
+};
+
+Article.propTypes = {
+  classes: PropTypes.object.isRequired,
+  children: PropTypes.node.isRequired
+};
+
+export default injectSheet(styles)(Article);
+
+
+//src/components/Main/Content.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import { connect } from "react-redux";
+
+import { setFontSizeIncrease } from "../../state/store";
+
+const styles = theme => ({
+  content: {
+    color: theme.main.colors.content,
+    fontSize: props => `calc(${theme.main.fonts.content.size}em * ${props.fontSizeIncrease})`,
+    lineHeight: theme.main.fonts.content.lineHeight,
+    "& a": {
+      color: theme.base.colors.link
+    },
+    "& .gatsby-highlight": {
+      margin: "2em 0"
+    },
+    "& .gatsby-resp-iframe-wrapper": {
+      margin: "2em 0"
+    },
+    "& .gatsby-resp-image-link": {
+      margin: "2em -1.5rem",
+      border: "none",
+      [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+        margin: "2.5em -3.5rem"
+      }
+    },
+    "& h2, & h3": {
+      color: theme.main.colors.contentHeading,
+      fontSize: `${theme.main.fonts.contentHeading.h2Size}em`,
+      fontWeight: theme.main.fonts.contentHeading.weight,
+      lineHeight: theme.main.fonts.contentHeading.lineHeight,
+      margin: "2em 0 1em",
+      letterSpacing: "-0.02em"
+    },
+    "& h3": {
+      fontSize: `${theme.main.fonts.contentHeading.h3Size}em`
+    },
+    "& p": {
+      margin: "0 0 1.5em 0",
+      fontWeight: 400
+    },
+    "& ul": {
+      listStyle: "circle",
+      padding: "0 0 0 1.3em",
+      [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+        padding: "0 0 0 2em"
+      }
+    },
+    "& li": {
+      margin: "0 0 .5em 0"
+    },
+    "& blockquote": {
+      border: `5px solid ${theme.main.colors.blockquoteFrame}`,
+      fontStyle: "italic",
+      margin: "2.5em 0",
+      padding: "1em 1.1em 1em 1.3em",
+      position: "relative",
+      "& p": {
+        margin: 0
+      },
+      "&::before, &::after": {
+        background: theme.main.colors.background,
+        content: `""`,
+        height: "5px",
+        left: "50%",
+        marginLeft: "-47%",
+        position: "absolute",
+        top: "-5px",
+        width: "94%"
+      },
+      "&::after": {
+        top: "auto",
+        bottom: "-5px"
+      }
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      fontSize: `${theme.main.fonts.content.sizeM}em`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      fontSize: `${theme.main.fonts.content.sizeL}em`
+    }
+  }
+});
+
+const Content = props => {
+  const { classes, html, children } = props;
+
+  if (html) {
+    return <div className={classes.content} dangerouslySetInnerHTML={{ __html: html }} />;
+  } else {
+    return <div className={classes.content}>{children}</div>;
+  }
+};
+
+Content.propTypes = {
+  classes: PropTypes.object.isRequired,
+  html: PropTypes.string,
+  children: PropTypes.node,
+  setFontSizeIncrease: PropTypes.func.isRequired,
+  fontSizeIncrease: PropTypes.number.isRequired
+};
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    fontSizeIncrease: state.fontSizeIncrease
+  };
+};
+
+const mapDispatchToProps = {
+  setFontSizeIncrease
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(injectSheet(styles)(Content));
+
+
+//src/components/Main/Main.js
+import React from "react";
+import PropTypes from "prop-types";
+import injectSheet from "react-jss";
+import SpringScrollbars from "../SpringScrollbars";
+
+const styles = theme => ({
+  main: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    bottom: 0,
+    width: "100%",
+    animationName: "main-entry",
+    animationDuration: ".5s",
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      width: `calc(100vw - ${theme.info.sizes.width}px - ${theme.bars.sizes.actionsBar}px)`,
+      left: `${theme.info.sizes.width}px`
+    },
+    "@media print": {
+      position: "relative",
+      "& > div": {
+        overflow: "visible!important"
+      },
+      "& > div > div": {
+        position: "relative!important"
+      }
+    }
+  },
+  article: {
+    maxWidth: theme.main.sizes.maxWidth,
+    margin: "0 auto",
+    padding: `calc(1.5rem + ${theme.info.sizes.height}px) 1.8rem 1.5rem 1.5rem`,
+    "& strong, & b": {
+      letterSpacing: "-.02em",
+      fontWeight: 600
+    },
+    "& a": {
+      fontWeight: 600,
+      letterSpacing: "-.02em",
+      textShadow: `
+         2px  2px ${theme.main.colors.background},
+        -2px  2px ${theme.main.colors.background},
+        -2px -2px ${theme.main.colors.background},
+        -2px  2px ${theme.main.colors.background},
+        -2px  0   ${theme.main.colors.background},
+         2px  0   ${theme.main.colors.background}
+      `,
+      display: "inline-block",
+      textDecoration: "none",
+      transition: "0.3s",
+      "&:hover": {
+        color: theme.base.colors.linkHover
+      }
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.M}px)`]: {
+      padding: `calc(2.5rem + ${theme.info.sizes.height}px) 3.5rem 2.5rem`
+    },
+    [`@media (min-width: ${theme.mediaQueryTresholds.L}px)`]: {
+      padding: "3.5rem"
+    }
+  },
+  "@keyframes main-entry": {
+    "0%": {
+      opacity: 0,
+      transform: "translateY(20px)"
+    },
+    "100%": {
+      opacity: 1,
+      transform: "translateY(0)"
+    }
+  }
+});
+
+const Main = props => {
+  const { classes, children } = props;
+
+  return (
+    <main className={classes.main}>
+      <SpringScrollbars>{children}</SpringScrollbars>
+    </main>
+  );
+};
+
+Main.propTypes = {
+  classes: PropTypes.object.isRequired,
+  children: PropTypes.any.isRequired
+};
+
+export default injectSheet(styles)(Main);
+
+
+
+//src/components/Main/index.js
+export { default } from "./Main";
+
+

@@ -27,16 +27,7 @@ import { Box, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React from 'react';
 
-// Configuration des réseaux sociaux (sera remplacée par vraie config)
-const SOCIAL_CONFIG = {
-  authorSocialLinks: [
-    { name: 'github', url: 'https://github.com/mandjo2010' },
-    { name: 'twitter', url: 'https://twitter.com/mandjo2010' },
-    { name: 'linkedin', url: 'https://fr.linkedin.com/in/mandjobb' },
-    { name: 'facebook', url: 'https://www.instagram.com/mandjo_bb/' },
-    { name: 'email', url: 'mailto:contact@mandjobore.com' },
-  ],
-};
+import authorConfig from '@/config/author';
 
 // Container pour les icônes sociales
 const SocialContainer = styled(Box)(({ theme: _theme }) => ({
@@ -127,7 +118,7 @@ const SocialIcons: React.FC = () => {
   
   return (
     <SocialContainer>
-      {SOCIAL_CONFIG.authorSocialLinks.map((item) => {
+      {authorConfig.authorSocialLinks.map((item) => {
         const IconComponent = getIconComponent(item.name);
         
         if (!IconComponent) return null;

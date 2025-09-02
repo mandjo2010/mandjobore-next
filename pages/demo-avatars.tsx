@@ -35,7 +35,6 @@ export default function DemoAvatars() {
 			</Head>
 			
 			<GatsbyLayoutNew 
-				location={{ pathname: '/demo-avatars' }}
 				posts={[]}
 				pages={[]}
 				parts={[]}

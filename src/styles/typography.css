@@ -6,11 +6,12 @@
 
 /* RESET COMPLET DES TITRES POUR ÉVITER CONFLITS */
 h1, h2, h3, h4, h5, h6 {
-  font-size: inherit !important;
-  font-weight: inherit !important;
-  line-height: inherit !important;
-  margin: 0 !important;
-  font-family: inherit !important;
+  /* Supprimé les overrides agressifs qui forzaient inherit !important et provoquaient 14px/20px */
+  /* font-size: inherit !important; */
+  /* font-weight: inherit !important; */
+  /* line-height: inherit !important; */
+  margin: 0;
+  /* font-family: inherit !important; */
 }
 
 /* Variables typographiques et structure - CORRECTION DES TAILLES */
@@ -18,7 +19,7 @@ h1, h2, h3, h4, h5, h6 {
   --font-open-sans: "Open Sans", Arial, sans-serif;
   
   /* Titres d'articles - TAILLES EXACTES */
-  --title-font-family: "Open Sans", sans-serif;
+  --title-font-family: "Open Sans";
   --title-font-style: normal;
   --title-font-weight: 600;
   --title-font-size: 27px;
@@ -26,7 +27,7 @@ h1, h2, h3, h4, h5, h6 {
   --title-color: rgb(51, 51, 51);
   
   /* Sous-titres d'articles - TAILLES EXACTES */
-  --subtitle-font-family: "Open Sans", sans-serif;
+  --subtitle-font-family: "Open Sans";
   --subtitle-font-style: normal;
   --subtitle-font-weight: 300;
   --subtitle-font-size: 23px;
@@ -61,7 +62,7 @@ h1.gatsby-title,
 .article-title,
 .post-title,
 .gatsby-title {
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-style: normal !important;
   font-weight: 600 !important;
   font-size: 27px !important;
@@ -81,7 +82,7 @@ h2.gatsby-subtitle,
 .article-subtitle,
 .post-subtitle,
 .gatsby-subtitle {
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-style: normal !important;
   font-weight: 300 !important;
   font-size: 23px !important;
@@ -403,4 +404,90 @@ a[href*="/posts/"]:hover * {
 .MuiCard-root:hover .MuiCardContent-root .MuiTypography-h3 {
   color: #709425 !important;
   text-shadow: 0 1px 2px rgba(112, 148, 37, 0.1) !important;
+}
+
+/* ============================================
+   CORRECTIONS MUI TYPOGRAPHY POUR SOUS-TITRES
+   ============================================ */
+
+/* Force les styles pour les composants MUI Typography sous-titres */
+.MuiTypography-root.blog-subtitle,
+.MuiTypography-root.article-subtitle,
+.MuiTypography-root.post-subtitle,
+.MuiTypography-root.gatsby-subtitle,
+.MuiTypography-h2.blog-subtitle,
+.MuiTypography-h2.article-subtitle,
+.MuiTypography-h2.post-subtitle,
+.MuiTypography-h2.gatsby-subtitle {
+  font-family: "Open Sans" !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 23px !important;
+  line-height: 27px !important;
+  color: rgb(85, 85, 85) !important;
+  margin: 0 0 1rem 0 !important;
+}
+
+/* Force maximale pour tous les h2 avec classes de sous-titres */
+h2.MuiTypography-root.blog-subtitle,
+h2.MuiTypography-root.article-subtitle,
+h2.MuiTypography-root.post-subtitle,
+h2.MuiTypography-root.gatsby-subtitle {
+  font-family: "Open Sans" !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 23px !important;
+  line-height: 27px !important;
+  color: rgb(85, 85, 85) !important;
+}
+
+/* Spécificité maximale pour surcharger MUI defaults */
+.MuiTypography-h2 {
+  font-family: "Open Sans" !important;
+  font-size: 23px !important;
+  font-weight: 300 !important;
+  line-height: 27px !important;
+  color: rgb(85, 85, 85) !important;
+}
+
+/* Force pour tous les h2 dans le contenu */
+article h2,
+.post-content h2,
+.article-content h2 {
+  font-family: "Open Sans" !important;
+  font-size: 23px !important;
+  font-weight: 300 !important;
+  line-height: 27px !important;
+  color: rgb(85, 85, 85) !important;
+}
+
+/* SPÉCIFICITÉ ULTRA-HAUTE - DERNIÈRE LIGNE DE DÉFENSE */
+html body .MuiTypography-root[class*="subtitle"],
+html body .MuiTypography-h2,
+html body h2.MuiTypography-root,
+html body [class*="blog-subtitle"],
+html body [class*="article-subtitle"],
+html body [class*="post-subtitle"] {
+  font-family: "Open Sans" !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 23px !important;
+  line-height: 27px !important;
+  color: rgb(85, 85, 85) !important;
+}
+
+/* SPÉCIFICITÉ ABSOLUE - TOUS LES H2 DANS LE CONTENU */
+html body main h2,
+html body article h2,
+html body [role="main"] h2,
+html body .MuiBox-root h2,
+html body .content h2,
+html body .post-content h2,
+html body .article-content h2 {
+  font-family: "Open Sans" !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+  font-size: 23px !important;
+  line-height: 27px !important;
+  color: rgb(85, 85, 85) !important;
 }

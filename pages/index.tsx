@@ -3,6 +3,7 @@ import Head from 'next/head'
 import * as React from 'react'
 
 import GatsbyLayoutNew from '@/components/layout/GatsbyLayoutNew'
+// import ScrollTest from '@/components/ScrollTest' // Temporairement désactivé
 import { getAll } from '@/lib/content'
 
 interface HomeProps {
@@ -43,6 +44,33 @@ export default function Home({ pages, parts, posts }: HomeProps) {
 					url: 'https://mandjobore.com',
 				}}
 			/>
+			
+			{/* Composants de test temporaires masqués */}
+			{/* <ScrollTest /> */}
+			
+			{/* Test de barre défilement simplifié directement dans la page */}
+			{/* <div
+				style={{
+					position: 'fixed',
+					top: '0',
+					left: '0',
+					width: '200px',
+					height: '300px',
+					backgroundColor: 'white',
+					border: '3px solid red',
+					overflowY: 'auto',
+					zIndex: 9999,
+					padding: '10px'
+				}}
+			>
+				<h3>🔍 Test Direct Barre</h3>
+				<p>Ce conteneur devrait avoir une barre de défilement visible :</p>
+				{Array.from({ length: 50 }, (_, i) => (
+					<div key={i} style={{ padding: '5px', backgroundColor: i % 2 === 0 ? '#eee' : '#ddd' }}>
+						Ligne {i + 1}
+					</div>
+				))}
+			</div> */}
 		</>
 	)
 }

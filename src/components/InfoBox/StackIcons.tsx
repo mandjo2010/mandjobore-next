@@ -16,7 +16,7 @@
 
 'use client';
 
-import { Box, IconButton } from '@mui/material';
+import { Box, IconButton, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Image from 'next/image';
 import React from 'react';
@@ -81,16 +81,22 @@ const StackIconButton = styled(IconButton)(({ theme: _theme }) => ({
 const StackIcons: React.FC = () => {
   return (
     <StackContainer>
-      <h5 style={{
-        color: 'var(--info-text, #555)',
-        fontSize: '.85em',
-        fontWeight: 300,
-        letterSpacing: '.3em',
-        margin: '0 0 .8em 0',
-        textAlign: 'center',
-        textTransform: 'uppercase',
-        width: '100%'
-      }}>built with:</h5>
+      <Typography 
+        variant="h5" 
+        component="h5"
+        sx={{
+          color: 'var(--info-text, #555) !important',
+          fontSize: '.85em !important',
+          fontWeight: '300 !important',
+          letterSpacing: '.3em !important',
+          margin: '0 0 .8em 0 !important',
+          textAlign: 'center !important',
+          textTransform: 'none !important',
+          width: '100% !important'
+        }}
+      >
+        built with:
+      </Typography>
       
       <IconsBox>
         {STACK_ITEMS.map((item) => (

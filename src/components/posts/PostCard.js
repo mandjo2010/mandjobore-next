@@ -1,4 +1,4 @@
-import Link from 'next/link'
+   import Link from 'next/link'
 import { Box, Typography } from '@mui/material'
 
 export default function PostCard({ post }) {
@@ -6,10 +6,8 @@ export default function PostCard({ post }) {
 	return (
 		<Box
 			sx={{
-				mb: 3,
-				pb: 2,
-				borderBottom: '1px solid',
-				borderColor: 'divider',
+				mb: 1.5,
+				pb: 1,
 			}}
 		>
 			<Link href={`/posts/${slug}`}>
@@ -21,7 +19,23 @@ export default function PostCard({ post }) {
 				</Typography>
 			)}
 			{frontmatter.subTitle && (
-				<Typography variant='body2' sx={{ mt: 1 }}>
+				<Typography 
+					component="h2"
+					className="blog-subtitle article-subtitle post-subtitle"
+					sx={{ 
+						mt: 1,
+						fontFamily: '"Open Sans" !important',
+						fontSize: '23px !important',
+						fontWeight: '300 !important',
+						lineHeight: '27px !important',
+						color: 'rgb(85, 85, 85) !important',
+						fontStyle: 'normal !important',
+						cursor: 'pointer',
+						'&:hover': {
+							color: 'rgb(112, 148, 37) !important'
+						}
+					}}
+				>
 					{frontmatter.subTitle}
 				</Typography>
 			)}

@@ -29,12 +29,46 @@
   --bars-icon: #666666;
   --bars-icon-hover: #709425;
   
+  /* Main/Post colors */
+  --main-title-color: #333333;
+  --main-subtitle-color: #666666;
+  --main-meta-color: #999999;
+  --main-footer-color: #555555;
+  --main-content-color: #333333;
+  --main-content-heading-color: #2a2a2a;
+  --base-link-color: #709425;
+  
+  /* === STYLES D'ARTICLES SELON SPÉCIFICATIONS EXACTES (styles.txt) === */
+  /* Titre article - Open Sans 600, 27px, line-height 31px, rgb(85, 85, 85) */
+  --article-title-color: rgb(85, 85, 85);
+  --article-title-size: 27px;
+  --article-title-line-height: 31px;
+  --article-title-weight: 600;
+  
+  /* Sous-titre article - Open Sans 300, 23px, line-height 27px, rgb(85, 85, 85) */
+  --article-subtitle-color: rgb(85, 85, 85);
+  --article-subtitle-size: 23px;
+  --article-subtitle-line-height: 27px;
+  --article-subtitle-weight: 300;
+  
+  /* Nom auteur - Open Sans 300, 27px, line-height 27px, rgb(85, 85, 85) */
+  --author-name-color: rgb(85, 85, 85);
+  --author-name-size: 27px;
+  --author-name-line-height: 27px;
+  --author-name-weight: 300;
+  
+  /* Bio auteur - Open Sans 300, 15px, line-height 23px, rgb(85, 85, 85) */
+  --author-bio-color: rgb(85, 85, 85);
+  --author-bio-size: 15px;
+  --author-bio-line-height: 23px;
+  --author-bio-weight: 300;
+  
   /* === DIMENSIONS EXACTES DU THÈME GATSBY === */
   /* Layout sizes */
   --info-width: 300px;
   --info-header-height: 140px;
   --bars-actions-width: 64px;
-  --bars-info-height: 48px;
+  --bars-info-height: 72px;
   --navigator-closed-height: 80px;
   
   /* Spacing */
@@ -280,6 +314,27 @@ a {
   }
 }
 
+/* === STYLES TYPOGRAPHIQUES GLOBAUX === */
+
+/* S'assurer que le texte par défaut n'est pas en gras */
+body, p, div, span {
+  font-weight: 300;
+}
+
+/* Forcer font-weight normal pour éviter le gras non désiré */
+.post-author-bio,
+.author-bio-text {
+  font-weight: 300 !important;
+}
+
+/* Neutraliser les balises strong/b dans certains contextes */
+.post-content strong,
+.post-content b,
+.author-bio strong,
+.author-bio b {
+  font-weight: 300 !important;
+}
+
 /* === CLASSES UTILITAIRES GATSBY === */
 
 /* Float utilities (utilisées dans InfoBar) */
@@ -373,6 +428,16 @@ a {
   
   &.bars-title {
     color: var(--bars-text);
+  }
+  
+  /* Forcer le texte normal (pas gras) pour les bio d'auteur */
+  &.author-bio {
+    font-weight: 300 !important;
+    
+    /* S'assurer que même les balises strong/b ne sont pas en gras */
+    strong, b {
+      font-weight: 300 !important;
+    }
   }
 }
 

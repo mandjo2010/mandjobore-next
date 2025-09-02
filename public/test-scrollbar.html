@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Barre de Défilement Pure</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        
+        .test-container {
+            width: 300px;
+            height: 400px;
+            background: white;
+            border: 3px solid #000;
+            overflow-y: scroll !important;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .test-container::-webkit-scrollbar {
+            width: 20px !important;
+            display: block !important;
+        }
+        
+        .test-container::-webkit-scrollbar-track {
+            background: #ff0000 !important;
+            border-radius: 10px;
+            border: 2px solid #000;
+        }
+        
+        .test-container::-webkit-scrollbar-thumb {
+            background: #0000ff !important;
+            border-radius: 10px;
+            border: 2px solid #fff;
+        }
+        
+        .test-container::-webkit-scrollbar-thumb:hover {
+            background: #000000 !important;
+        }
+        
+        .test-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #eee;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        
+        .test-item:nth-child(even) {
+            background: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Test de Barre de Défilement HTML Pur</h1>
+    <p>Ce test utilise du HTML/CSS pur sans framework pour diagnostiquer le problème.</p>
+    
+    <div class="test-container">
+        <h3>Zone de défilement</h3>
+        <p>Cette zone devrait avoir une barre de défilement <strong>ROUGE/BLEU très visible</strong>.</p>
+        
+        <!-- Génération de contenu pour forcer le scroll -->
+        <script>
+            for (let i = 1; i <= 50; i++) {
+                document.write(`<div class="test-item">📝 Élément de test #${i} - Contenu pour forcer le défilement vertical</div>`);
+            }
+        </script>
+    </div>
+    
+    <h2>Instructions :</h2>
+    <ol>
+        <li>La zone blanche ci-dessus devrait avoir une barre de défilement visible</li>
+        <li>Track ROUGE, Thumb BLEU, largeur 20px</li>
+        <li>Si vous ne voyez pas la barre, le problème vient du navigateur/OS</li>
+        <li>Si vous la voyez, le problème vient de React/Material-UI</li>
+    </ol>
+    
+    <h2>Test rapide :</h2>
+    <p>Faites défiler dans la zone blanche avec la molette de la souris ou les flèches du clavier.</p>
+</body>
+</html>

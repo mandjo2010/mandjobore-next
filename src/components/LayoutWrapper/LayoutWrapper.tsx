@@ -4,12 +4,13 @@
  */
 'use client'
 
-import { Box, styled } from '@mui/material'
+import { Box, styled, ThemeProvider } from '@mui/material'
 import React, { ReactNode } from 'react'
 
 import { useResponsiveDetector } from '@/hooks/useResponsiveDetector'
 import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 import { gatsbyVariables } from '@/theme/gatsby-theme'
+import { theme as correctedTheme } from '@/theme/muiTheme'
 
 // Helpers temporairement désactivés pour éviter les boucles
 // const isWideScreen = () => {
@@ -108,8 +109,10 @@ export default function LayoutWrapper({ children }: LayoutWrapperProps) {
   ].join(' ')
   
   return (
-    <StyledWrapper className={wrapperClasses}>
-      {children}
-    </StyledWrapper>
+    <ThemeProvider theme={correctedTheme}>
+      <StyledWrapper className={wrapperClasses}>
+        {children}
+      </StyledWrapper>
+    </ThemeProvider>
   )
 }

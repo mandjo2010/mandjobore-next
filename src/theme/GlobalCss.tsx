@@ -1,6 +1,9 @@
 import { GlobalStyles } from '@mui/material'
 import type { CSSProperties } from 'react'
 
+// Import des styles d'auteur pour application globale
+import '../styles/author-styles.css'
+
 export default function GlobalCss() {
 	return (
 		<GlobalStyles
@@ -19,8 +22,8 @@ export default function GlobalCss() {
 					'--c-text': '#555555',
 					'--c-title': 'rgb(51, 51, 51)',
 					'--divider': '#eceff1',
-					'--font-body': '"Open Sans", Arial, sans-serif',
-					'--font-styled': '"Open Sans", sans-serif',
+					'--font-body': '"Open Sans"',
+					'--font-styled': '"Open Sans"',
 					'--subtitle-line-height': '27px',
 					'--subtitle-size': '23px',
 					'--title-line-height': '31px',
@@ -46,41 +49,56 @@ export default function GlobalCss() {
 					// Styles gérés directement en inline dans le composant Material-UI
 				},
 
-				// Nom de l'auteur (grand titre)
+				// === STYLES AUTEUR - Spécifications exactes ===
+				// Nom de l'auteur (grand titre): Open Sans 300, 27px/27px, color #555
 				'.authorName': {
-					color: '#555555',
-					fontFamily: '"Open Sans"',
-					fontSize: '27.2px',
-					fontWeight: 300,
-					lineHeight: '27.2px',
-					margin: 0,
+					color: '#555555 !important',
+					fontFamily: '"Open Sans" !important',
+					fontSize: '27px !important',
+					fontWeight: '300 !important',
+					lineHeight: '27px !important',
+					margin: '8px 0 0 0 !important',
+					padding: '0 !important',
 				},
 
-				// Titre/Rôle de l'auteur (petit)
+				// Override ultra-spécifique pour les h1 utilisés comme nom d'auteur
+				'h1.authorName, .authorName h1, .profileHeader h1.authorName, .profileHeader .authorName': {
+					color: '#555555 !important',
+					fontFamily: '"Open Sans" !important',
+					fontSize: '27px !important',
+					fontWeight: '300 !important',
+					lineHeight: '27px !important',
+					margin: '8px 0 0 0 !important',
+					padding: '0 !important',
+				},
+
+				// Titre/Rôle de l'auteur: Open Sans 300, 16px/16px, color #555
 				'.authorRole': {
-					color: '#555555',
-					fontFamily: '"Open Sans"',
-					fontSize: '16.32px',
-					fontWeight: 300,
-					lineHeight: '16.32px',
-					margin: '.25rem 0 0',
+					color: '#555555 !important',
+					fontFamily: '"Open Sans" !important',
+					fontSize: '16px !important',
+					fontWeight: '300 !important',
+					lineHeight: '18px !important',
+					margin: '8px 0 0 0 !important',
+					padding: '0 !important',
 				},
 
 				// === PROFIL / BIO (sidebar) ===
+				// Bio auteur: Open Sans 300, 15px/23px, color #555
 				'.bioText': {
-					color: '#555555',
-					fontFamily: '"Open Sans"',
-					fontSize: '15.2px',
-					fontWeight: 300,
-					lineHeight: '22.8px',
-					margin: '0 auto 16px',
-					maxWidth: '320px',
-					textAlign: 'center',
+					color: '#555555 !important',
+					fontFamily: '"Open Sans" !important',
+					fontSize: '15px !important',
+					fontWeight: '300 !important',
+					lineHeight: '23px !important',
+					margin: '0 0 20px 0 !important',
+					padding: '0 !important',
+					textAlign: 'center !important',
 				},
 				// Sous-titre d'article (style exact Gatsby)
 				'.blog-subtitle, .article-subtitle, .post-subtitle': {
 					color: 'rgb(85, 85, 85) !important',
-					fontFamily: '"Open Sans", sans-serif !important',
+					fontFamily: '"Open Sans" !important',
 					fontSize: '23px !important',
 					fontStyle: 'normal !important',
 					fontWeight: '300 !important',
@@ -92,7 +110,7 @@ export default function GlobalCss() {
 				// Titre principal d'article (style exact Gatsby)
 				'.blog-title, .article-title, .post-title': {
 					color: 'rgb(51, 51, 51) !important',
-					fontFamily: '"Open Sans", sans-serif !important',
+					fontFamily: '"Open Sans" !important',
 					fontSize: '27px !important',
 					fontStyle: 'normal !important',
 					fontWeight: '600 !important',
@@ -304,13 +322,22 @@ export default function GlobalCss() {
 				// Sous-titre (excerpt) de l'article dans la liste
 				'.postSubtitle, .postExcerpt': {
 					color: 'rgb(85, 85, 85) !important',
-					fontFamily: '"Open Sans", sans-serif !important',
+					fontFamily: '"Open Sans" !important',
 					fontSize: '23px !important',
 					fontStyle: 'normal !important',
 					fontWeight: '300 !important',
 					lineHeight: '27px !important',
 					margin: '.25rem 0 0 !important',
-					transition: 'color 0.3s ease',
+					transition: 'color 0.3s ease !important',
+					cursor: 'pointer !important',
+				},
+				// Effet de survol pour postSubtitle et postExcerpt - FORCE ABSOLUE
+				'.postSubtitle:hover, .postExcerpt:hover': {
+					color: 'rgb(112, 148, 37) !important'
+				},
+				// Même dans les liens
+				'a .postSubtitle:hover, a .postExcerpt:hover': {
+					color: 'rgb(112, 148, 37) !important'
 				},
 				'.postThumb': {
 					background: '#eee',
@@ -375,29 +402,30 @@ export default function GlobalCss() {
 					flexDirection: 'column',
 					gap: '12px',
 				},
-				// === Profile social icons ===
+				// === Profile social icons - Spécifications exactes ===
 				'.profileSocial': {
 					display: 'flex',
-					gap: '12px',
+					flexWrap: 'wrap',
+					gap: '0.8em',
 					justifyContent: 'center',
-					margin: '10px 0 22px',
+					padding: '1em 0',
 				},
+				// Liens sociaux avec couleurs spécifiques selon Gatsby v1
 				'.profileSocial a': {
-					alignItems: 'center',
-					backgroundColor: '#f8f9fa',
-					border: '1px solid #e9ecef',
-					borderRadius: '50%',
-					color: '#6c757d',
-					display: 'flex',
-					height: '36px',
-					justifyContent: 'center',
-					transition: 'all 0.2s ease',
-					width: '36px',
+					color: '#709425', // Couleur accent verte selon spécifications
+					display: 'block',
+					fontFamily: '"Open Sans"',
+					fontSize: '16px',
+					fontWeight: 300,
+					lineHeight: '18px',
+					padding: '5px',
+					textDecoration: 'none',
+					transition: 'all .5s ease',
 				},
+				// Effet hover vert pour les liens sociaux
 				'.profileSocial a:hover': {
-					backgroundColor: 'var(--c-accent)',
-					color: '#fff',
-					transform: 'translateY(-2px)',
+					color: 'rgb(112, 148, 37)', // Vert selon spécifications
+					transform: 'scale(1.1)',
 				},
 				// === Search overlay light background ===
 				'.searchOverlay': {

@@ -3,6 +3,7 @@ import { Github, Linkedin, Facebook, Twitter } from 'lucide-react'
 import Image from 'next/image'
 
 import animations from '@/styles/AdvancedAnimations.module.css'
+import authorConfig from '@/config/author'
 
 import InfoMenu from './InfoMenu'
 import OrganicProfileBar from './OrganicProfileBar'
@@ -36,31 +37,43 @@ export default function ProfileSidebar({ isHorizontal }: ProfileSidebarProps) {
   return (
     <aside className={`${styles.sidebar} ${animations.navigationTransition} ${animations.themeTransition}`}>
       <div className={styles.profileContent}>
-        <div className={`${styles.profileHeader} ${animations.lazyLoadElement}`}>
-          <div className={`${styles.profileAvatar} ${animations.avatarInteractive}`}>
-            <Image src="/images/avatar.svg" alt="" fill sizes="72px" />
+        <div className={styles.profileHeader}>
+          <div className={styles.profileAvatar}>
+            <Image src={authorConfig.avatar} alt={authorConfig.authorName} fill sizes="72px" />
           </div>
-          <h1 className={`${styles.authorName} ${animations.responsiveTypography}`}>Mandjo Béa Boré</h1>
-          <p className={`${styles.authorRole} ${animations.responsiveTypography}`}>Data analyst - Developer</p>
+          <h1 className={styles.authorName}>{authorConfig.infoTitle}</h1>
+          <p className={styles.authorRole}>{authorConfig.infoTitleNote}</p>
         </div>
 
-        <p className={`${styles.bioText} ${animations.lazyLoadElement}`}>
-          Design and build applications to support data including spatial &amp; geospatial ones.
+        <p className={styles.bioText}>
+          {authorConfig.bio}
         </p>
 
         <div className={`${styles.profileSocial} ${animations.lazyLoadElement}`}>
-          <a href="https://github.com/mandjobore" aria-label="GitHub" target="_blank" rel="noreferrer" className={animations.interactiveElement}>
-            <Github size={20} />
-          </a>
-          <a href="https://fr.linkedin.com/in/mandjobb" aria-label="LinkedIn" target="_blank" rel="noreferrer" className={animations.interactiveElement}>
-            <Linkedin size={20} />
-          </a>
-          <a href="https://www.instagram.com/mandjo_bb/" aria-label="Facebook" target="_blank" rel="noreferrer" className={animations.interactiveElement}>
-            <Facebook size={20} />
-          </a>
-          <a href="https://twitter.com/mandjobore" aria-label="X (Twitter)" target="_blank" rel="noreferrer" className={animations.interactiveElement}>
-            <Twitter size={20} />
-          </a>
+          {authorConfig.authorSocialLinks.map((social) => {
+            const getIcon = () => {
+              switch (social.name) {
+                case 'github': return <Github size={20} />;
+                case 'linkedin': return <Linkedin size={20} />;
+                case 'facebook': return <Facebook size={20} />;
+                case 'twitter': return <Twitter size={20} />;
+                default: return null;
+              }
+            };
+            
+            return (
+              <a 
+                key={social.name}
+                href={social.url} 
+                aria-label={social.name} 
+                target="_blank" 
+                rel="noreferrer" 
+                className={animations.interactiveElement}
+              >
+                {getIcon()}
+              </a>
+            );
+          })}
         </div>
 
         <InfoMenu 
@@ -74,7 +87,7 @@ export default function ProfileSidebar({ isHorizontal }: ProfileSidebarProps) {
       </div>
 
       <div className={`${styles.builtWith} ${animations.lazyLoadElement}`}>
-        <p className={styles.builtTitle}>built with:</p>
+        <p className={styles.builtTitle}>BUILT WITH:</p>
         <ul className={styles.builtGrid}>
           {techStack.map((tech, index) => (
             <li key={tech.name}>
