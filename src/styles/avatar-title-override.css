@@ -1,0 +1,40 @@
+/**
+ * Override spécifique pour le titre de l'avatar
+ * Force la line-height à 16px avec une spécificité maximale
+ */
+
+/* Spécificité maximale pour le titre de l'avatar */
+html body div aside .avatar-title-tagline,
+html body div .avatar-title-tagline,
+html body .avatar-title-tagline,
+.avatar-title-tagline {
+  line-height: 16px !important;
+  font-size: 16px !important;
+  font-family: "Open Sans" !important;
+  font-weight: 300 !important;
+  color: #555555 !important;
+}
+
+/* Override pour tous les enfants également */
+html body div aside .avatar-title-tagline *,
+html body div .avatar-title-tagline *,
+html body .avatar-title-tagline *,
+.avatar-title-tagline * {
+  line-height: 16px !important;
+  font-size: 16px !important;
+  font-family: "Open Sans" !important;
+  font-weight: 300 !important;
+  color: #555555 !important;
+}
+
+/* Spécificité MUI Typography */
+html body div aside .MuiTypography-root.avatar-title-tagline,
+html body div .MuiTypography-root.avatar-title-tagline,
+html body .MuiTypography-root.avatar-title-tagline,
+.MuiTypography-root.avatar-title-tagline {
+  line-height: 16px !important;
+  font-size: 16px !important;
+  font-family: "Open Sans" !important;
+  font-weight: 300 !important;
+  color: #555555 !important;
+}

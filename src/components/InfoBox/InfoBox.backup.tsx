@@ -22,7 +22,7 @@ const authorConfig = {
     linkedin: 'https://fr.linkedin.com/in/mandjobb',
     twitter: 'https://twitter.com/mandjobore'
   },
-  tagline: 'Data Analyst & Developer'
+  tagline: 'Data analyst - Developer'
 }
 
 interface Page {

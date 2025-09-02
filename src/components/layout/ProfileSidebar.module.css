@@ -64,7 +64,7 @@
 
 .authorName {
   /* Nom auteur selon spécifications exactes: Open Sans 300, 27px/27px, color #555 - PAS GRAS */
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-weight: 300 !important; 
   font-style: normal !important;
   font-size: 27px !important;
@@ -82,7 +82,7 @@ h1.authorName,
 .authorName h1,
 .profileHeader h1.authorName,
 .profileHeader .authorName h1 {
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-weight: 300 !important;
   font-style: normal !important;
   font-size: 27px !important;
@@ -94,11 +94,11 @@ h1.authorName,
 
 .authorRole {
   /* Titre auteur selon spécifications: Open Sans 300, 16px/16px, color #555 */
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-weight: 300 !important;
   font-style: normal !important;
   font-size: 16px !important;
-  line-height: 18px !important; 
+  line-height: 16px !important; 
   color: rgb(85, 85, 85) !important;
   margin: 8px 0 0 0 !important; /* Espacement visible avec le nom */
   padding: 0 !important;
@@ -106,7 +106,7 @@ h1.authorName,
 
 .bioText {
   /* Bio auteur selon spécifications: Open Sans 300, 15px/23px, color #555 */
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-weight: 300 !important;
   font-style: normal !important;
   font-size: 15px !important;
@@ -133,7 +133,7 @@ h1.authorName,
   /* Liens sociaux selon spécifications: Open Sans 300, 16px/18px, couleur verte */
   color: #709425;
   display: block;
-  font-family: "Open Sans", sans-serif;
+  font-family: "Open Sans";
   font-size: 16px;
   font-weight: 300;
   line-height: 18px;
@@ -244,7 +244,7 @@ h1.authorName,
 }
 
 .authorNameHorizontal {
-  font-family: "Open Sans", sans-serif;
+  font-family: "Open Sans";
   font-weight: 300;
   font-style: normal;
   font-size: 22px;
@@ -255,11 +255,11 @@ h1.authorName,
 }
 
 .authorRoleHorizontal {
-  font-family: "Open Sans", sans-serif;
+  font-family: "Open Sans";
   font-weight: 300;
   font-style: normal;
   font-size: 14px;
-  line-height: 14px;
+  line-height: 16px;
   color: rgb(85, 85, 85);
   margin: 0;
   white-space: nowrap;
@@ -380,7 +380,7 @@ h1.authorName,
   
   .authorRoleHorizontal {
     font-size: 12px;
-    line-height: 12px;
+    line-height: 16px;
   }
   
   .profileSocialHorizontal {

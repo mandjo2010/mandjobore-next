@@ -4,7 +4,6 @@ import Head from 'next/head';
 import React from 'react';
 
 import Footer from '../Footer/Footer';
-
 import MainLayout from './MainLayout';
 
 interface BaseTemplateProps {
@@ -28,15 +27,15 @@ interface BaseTemplateProps {
  * Intègre la gestion d'état pour la navigation et l'interface
  */
 export default function BaseTemplate({
+  activeCategory,
+  categories = [],
   children,
   left,
+  onCategoryChange,
   right,
   seo,
-  categories = [],
-  activeCategory,
-  onCategoryChange,
 }: BaseTemplateProps) {
-  const seoTitle = seo?.title || 'Mandjo Béa Boré - Data Analyst & Developer';
+  const seoTitle = seo?.title || 'Mandjo Béa Boré - Data analyst - Developer';
   const seoDescription = seo?.description || 'Design and build applications to support data including spatial & geospatial ones.';
   const seoImage = seo?.image || '/images/avatar.svg';
   const seoUrl = seo?.url || 'https://mandjobore.com';
@@ -74,9 +73,9 @@ export default function BaseTemplate({
       >
         <main
           style={{
-            minHeight: '100vh',
             display: 'flex',
             flexDirection: 'column',
+            minHeight: '100vh',
           }}
         >
           <div style={{ flex: 1 }}>

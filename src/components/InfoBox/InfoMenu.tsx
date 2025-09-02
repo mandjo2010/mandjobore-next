@@ -48,7 +48,7 @@ const MenuLink = styled(Link)(({ theme: _theme }) => ({
     fontWeight: 400
   },
   '&:hover': {
-    color: 'var(--c-accent)' // theme.info.colors.menuLinkHover
+    color: '#709425' // Force la couleur exacte au survol
   },
   color: 'var(--c-subtitle)', // theme.info.colors.menuLink
   cursor: 'pointer',

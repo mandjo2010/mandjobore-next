@@ -72,7 +72,7 @@ export default function DebugHome({ pages, parts, posts }: HomeProps) {
 				parts={parts}
 				seo={{
 					description: 'Design and build applications to support data including spatial & geospatial ones.',
-					title: 'DEBUG - Mandjo Béa Boré - Data Analyst & Developer',
+					title: 'DEBUG - Mandjo Béa Boré - Data analyst - Developer',
 					url: 'https://mandjobore.com',
 				}}
 			/>

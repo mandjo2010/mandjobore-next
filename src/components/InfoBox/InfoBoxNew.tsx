@@ -108,7 +108,7 @@ export default function InfoBox({ pages = [] }: InfoBoxProps) {
     avatar: '/images/avatar.jpg',
     bio: 'Design and build applications to support data including spatial & geospatial ones.',
     name: 'Mandjo Béa Boré',
-    title: 'Data Analyst & Developer'
+    title: 'Data analyst - Developer'
   }
   
   const handleAvatarClick = () => {

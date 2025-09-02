@@ -4,15 +4,11 @@
  */
 import { GetStaticProps } from 'next'
 import Head from 'next/head'
+
 import LayoutWrapper from '@/components/LayoutWrapper/LayoutWrapper'
 import Post from '@/components/post'
 
 const samplePost = {
-  slug: '/test-post',
-  title: 'Test Article - Reproduction du Design Gatsby',
-  subTitle: 'Vérification de la migration des composants Post vers Next.js',
-  date: '2024-01-29',
-  excerpt: 'Cet article de test permet de vérifier que tous les composants Post reproduisent fidèlement le design Gatsby original.',
   content: `
 # Test de l'affichage Markdown
 
@@ -54,13 +50,18 @@ console.log(\`\${gatsby} vers \${nextjs}\`)
 
 *Texte en italique* et **texte en gras** avec spacing optimal.
   `,
-  frontmatter: {
-    title: 'Test Article - Reproduction du Design Gatsby',
-    subTitle: 'Vérification de la migration des composants Post vers Next.js'
-  },
+  date: '2024-01-29',
+  excerpt: 'Cet article de test permet de vérifier que tous les composants Post reproduisent fidèlement le design Gatsby original.',
   fields: {
     prefix: '2024-01-29'
-  }
+  },
+  frontmatter: {
+    subTitle: 'Vérification de la migration des composants Post vers Next.js',
+    title: 'Test Article - Reproduction du Design Gatsby'
+  },
+  slug: '/test-post',
+  subTitle: 'Vérification de la migration des composants Post vers Next.js',
+  title: 'Test Article - Reproduction du Design Gatsby'
 }
 
 interface TestPostPageProps {
@@ -82,9 +83,9 @@ export default function TestPostPage({ post }: TestPostPageProps) {
             html: post.content
           }}
           author={{
-            name: 'Mandjo Béa Boré',
-            bio: 'Data Analyst & Developer. Design and build geospatial applications with modern web technologies.',
-            avatar: '/images/jpg/avatar.jpg'
+            avatar: '/images/jpg/avatar.jpg',
+            bio: 'Data analyst - Developer. Design and build geospatial applications with modern web technologies.',
+            name: 'Mandjo Béa Boré'
           }}
           facebookAppId="test"
         />

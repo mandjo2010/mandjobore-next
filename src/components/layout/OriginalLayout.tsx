@@ -50,7 +50,7 @@ export default function OriginalLayout({
   console.log('🎯 OriginalLayout - posts reçus:', posts.length);
   
   // SEO meta tags
-  const seoTitle = seo?.title || 'Mandjo Béa Boré - Data Analyst & Developer';
+  const seoTitle = seo?.title || 'Mandjo Béa Boré - Data analyst - Developer';
   const seoDescription = seo?.description || 'Design and build applications to support data including spatial & geospatial ones.';
   const seoImage = seo?.image || '/images/avatar.svg';
   const seoUrl = seo?.url || 'https://mandjobore.com';

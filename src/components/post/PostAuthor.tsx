@@ -17,9 +17,9 @@ interface PostAuthorProps {
 export default function PostAuthor({ author }: PostAuthorProps) {
   // Configuration par défaut comme dans l'original
   const defaultAuthor = {
-    name: 'Mandjo Béa Boré',
-    bio: 'Data Analyst & Developer. design and build geospatial applications with modern web technologies.',
-    avatar: '/images/jpg/avatar.jpg'
+    avatar: '/images/jpg/avatar.jpg',
+    bio: 'Data analyst - Developer. design and build geospatial applications with modern web technologies.',
+    name: 'Mandjo Béa Boré'
   }
 
   const authorInfo = author || defaultAuthor
@@ -27,21 +27,21 @@ export default function PostAuthor({ author }: PostAuthorProps) {
   return (
     <Box
       sx={{
+        '& a': {
+          color: 'var(--base-link-color)' // theme.base.colors.link
+        },
+        // Responsive: row sur desktop
+        '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
+          flexDirection: 'row',
+          justifyContent: 'center'
+        },
         // Reproduction exacte des styles author du theme original
         alignItems: 'center',
         borderTop: '1px solid #ddd',
         display: 'flex',
         flexDirection: 'column',
         margin: '3em 0 0',
-        padding: '3em 0 0',
-        // Responsive: row sur desktop
-        '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
-          flexDirection: 'row',
-          justifyContent: 'center'
-        },
-        '& a': {
-          color: 'var(--base-link-color)' // theme.base.colors.link
-        }
+        padding: '3em 0 0'
       }}
     >
       {/* Avatar avec style organique comme l'original */}
@@ -49,16 +49,16 @@ export default function PostAuthor({ author }: PostAuthorProps) {
         src={authorInfo.avatar}
         alt={authorInfo.name}
         sx={{
+          '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
+            margin: '0 1em 0'
+          },
           // Reproduction exacte des styles avatar du theme original
           border: '1px solid #ddd',
           borderRadius: '75% 65%', // Style organique caractéristique
           flexShrink: 0,
           height: '60px',
           margin: '0 1em 1em',
-          width: '60px',
-          '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
-            margin: '0 1em 0'
-          }
+          width: '60px'
         }}
       />
 
@@ -90,16 +90,16 @@ export default function PostAuthor({ author }: PostAuthorProps) {
         <Typography
           className="author-bio"
           sx={{
+            '& strong, & b': {
+              fontWeight: 300 // Forcer le non-gras même pour les balises strong/b
+            },
             color: 'rgb(85, 85, 85)', // Exact selon styles.txt
             fontFamily: '"Open Sans"', // Exact selon styles.txt
             fontSize: '15px', // Exact selon styles.txt
             fontWeight: 300, // Exact selon styles.txt
             lineHeight: '23px', // Exact selon styles.txt
             margin: 0,
-            textAlign: 'center',
-            '& strong, & b': {
-              fontWeight: 300 // Forcer le non-gras même pour les balises strong/b
-            }
+            textAlign: 'center'
           }}
           dangerouslySetInnerHTML={{ __html: authorInfo.bio }}
         />

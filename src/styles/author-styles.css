@@ -11,7 +11,7 @@
 .author-name,
 .authorName {
   color: #555555 !important;
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-style: normal !important;
   font-weight: 300 !important;
   font-size: 27px !important;
@@ -37,7 +37,7 @@ h3.authorName,
 .profileHeader h1.authorName,
 .profileHeader .author-name {
   color: #555555 !important;
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-style: normal !important;
   font-weight: 300 !important;
   font-size: 27px !important;
@@ -51,11 +51,11 @@ h3.authorName,
 .authorRole,
 .author-title {
   color: #555555 !important;
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-style: normal !important;
   font-weight: 300 !important;
   font-size: 16px !important;
-  line-height: 18px !important;
+  line-height: 16px !important;
   margin: 8px 0 0 0 !important;
   padding: 0 !important;
 }
@@ -65,7 +65,7 @@ h3.authorName,
 .bioText,
 .author-description {
   color: #555555 !important;
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-style: normal !important;
   font-weight: 300 !important;
   font-size: 15px !important;
@@ -91,7 +91,7 @@ h3.authorName,
 .social-links a {
   color: #709425 !important;
   display: block !important;
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-style: normal !important;
   font-weight: 300 !important;
   font-size: 16px !important;
@@ -116,7 +116,7 @@ h3.authorName,
 /* Mode horizontal (barres organiques) - version blanche pour fond rouge */
 .organic-author-name {
   color: white !important;
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-style: normal !important;
   font-weight: 300 !important;
   font-size: 27px !important;
@@ -126,7 +126,7 @@ h3.authorName,
 
 .organic-author-role {
   color: rgba(255, 255, 255, 0.9) !important;
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-style: normal !important;
   font-weight: 300 !important;
   font-size: 16px !important;
@@ -175,7 +175,7 @@ h2.authorName,
 h3.author-name,
 h3.authorName {
   color: #555555 !important;
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-weight: 300 !important;
   font-size: 27px !important;
   line-height: 27px !important;
@@ -186,7 +186,7 @@ p.authorRole,
 small.author-role,
 small.authorRole {
   color: #555555 !important;
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-weight: 300 !important;
   font-size: 16px !important;
   line-height: 16px !important;
@@ -197,7 +197,7 @@ p.bioText,
 div.author-bio,
 div.bioText {
   color: #555555 !important;
-  font-family: "Open Sans", sans-serif !important;
+  font-family: "Open Sans" !important;
   font-weight: 300 !important;
   font-size: 15px !important;
   line-height: 23px !important;

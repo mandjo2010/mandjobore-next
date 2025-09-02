@@ -1,4 +1,5 @@
 import { GlobalStyles } from '@mui/material'
+import { GlobalStyles } from '@mui/material'
 import type { CSSProperties } from 'react'
 
 // Import des styles d'auteur pour application globale
@@ -8,28 +9,6 @@ export default function GlobalCss() {
 	return (
 		<GlobalStyles
 			styles={{
-				// === VARIABLES CSS GLOBALES POUR ANIMATIONS ===
-				':root': {
-					'--transition-smooth': 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-					'--transition-bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
-					'--organic-red': '#dc3545',
-					'--organic-red-hover': '#c82333',
-					'--shadow-elegant': '0 8px 25px rgba(0, 0, 0, 0.15)',
-					'--shadow-strong': '0 10px 30px rgba(0, 0, 0, 0.1)',
-					// Variables CSS supplémentaires - FUSION
-					'--c-accent': '#709425',
-					'--c-subtitle': 'rgb(85, 85, 85)',
-					'--c-text': '#555555',
-					'--c-title': 'rgb(51, 51, 51)',
-					'--divider': '#eceff1',
-					'--font-body': '"Open Sans"',
-					'--font-styled': '"Open Sans"',
-					'--subtitle-line-height': '27px',
-					'--subtitle-size': '23px',
-					'--title-line-height': '31px',
-					'--title-size': '27px',
-				},
-
 				// === LAYOUT ET STRUCTURE ===
 				// Hide scrollbars but keep functionality
 				'*': {
@@ -52,17 +31,6 @@ export default function GlobalCss() {
 				// === STYLES AUTEUR - Spécifications exactes ===
 				// Nom de l'auteur (grand titre): Open Sans 300, 27px/27px, color #555
 				'.authorName': {
-					color: '#555555 !important',
-					fontFamily: '"Open Sans" !important',
-					fontSize: '27px !important',
-					fontWeight: '300 !important',
-					lineHeight: '27px !important',
-					margin: '8px 0 0 0 !important',
-					padding: '0 !important',
-				},
-
-				// Override ultra-spécifique pour les h1 utilisés comme nom d'auteur
-				'h1.authorName, .authorName h1, .profileHeader h1.authorName, .profileHeader .authorName': {
 					color: '#555555 !important',
 					fontFamily: '"Open Sans" !important',
 					fontSize: '27px !important',
@@ -95,6 +63,7 @@ export default function GlobalCss() {
 					padding: '0 !important',
 					textAlign: 'center !important',
 				},
+
 				// Sous-titre d'article (style exact Gatsby)
 				'.blog-subtitle, .article-subtitle, .post-subtitle': {
 					color: 'rgb(85, 85, 85) !important',
@@ -117,7 +86,6 @@ export default function GlobalCss() {
 					lineHeight: '31px !important',
 					margin: '0 0 0.5rem 0 !important',
 				},
-
 				'.builtGrid': {
 					display: 'flex',
 					flexWrap: 'wrap',
@@ -127,6 +95,7 @@ export default function GlobalCss() {
 					margin: 0,
 					padding: 0,
 				},
+
 				'.builtGrid a': {
 					alignItems: 'center',
 					background: '#fff',
@@ -143,7 +112,6 @@ export default function GlobalCss() {
 					borderColor: 'var(--c-accent)',
 					transform: 'translateY(-1px)',
 				},
-
 				'.builtGrid img': {
 					height: '20px',
 					objectFit: 'contain',
@@ -177,6 +145,7 @@ export default function GlobalCss() {
 					minWidth: '260px',
 					padding: '16px 20px',
 				},
+
 				'.catBox button': {
 					background: '#fff',
 					border: '1px solid #e5e8ed',
@@ -190,15 +159,16 @@ export default function GlobalCss() {
 				'.catBox button.isActive': {
 					borderColor: 'var(--c-accent)',
 				},
-
 				'.catBox li + li': {
 					marginTop: '8px',
 				},
+
 				'.catBox ul': {
 					listStyle: 'none',
 					margin: 0,
 					padding: 0,
 				},
+
 				'.catClose': {
 					all: 'unset',
 					cursor: 'pointer',
@@ -224,7 +194,6 @@ export default function GlobalCss() {
 					width: '1px',
 					zIndex: 1,
 				},
-
 				'.column-border-right': {
 					background: 'var(--divider)',
 					bottom: '120px', // End above footer margin
@@ -254,6 +223,7 @@ export default function GlobalCss() {
 					display: 'block', // Show scrollbar in main content
 					width: '8px',
 				},
+
 				'.main-content::-webkit-scrollbar-thumb': {
 					background: '#e0e0e0',
 					borderRadius: '4px',
@@ -277,7 +247,6 @@ export default function GlobalCss() {
 				'.navMenu a:hover, .nav-item:hover': {
 					color: 'var(--c-accent)',
 				},
-
 				'.postItem': {
 					alignItems: 'flex-start',
 					borderBottom: 'none',
@@ -285,7 +254,6 @@ export default function GlobalCss() {
 					gap: '16px',
 					padding: '24px 0',
 				},
-
 				'.postItemLink': {
 					alignItems: 'flex-start',
 					color: 'inherit',
@@ -296,9 +264,11 @@ export default function GlobalCss() {
 					transition: 'all 0.3s ease',
 					width: '100%',
 				},
+
 				'.postItemLink:hover .postThumb': {
 					transform: 'rotate(-12deg)',
 				},
+
 				// === Liste d'articles façon Gatsby ===
 				'.postList': {
 					listStyle: 'none',
@@ -309,7 +279,6 @@ export default function GlobalCss() {
 					flex: '1 1 auto',
 					minWidth: 0,
 				},
-
 				// === Liens de navigation entre articles ===
 				'.postNavLink, .backToList': {
 					color: '#000000',
@@ -322,6 +291,7 @@ export default function GlobalCss() {
 				// Sous-titre (excerpt) de l'article dans la liste
 				'.postSubtitle, .postExcerpt': {
 					color: 'rgb(85, 85, 85) !important',
+					cursor: 'pointer !important',
 					fontFamily: '"Open Sans" !important',
 					fontSize: '23px !important',
 					fontStyle: 'normal !important',
@@ -329,14 +299,10 @@ export default function GlobalCss() {
 					lineHeight: '27px !important',
 					margin: '.25rem 0 0 !important',
 					transition: 'color 0.3s ease !important',
-					cursor: 'pointer !important',
 				},
+
 				// Effet de survol pour postSubtitle et postExcerpt - FORCE ABSOLUE
 				'.postSubtitle:hover, .postExcerpt:hover': {
-					color: 'rgb(112, 148, 37) !important'
-				},
-				// Même dans les liens
-				'a .postSubtitle:hover, a .postExcerpt:hover': {
 					color: 'rgb(112, 148, 37) !important'
 				},
 				'.postThumb': {
@@ -361,7 +327,7 @@ export default function GlobalCss() {
 				// Titre d'article dans la liste
 				'.postTitle': {
 					color: 'rgb(51, 51, 51) !important',
-					fontFamily: '"Open Sans", sans-serif !important',
+					fontFamily: '"Open Sans" !important',
 					fontSize: '27px !important',
 					fontStyle: 'normal !important',
 					fontWeight: '600 !important',
@@ -389,7 +355,6 @@ export default function GlobalCss() {
 					flexDirection: 'column',
 					paddingBottom: '100px',
 				},
-
 				'.profileHeader': {
 					alignItems: 'center',
 					display: 'flex',
@@ -410,6 +375,7 @@ export default function GlobalCss() {
 					justifyContent: 'center',
 					padding: '1em 0',
 				},
+
 				// Liens sociaux avec couleurs spécifiques selon Gatsby v1
 				'.profileSocial a': {
 					color: '#709425', // Couleur accent verte selon spécifications
@@ -451,8 +417,27 @@ export default function GlobalCss() {
 					padding: '1px 5px',
 					textShadow: 'none',
 				},
-				// Variables CSS - CORRECTION TAILLES EXACTES - SUPPRIMÉ (FUSIONNÉ AVEC LE PREMIER BLOC)
-
+				// === VARIABLES CSS GLOBALES POUR ANIMATIONS ===
+				':root': {
+					// Variables CSS supplémentaires - FUSION
+					'--c-accent': '#709425',
+					'--c-subtitle': 'rgb(85, 85, 85)',
+					'--c-text': '#555555',
+					'--c-title': 'rgb(51, 51, 51)',
+					'--divider': '#eceff1',
+					'--font-body': '"Open Sans"',
+					'--font-styled': '"Open Sans"',
+					'--organic-red': '#dc3545',
+					'--organic-red-hover': '#c82333',
+					'--shadow-elegant': '0 8px 25px rgba(0, 0, 0, 0.15)',
+					'--shadow-strong': '0 10px 30px rgba(0, 0, 0, 0.1)',
+					'--subtitle-line-height': '27px',
+					'--subtitle-size': '23px',
+					'--title-line-height': '31px',
+					'--title-size': '27px',
+					'--transition-bounce': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+					'--transition-smooth': 'cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+				},
 				// Responsive: layout fluide
 				'@media (max-width: 640px)': {
 					'.postItem': {
@@ -466,12 +451,14 @@ export default function GlobalCss() {
 						width: '60px',
 					},
 				},
-
 				'[hidden]': { display: 'none' },
+				// Variables CSS - CORRECTION TAILLES EXACTES - SUPPRIMÉ (FUSIONNÉ AVEC LE PREMIER BLOC)
+
 				'[type=checkbox], [type=radio]': {
 					boxSizing: 'border-box',
 					padding: 0,
 				},
+
 				'[type=number]::-webkit-inner-spin-button, [type=number]::-webkit-outer-spin-button':
 					{ height: 'auto' },
 				'[type=search]': {
@@ -488,6 +475,10 @@ export default function GlobalCss() {
 					textDecoration: 'none',
 					textDecorationSkip: 'objects' as CSSProperties['textDecorationSkip'],
 					transition: '0.3s',
+				},
+				// Même dans les liens
+				'a .postSubtitle:hover, a .postExcerpt:hover': {
+					color: 'rgb(112, 148, 37) !important'
 				},
 				'a:active, a:hover': { outlineWidth: 0 },
 				'abbr[title]': {
@@ -546,6 +537,16 @@ export default function GlobalCss() {
 					fontWeight: 'inherit !important',
 					lineHeight: 'inherit !important',
 					margin: '0 !important',
+				},
+				// Override ultra-spécifique pour les h1 utilisés comme nom d'auteur
+				'h1.authorName, .authorName h1, .profileHeader h1.authorName, .profileHeader .authorName': {
+					color: '#555555 !important',
+					fontFamily: '"Open Sans" !important',
+					fontSize: '27px !important',
+					fontWeight: '300 !important',
+					lineHeight: '27px !important',
+					margin: '8px 0 0 0 !important',
+					padding: '0 !important',
 				},
 				// h1 par défaut supprimé pour éviter les conflits avec nos styles d'articles
 				// 'h1, h2, h3': { fontWeight: 300 }, // Supprimé également

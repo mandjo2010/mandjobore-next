@@ -14,22 +14,22 @@ export default function PostPage({
 }) {
 	// Adaptation des données pour le composant Post Gatsby-style
 	const postData = {
-		slug: post.slug || '',
-		title: post.data?.title || '',
-		subTitle: post.data?.subTitle,
 		content: post.content || '',
-		html: post.content || '', // Pour compatibilité
 		date: post.data?.date || '',
 		excerpt: post.data?.description || post.data?.subTitle,
-		frontmatter: {
-			title: post.data?.title || '',
-			subTitle: post.data?.subTitle,
-			category: post.data?.category,
-			cover: post.data?.cover
-		},
 		fields: {
 			prefix: post.data?.date
-		}
+		},
+		frontmatter: {
+			category: post.data?.category,
+			cover: post.data?.cover,
+			subTitle: post.data?.subTitle,
+			title: post.data?.title || ''
+		},
+		html: post.content || '', // Pour compatibilité
+		slug: post.slug || '',
+		subTitle: post.data?.subTitle,
+		title: post.data?.title || ''
 	}
 
 	return (
@@ -37,9 +37,9 @@ export default function PostPage({
 			<Post 
 				post={postData}
 				author={{
-					name: 'Mandjo Béa Boré',
-					bio: 'Data Analyst & Developer. Design and build geospatial applications with modern web technologies.',
-					avatar: '/images/jpg/avatar.jpg'
+					avatar: '/images/jpg/avatar.jpg',
+					bio: 'Data analyst - Developer. Design and build geospatial applications with modern web technologies.',
+					name: 'Mandjo Béa Boré'
 				}}
 				facebookAppId={process.env.NEXT_PUBLIC_FACEBOOK_APP_ID}
 			/>

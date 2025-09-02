@@ -5,10 +5,9 @@ import * as React from 'react'
 import '../src/styles/layout.css' // CSS de layout absolue
 import '../src/styles/gatsby-theme.css' // Variables et styles du thème Gatsby
 import '../src/styles/font-size.css'
-import '../src/styles/scrollbar-hidden.css' // Masquage complet des barres de défilement (sauf Navigator)
+// import '../src/styles/scrollbar-hidden.css' // ← TEMPORAIREMENT COMMENTÉ POUR TEST
 import '../src/styles/typography.css' // Styles généraux
 import '../src/styles/subtitle-force.css' // FORCE ABSOLUE - Dernier import
-import '../src/styles/avatar-title-override.css' // Override spécifique pour le titre de l'avatar
 
 // Composant wrapper pour utiliser le hook
 function AppWrapper({ Component, pageProps }: { Component: React.ComponentType<Record<string, unknown>>; pageProps: Record<string, unknown> }) {

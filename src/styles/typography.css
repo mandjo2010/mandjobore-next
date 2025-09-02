@@ -16,7 +16,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Variables typographiques et structure - CORRECTION DES TAILLES */
 :root {
-  --font-open-sans: "Open Sans", Arial, sans-serif;
+  --font-open-sans: "Open Sans";
   
   /* Titres d'articles - TAILLES EXACTES */
   --title-font-family: "Open Sans";

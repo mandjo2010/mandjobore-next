@@ -11,7 +11,7 @@
   --base-bg: #ffffff;
   --base-text: #333333;
   --base-lines: #e0e0e0;
-  --base-accent: #27ae60;
+  --base-accent: #709425;
   --base-link: #709425;
   --base-link-hover: #8bc34a;
   
@@ -82,7 +82,7 @@
   
   /* === TYPOGRAPHIE EXACTE DU THÈME GATSBY === */
   /* Font families */
-  --font-family: "Open Sans", Arial, sans-serif;
+  --font-family: "Open Sans";
   
   /* Info fonts */
   --info-box-title-size: 1.1em;

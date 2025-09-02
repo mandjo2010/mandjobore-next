@@ -2,16 +2,13 @@
  * Page de test pour les styles d'articles exacts selon styles.txt
  */
 import Head from 'next/head'
+
 import Layout from '@/components/layout/Layout'
 import Post from '@/components/post'
 
 export default function TestPostStylesPage() {
   // Données de test pour reproduire un article complet
   const testPost = {
-    slug: '/test-styles',
-    title: 'Test des Styles d\'Articles',
-    subTitle: 'Vérification des tailles de police exactes selon styles.txt',
-    date: '2025-01-15',
     content: `
       <p>Ceci est un test pour vérifier que tous les styles d'articles correspondent exactement aux spécifications de l'ancien code Gatsby.</p>
       
@@ -34,20 +31,24 @@ export default function TestPostStylesPage() {
       
       <p>Ce paragraphe teste le rendu du contenu principal avec les bonnes couleurs et espacements.</p>
     `,
+    date: '2025-01-15',
     excerpt: 'Test des styles d\'articles pour vérifier la conformité avec l\'ancien code Gatsby.',
-    frontmatter: {
-      title: 'Test des Styles d\'Articles',
-      subTitle: 'Vérification des tailles de police exactes selon styles.txt'
-    },
     fields: {
       prefix: '2025-01-15'
-    }
+    },
+    frontmatter: {
+      subTitle: 'Vérification des tailles de police exactes selon styles.txt',
+      title: 'Test des Styles d\'Articles'
+    },
+    slug: '/test-styles',
+    subTitle: 'Vérification des tailles de police exactes selon styles.txt',
+    title: 'Test des Styles d\'Articles'
   }
 
   const author = {
-    name: 'Mandjo Béa Boré',
-    bio: 'Data Analyst & Developer. Design and build geospatial applications with modern web technologies.',
-    avatar: '/images/jpg/avatar.jpg'
+    avatar: '/images/jpg/avatar.jpg',
+    bio: 'Data analyst - Developer. Design and build geospatial applications with modern web technologies.',
+    name: 'Mandjo Béa Boré'
   }
 
   return (
@@ -59,12 +60,12 @@ export default function TestPostStylesPage() {
       </Head>
 
       <Layout left={<div />}>
-        <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+        <div style={{ margin: '0 auto', maxWidth: '800px', padding: '20px' }}>
           <h1 style={{ 
+            borderBottom: '2px solid #e0e0e0', 
             color: '#709425', 
-            fontSize: '24px', 
+            fontSize: '24px',
             marginBottom: '20px',
-            borderBottom: '2px solid #e0e0e0',
             paddingBottom: '10px'
           }}>
             🎨 Test des Styles d'Articles
@@ -72,10 +73,10 @@ export default function TestPostStylesPage() {
           
           <div style={{ 
             backgroundColor: '#f8f9fa', 
-            padding: '15px', 
-            borderRadius: '5px',
+            borderRadius: '5px', 
+            fontSize: '14px',
             marginBottom: '30px',
-            fontSize: '14px'
+            padding: '15px'
           }}>
             <strong>Instructions :</strong> Vérifiez que les styles ci-dessous correspondent exactement aux spécifications :
             <ul style={{ margin: '10px 0 0 20px' }}>

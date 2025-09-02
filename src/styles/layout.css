@@ -8,7 +8,7 @@
 ======================================== */
 :root {
   /* COULEURS PRIMAIRES EXACTES */
-  --c-accent: #27ae60;           /* Vert principal */
+  --c-accent: #709425;           /* Vert principal */
   --c-text: #2c3e50;            /* Bleu-gris foncé pour le texte */
   --c-background: #ffffff;       /* Blanc pur */
   --c-lines: #e0e0e0;          /* Gris lignes de séparation */
@@ -30,7 +30,7 @@
   --layout-infobar-height: 48px;
   
   /* TYPOGRAPHIE EXACTE */
-  --font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --font-family: 'Open Sans';
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-semibold: 600;

@@ -46,7 +46,7 @@ const mockPages = [
 
 const mockParts = [
   {
-    html: '<div>Mandjo Béa Boré - Data Analyst & Developer</div>',
+    html: '<div>Mandjo Béa Boré - Data analyst - Developer</div>',
     title: 'author'
   },
   {

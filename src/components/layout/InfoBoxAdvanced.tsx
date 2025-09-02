@@ -11,52 +11,52 @@ export default function InfoBoxAdvanced() {
     <div
       className="info-box-advanced"
       style={{
-        width: '100%',
-        height: '100vh',
         background: '#ffffff',
+        borderRight: '1px solid #e0e0e0',
         display: 'flex',
         flexDirection: 'column',
         fontFamily: "'Open Sans', Arial, sans-serif",
+        height: '100vh',
         overflow: 'hidden',
-        borderRight: '1px solid #e0e0e0'
+        width: '100%'
       }}
     >
       {/* Section Profil */}
       <div
         className="profile-section"
         style={{
-          padding: '20px',
-          textAlign: 'center',
-          borderBottom: '1px solid #f0f0f0',
           background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white'
+          borderBottom: '1px solid #f0f0f0',
+          color: 'white',
+          padding: '20px',
+          textAlign: 'center'
         }}
       >
         <div
           className="avatar"
           style={{
-            width: '80px',
-            height: '80px',
-            borderRadius: '50%',
-            background: '#ffffff',
-            margin: '0 auto 12px',
-            display: 'flex',
             alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: '32px',
+            background: '#ffffff',
+            border: '3px solid rgba(255,255,255,0.3)',
+            borderRadius: '50%',
             color: '#667eea',
+            display: 'flex',
+            fontSize: '32px',
             fontWeight: 'bold',
-            border: '3px solid rgba(255,255,255,0.3)'
+            height: '80px',
+            justifyContent: 'center',
+            margin: '0 auto 12px',
+            width: '80px'
           }}
         >
           MB
         </div>
         <h2
           style={{
+            color: 'white',
             fontSize: '18px',
             fontWeight: '600',
-            margin: '0 0 4px 0',
-            color: 'white'
+            margin: '0 0 4px 0'
           }}
         >
           Mandjo Béa Boré
@@ -64,12 +64,12 @@ export default function InfoBoxAdvanced() {
         <p
           style={{
             fontSize: '12px',
+            fontWeight: '300',
             margin: '0',
-            opacity: 0.9,
-            fontWeight: '300'
+            opacity: 0.9
           }}
         >
-          Data Analyst & Developer
+          Data analyst - Developer
         </p>
       </div>
 
@@ -77,9 +77,9 @@ export default function InfoBoxAdvanced() {
       <nav
         className="main-nav"
         style={{
+          borderBottom: '1px solid #f0f0f0',
           flex: 1,
-          padding: '16px 0',
-          borderBottom: '1px solid #f0f0f0'
+          padding: '16px 0'
         }}
       >
         <NavItem icon="📥" label="Articles récents" active count={12} />
@@ -95,19 +95,19 @@ export default function InfoBoxAdvanced() {
       <div
         className="categories-section"
         style={{
-          padding: '16px 0',
-          borderBottom: '1px solid #f0f0f0'
+          borderBottom: '1px solid #f0f0f0',
+          padding: '16px 0'
         }}
       >
         <div
           style={{
+            color: '#888',
             fontSize: '11px',
             fontWeight: '600',
-            color: '#888',
-            textTransform: 'uppercase',
             letterSpacing: '1px',
+            marginBottom: '8px',
             padding: '0 20px 12px',
-            marginBottom: '8px'
+            textTransform: 'uppercase'
           }}
         >
           🏷️ Catégories
@@ -123,28 +123,28 @@ export default function InfoBoxAdvanced() {
       <div
         className="social-section"
         style={{
-          padding: '16px 20px',
+          background: '#fafafa',
           borderTop: '1px solid #f0f0f0',
-          background: '#fafafa'
+          padding: '16px 20px'
         }}
       >
         <div
           style={{
+            color: '#888',
             fontSize: '11px',
             fontWeight: '600',
-            color: '#888',
-            textTransform: 'uppercase',
             letterSpacing: '1px',
-            marginBottom: '12px'
+            marginBottom: '12px',
+            textTransform: 'uppercase'
           }}
         >
           🔗 Liens
         </div>
         <div
           style={{
+            alignItems: 'center',
             display: 'flex',
-            justifyContent: 'space-around',
-            alignItems: 'center'
+            justifyContent: 'space-around'
           }}
         >
           <SocialIcon icon="🐙" label="GitHub" />
@@ -165,16 +165,16 @@ interface NavItemProps {
   count?: number;
 }
 
-function NavItem({ icon, label, active = false, count }: NavItemProps) {
+function NavItem({ active = false, count, icon, label }: NavItemProps) {
   return (
     <div
       style={{
-        display: 'flex',
         alignItems: 'center',
-        padding: '8px 20px',
-        cursor: 'pointer',
         background: active ? 'rgba(39, 174, 96, 0.1)' : 'transparent',
         borderLeft: active ? '3px solid #27ae60' : '3px solid transparent',
+        cursor: 'pointer',
+        display: 'flex',
+        padding: '8px 20px',
         transition: 'all 0.2s ease'
       }}
       onMouseEnter={(e) => {
@@ -191,10 +191,10 @@ function NavItem({ icon, label, active = false, count }: NavItemProps) {
       <span style={{ fontSize: '16px', marginRight: '12px' }}>{icon}</span>
       <span
         style={{
-          fontSize: '14px',
           color: active ? '#27ae60' : '#555',
-          fontWeight: active ? '500' : '400',
-          flex: 1
+          flex: 1,
+          fontSize: '14px',
+          fontWeight: active ? '500' : '400'
         }}
       >
         {label}
@@ -202,12 +202,12 @@ function NavItem({ icon, label, active = false, count }: NavItemProps) {
       {count && (
         <span
           style={{
-            fontSize: '11px',
             background: active ? '#27ae60' : '#ddd',
-            color: active ? 'white' : '#666',
-            padding: '2px 6px',
             borderRadius: '10px',
+            color: active ? 'white' : '#666',
+            fontSize: '11px',
             minWidth: '18px',
+            padding: '2px 6px',
             textAlign: 'center'
           }}
         >
@@ -225,14 +225,14 @@ interface CategoryItemProps {
   count: number;
 }
 
-function CategoryItem({ label, color, count }: CategoryItemProps) {
+function CategoryItem({ color, count, label }: CategoryItemProps) {
   return (
     <div
       style={{
-        display: 'flex',
         alignItems: 'center',
-        padding: '6px 20px',
         cursor: 'pointer',
+        display: 'flex',
+        padding: '6px 20px',
         transition: 'all 0.2s ease'
       }}
       onMouseEnter={(e) => {
@@ -244,26 +244,26 @@ function CategoryItem({ label, color, count }: CategoryItemProps) {
     >
       <div
         style={{
-          width: '8px',
-          height: '8px',
-          borderRadius: '50%',
           background: color,
-          marginRight: '10px'
+          borderRadius: '50%',
+          height: '8px',
+          marginRight: '10px',
+          width: '8px'
         }}
       />
       <span
         style={{
-          fontSize: '13px',
           color: '#555',
-          flex: 1
+          flex: 1,
+          fontSize: '13px'
         }}
       >
         {label}
       </span>
       <span
         style={{
-          fontSize: '11px',
-          color: '#888'
+          color: '#888',
+          fontSize: '11px'
         }}
       >
         {count}
@@ -282,12 +282,12 @@ function SocialIcon({ icon, label }: SocialIconProps) {
   return (
     <div
       style={{
+        alignItems: 'center',
+        borderRadius: '6px',
+        cursor: 'pointer',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        cursor: 'pointer',
         padding: '4px',
-        borderRadius: '6px',
         transition: 'all 0.2s ease'
       }}
       onMouseEnter={(e) => {
@@ -301,7 +301,7 @@ function SocialIcon({ icon, label }: SocialIconProps) {
       title={label}
     >
       <span style={{ fontSize: '18px', marginBottom: '2px' }}>{icon}</span>
-      <span style={{ fontSize: '9px', color: '#666' }}>
+      <span style={{ color: '#666', fontSize: '9px' }}>
         {label.substring(0, 3)}
       </span>
     </div>

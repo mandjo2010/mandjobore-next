@@ -48,7 +48,7 @@ const author = {
     linkedin: 'https://fr.linkedin.com/in/mandjobb',
     x: 'https://x.com/kozoubea' // Lien X mis à jour
   },
-  tagline: 'Data Analyst & Developer'
+  tagline: 'Data analyst - Developer'
 }
 
 // Tech stack avec icônes comme dans le original
@@ -134,6 +134,11 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
       component="aside"
       className={`${navigatorPosition} ${navigatorShape}`}
       sx={{
+        // Medium/Small screens: moins de 1024px = InfoBox masquée (InfoBar prend le relais)
+        '@media (max-width: 1023px)': {
+          display: 'none' // Masquée pour laisser place au mode horizontal
+        },
+        
         // Large screens: 1024px+ = Affichage complet de l'InfoBox (mode vertical)
         '@media (min-width: 1024px)': {
           // Border right comme dans le original avec theme.base.colors.lines
@@ -156,11 +161,6 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
           top: 0,
           
           width: 'var(--layout-infobox-width)' // theme.info.sizes.width = 300px
-        },
-        
-        // Medium/Small screens: moins de 1024px = InfoBox masquée (InfoBar prend le relais)
-        '@media (max-width: 1023px)': {
-          display: 'none' // Masquée pour laisser place au mode horizontal
         },
         
         // Style de base du container infoBox (reproduction exacte du theme Gatsby)
@@ -251,20 +251,10 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
           />
         </Box>
 
-        {/* Titre avec nom et tagline - styles selon spécifications exactes */}
+        {/* Nom de l'auteur - styles selon spécifications exactes */}
         <Typography
           component="h1"
           sx={{
-            '& small': {
-              // Titre auteur selon spécifications: Open Sans 300, 16px/16px, color #555
-              color: '#555555 !important',
-              display: 'block',
-              fontFamily: '"Open Sans", sans-serif !important',
-              fontSize: '16px !important',
-              fontWeight: '300 !important',
-              lineHeight: '18px !important',
-              margin: '4px 0 0 0 !important', // Réduit l'espacement pour garder dans la même box
-            },
             '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
               fontSize: '27px !important', // Taille selon spécifications
               // Garde les éléments groupés même sur tablet
@@ -289,11 +279,11 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
             },
             // Nom auteur selon spécifications exactes: Open Sans 300, 27px/27px, color #555
             color: '#555555 !important',
-            fontFamily: '"Open Sans", sans-serif !important',
+            float: 'left',
+            fontFamily: '"Open Sans" !important',
             fontSize: '27px !important',
             fontWeight: '300 !important',
             lineHeight: '27px !important',
-            float: 'left',
             margin: '0 !important',
             transition: 'all 0.5s ease',
             // Reproduction exacte des styles title du theme original
@@ -301,7 +291,53 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
           }}
         >
           {author.name.replace(/ /g, '\u00a0')} {/* Non-breaking spaces comme l'original */}
-          <small>{author.tagline}</small>
+        </Typography>
+
+        {/* Titre/tagline de l'auteur - élément séparé pour meilleure sélectabilité */}
+        <Typography
+          component="div"
+          className="avatar-title-tagline" // Classe spécifique pour override CSS
+          sx={{
+            // Force l'override de tous les styles externes qui pourraient affecter la line-height
+            '&, & *': {
+              lineHeight: '16px !important'
+            },
+            '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
+              // Garde les éléments groupés même sur tablet
+              position: 'relative',
+              textAlign: 'left'
+            },
+            '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+              // Position selon l'état du navigator (.is-aside.open &)
+              '.is-aside.open &': {
+                left: '60%',
+                textAlign: 'left',
+                top: '2em', // Positionné sous le nom
+                transform: 'none'
+              },
+              left: '50%',
+              position: 'absolute',
+              textAlign: 'center',
+              top: '115px', // Positionné sous le nom (85px + 27px + 3px de marge)
+              transform: 'translate(-50%)',
+              transition: 'all 0.5s ease'
+            },
+            // Titre auteur selon spécifications: Open Sans 300, 16px/16px, color #555
+            color: '#555555 !important',
+            cursor: 'text', // Indication visuelle que le texte est sélectionnable
+            display: 'inline', // Une seule ligne
+            fontFamily: '"Open Sans" !important',
+            fontSize: '16px !important',
+            fontWeight: '300 !important',
+            lineHeight: '16px !important', // Force la line-height à 16px exactement
+            margin: '4px 0 0 0 !important',
+            transition: 'all 0.5s ease',
+            userSelect: 'text', // Assure la sélectabilité du texte
+            whiteSpace: 'nowrap', // Empêche le retour à la ligne
+            willChange: 'transform, left, top'
+          }}
+        >
+          {author.tagline}
         </Typography>
 
         {/* Bouton "Expand the box" - styles exacts du theme original */}
@@ -431,7 +467,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
                   }}
                   title="github"
                 >
-                  <FaGithub size={18} />
+                  <FaGithub size={22} />
                 </IconButton>
               </Link>
               <Link href={author.social.linkedin} target="_blank" rel="noopener noreferrer">
@@ -451,7 +487,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
                   }}
                   title="linkedin"
                 >
-                  <FaLinkedin size={18} />
+                  <FaLinkedin size={22} />
                 </IconButton>
               </Link>
               <Link href={author.social.x} target="_blank" rel="noopener noreferrer">
@@ -471,7 +507,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
                   }}
                   title="x"
                 >
-                  <FaXTwitter size={18} />
+                  <FaXTwitter size={22} />
                 </IconButton>
               </Link>
               <Link href={author.social.facebook} target="_blank" rel="noopener noreferrer">
@@ -491,7 +527,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
                   }}
                   title="facebook"
                 >
-                  <FaFacebook size={18} />
+                  <FaFacebook size={22} />
                 </IconButton>
               </Link>
               <Link href={author.social.instagram} target="_blank" rel="noopener noreferrer">
@@ -511,7 +547,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
                   }}
                   title="instagram"
                 >
-                  <FaInstagram size={18} />
+                  <FaInstagram size={22} />
                 </IconButton>
               </Link>
               <Link href={author.social.email}>
@@ -531,7 +567,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
                   }}
                   title="email"
                 >
-                  <FaEnvelope size={18} />
+                  <FaEnvelope size={22} />
                 </IconButton>
               </Link>
             </Box>
