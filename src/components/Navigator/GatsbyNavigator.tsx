@@ -147,6 +147,7 @@ export default function GatsbyNavigator({ categories: _categories, className, po
                 borderBottom: index < filteredPosts.length - 1 ? '1px solid #eeeeee' : 'none',
                 cursor: 'pointer',
                 display: 'flex',
+                marginBottom: index < filteredPosts.length - 1 ? '24px' : '0',
                 padding: '30px 0'
               }}
             >
@@ -162,6 +163,7 @@ export default function GatsbyNavigator({ categories: _categories, className, po
                   height: '60px',
                   justifyContent: 'center',
                   marginRight: '20px',
+                  overflow: 'hidden',
                   width: '60px'
                 }}
               >
@@ -173,6 +175,7 @@ export default function GatsbyNavigator({ categories: _categories, className, po
                       borderRadius: '50%',
                       height: '100%',
                       objectFit: 'cover',
+                      objectPosition: 'center',
                       width: '100%'
                     }}
                   />
@@ -210,12 +213,12 @@ export default function GatsbyNavigator({ categories: _categories, className, po
                   <Typography
                     sx={{
                       color: 'rgb(85, 85, 85) !important',
+                      display: '-webkit-box',
                       fontFamily: '"Open Sans" !important',
                       fontSize: '23px !important',
                       fontWeight: '300 !important',
                       lineHeight: '27px !important',
                       marginBottom: '8px',
-                      display: '-webkit-box',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       WebkitBoxOrient: 'vertical',
@@ -230,17 +233,17 @@ export default function GatsbyNavigator({ categories: _categories, className, po
                   component="h2"
                   className="blog-subtitle article-subtitle post-subtitle"
                   sx={{
-                    fontFamily: '"Open Sans" !important',
-                    fontSize: '23px !important',
-                    fontWeight: '300 !important',
-                    lineHeight: '27px !important',
-                    color: 'rgb(85, 85, 85) !important',
-                    fontStyle: 'normal !important',
-                    marginBottom: '8px',
-                    cursor: 'pointer',
                     '&:hover': {
                       color: 'rgb(112, 148, 37) !important'
-                    }
+                    },
+                    color: 'rgb(85, 85, 85) !important',
+                    cursor: 'pointer',
+                    fontFamily: '"Open Sans" !important',
+                    fontSize: '23px !important',
+                    fontStyle: 'normal !important',
+                    fontWeight: '300 !important',
+                    lineHeight: '27px !important',
+                    marginBottom: '8px'
                   }}
                 >
                   {post.excerpt}

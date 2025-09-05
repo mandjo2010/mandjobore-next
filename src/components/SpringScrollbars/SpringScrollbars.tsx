@@ -35,14 +35,6 @@ const ScrollContent = styled(motion.div)({
   willChange: 'transform',
 })
 
-// Helper pour mapper les valeurs comme dans Rebound (MathUtil.mapValueInRange)
-const mapValueInRange = (value: number, fromLow: number, fromHigh: number, toLow: number, toHigh: number): number => {
-  const fromRangeSize = fromHigh - fromLow
-  const toRangeSize = toHigh - toLow
-  const valueScale = (value - fromLow) / fromRangeSize
-  return toLow + (valueScale * toRangeSize)
-}
-
 export default function SpringScrollbars({ 
   children, 
   className = '',
@@ -53,12 +45,13 @@ export default function SpringScrollbars({
   const contentRef = useRef<HTMLDivElement>(null)
   const { scrollToTop, setScrollToTop } = useUIPreferences()
   
-  // Motion values pour le scroll spring
+  // Motion values pour le scroll spring avec paramètres optimisés
   const y = useMotionValue(0)
   const springY = useSpring(y, {
     damping: 30,
-    mass: 0.8,
-    stiffness: 300
+    mass: 0.3,
+    restDelta: 0.001, // Plus précis pour les positions exactes
+    stiffness: 500
   })
   
   // Référence pour les dimensions
@@ -68,9 +61,7 @@ export default function SpringScrollbars({
     scrollTop: 0
   })
 
-  // API publique reproduisant l'interface Gatsby
-  // getScrollTop removed - was unused
-  
+  // API publique reproduisant l'interface Gatsby avec sync scrollbar
   const scrollTop = useCallback((targetY: number) => {
     const container = containerRef.current
     if (!container) return
@@ -81,6 +72,12 @@ export default function SpringScrollbars({
     
     // Animation spring vers la position cible
     y.set(-clampedY)
+    
+    // Synchroniser avec la scrollbar native si elle existe
+    const scrollableElement = container.querySelector('[style*="overflow"]') as HTMLElement
+    if (scrollableElement) {
+      scrollableElement.scrollTop = clampedY
+    }
   }, [y])
 
   // Gestion du scrollToTop depuis le store (comme dans Gatsby)
@@ -111,20 +108,33 @@ export default function SpringScrollbars({
     const { clientHeight, scrollHeight } = container
     const maxScroll = Math.max(0, scrollHeight - clientHeight)
     
+    // Si pas de contenu à défiler, ne rien faire
+    if (maxScroll <= 0) return
+    
     const currentY = y.get()
     const deltaY = event.deltaY
-    const newY = Math.max(-maxScroll, Math.min(0, currentY - deltaY))
+    let newY = currentY - deltaY
+    
+    // Contraintes de défilement avec élasticité aux bords améliorée
+    if (newY > 0) {
+      // Résistance très légère en haut pour permettre d'atteindre exactement le top
+      newY = newY * 0.05
+    } else if (newY < -maxScroll) {
+      // Résistance en bas (au-dessous du contenu)
+      newY = -maxScroll + (newY + maxScroll) * 0.1
+    }
     
     y.set(newY)
     
     // Mettre à jour les métriques
-    const scrollTop = Math.abs(newY)
+    const scrollTop = Math.max(0, Math.min(-newY, maxScroll))
     scrollMetrics.current = { clientHeight, scrollHeight, scrollTop }
     
-    // Callback comme dans l'original
+    // Callback comme dans l'original avec normalisation corrigée
     if (onScrollFrame) {
+      // Normalisation 0-1 au lieu de 0.01-0.99 pour permettre les extrêmes
       const normalizedTop = scrollHeight > clientHeight 
-        ? mapValueInRange(scrollTop, 0, maxScroll, 0.01, 0.99)
+        ? Math.max(0, Math.min(1, scrollTop / maxScroll))
         : 0
       onScrollFrame({ 
         clientHeight, 
@@ -148,8 +158,20 @@ export default function SpringScrollbars({
     const { clientHeight, scrollHeight } = container
     const maxScroll = Math.max(0, scrollHeight - clientHeight)
     
+    // Si pas de contenu à défiler, ne rien faire
+    if (maxScroll <= 0) return
+    
     const currentY = y.get()
-    const newY = Math.max(-maxScroll, Math.min(0, currentY + info.delta.y))
+    let newY = currentY + info.delta.y
+    
+    // Permettre un dépassement élastique mais avec contrainte douce
+    if (newY > 0) {
+      // Résistance en haut
+      newY = newY * 0.3
+    } else if (newY < -maxScroll) {
+      // Résistance en bas
+      newY = -maxScroll + (newY + maxScroll) * 0.3
+    }
     
     y.set(newY)
   }, [y])
@@ -161,11 +183,24 @@ export default function SpringScrollbars({
     const { clientHeight, scrollHeight } = container
     const maxScroll = Math.max(0, scrollHeight - clientHeight)
     
-    // Appliquer l'inertie comme dans SpringScrollbars original
+    if (maxScroll <= 0) return
+    
     const currentY = y.get()
     const velocity = info.velocity.y
-    const targetY = Math.max(-maxScroll, Math.min(0, currentY + velocity * 0.1))
     
+    // Calculer la position finale avec inertie
+    let targetY = currentY + velocity * 0.1
+    
+    // Ramener dans les limites avec un effet de ressort
+    if (targetY > 0) {
+      // Retour en position haute
+      targetY = 0
+    } else if (targetY < -maxScroll) {
+      // Retour en position basse
+      targetY = -maxScroll
+    }
+    
+    // Animation vers la position finale
     y.set(targetY)
   }, [y])
 
@@ -214,8 +249,9 @@ export default function SpringScrollbars({
         onPan={handlePan}
         onPanEnd={handlePanEnd}
         drag="y"
-        dragConstraints={containerRef}
-        dragElastic={0.1}
+        dragConstraints={false}
+        dragElastic={0.2}
+        dragMomentum={true}
       >
         {children}
       </ScrollContent>

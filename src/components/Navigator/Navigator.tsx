@@ -1,25 +1,19 @@
 /**
- * TODO/MIGRATION BLOCK - Navigator.tsx
- * - Component: Navigator (Liste d'articles central)  
- * - Migration target: Gatsby Navigator to Next.js + Emotion/MUI
- * - Date: 2024-01-XX
- * - Removed: JSS injectSheet, Redux connect, forceCheck
- * - Refactor: styled(Box) avec complex positioning et states
- * - Responsive: Multiple breakpoints avec width/position calculations
- * - Theme access: Secured theme.navigator.* et theme.info.sizes
- * - Dynamic props: navigatorPosition/navigatorShape complex logic
- * - Visual tests: Transitions aside/featured, scroll behavior
- * - Pattern: Complex CSS states avec multiple class combinations
- * - Last migration commit: feat(migration): migrate Navigator.tsx to Emotion/MUI
- * - Dev referent: Next.js migration team
+ * Navigator - Reproduit fidèlement le Navigator de Gatsby avec animations
+ * Migration avec AnimationNavigator et logique de clic article
  */
 
 'use client';
 
-import { ExpandLess, Close } from '@mui/icons-material';
+import { ExpandMore } from '@mui/icons-material';
 import { Box, Typography, IconButton } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React, { useState } from 'react';
+import React from 'react';
+
+import NavigatorAnimations from '@/components/animations/NavigatorAnimations';
+import NavigatorSlideUpAnimation from '@/components/animations/NavigatorSlideUpAnimation';
+import CompactArticleList from '@/components/Navigator/CompactArticleList';
+import { useNavigatorState, useGatsbyUIStore } from '@/store/gatsby-ui-store';
 
 interface NavigatorProps {
   posts?: any[];
@@ -27,84 +21,7 @@ interface NavigatorProps {
   navigatorShape?: 'open' | 'closed' | '';
 }
 
-// Container principal avec tous les states complexes de Gatsby
-const NavigatorContainer = styled(Box)(({ theme }) => ({
-  // Mobile states
-  '@media (max-width: 1023px)': {
-    '&.is-aside': {
-      left: '-100%',
-    },
-    '&.is-featured': {
-      left: 0,
-    },
-  },
-  background: theme.navigator?.colors?.background || '#ffffff',
-  height: '100vh',
-  left: 0,
-  position: 'absolute',
-  // Desktop states  
-  [theme.breakpoints?.up('lg') || '@media (min-width: 1024px)']: {
-    '&.is-aside': {
-      '&.closed': {
-        bottom: `calc(-100% + 100px + ${theme.navigator?.sizes?.closedHeight || 80}px)`,
-        height: `calc(100% - 100px)`,
-      },
-      '&.open': {
-        bottom: 0,
-        height: `calc(100% - 100px)`,
-      },
-      '&::after': {
-        borderTop: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
-        content: '""',
-        height: 0,
-        left: theme.base?.sizes?.linesMargin || '20px',
-        position: 'absolute',
-        right: theme.base?.sizes?.linesMargin || '20px',
-        top: 0,
-      },
-      left: 0,
-      top: 'auto',
-      
-      transition: 'none, bottom 0.5s',
-      
-      width: `${(theme.info?.sizes?.width || 320) - 1}px`,
-      
-      zIndex: 1,
-    },
-    
-    '&.is-featured': {
-      left: `${theme.info?.sizes?.width || 320}px`,
-      top: 0,
-      transition: 'left .9s',
-      width: `calc(100vw - ${theme.info?.sizes?.width || 320}px - ${theme.bars?.sizes?.actionsBar || 60}px)`,
-    },
-    
-    // États de transition
-    '&.moving-aside': {
-      left: `calc(-100vw + ${2 * (theme.info?.sizes?.width || 320) + 60}px)`,
-      top: 0,
-      transition: 'left 0.9s',
-      width: `calc(100vw - ${theme.info?.sizes?.width || 320}px - 60px)`,
-    },
-    
-    '&.moving-featured': {
-      bottom: '-100%',
-      left: 0,
-      top: 'auto',
-      transition: 'bottom .3s',
-      width: `${(theme.info?.sizes?.width || 320) - 1}px`,
-      zIndex: 1,
-    },
-  },
-  top: 0,
-  transform: 'translate3d(0, 0, 0)',
-  transition: 'left .9s',
-  transitionTimingFunction: 'ease',
-  
-  width: '100%',
-  
-  willChange: 'left, top, bottom, width',
-}));
+// Container principal SUPPRIMÉ - remplacé par NavigatorAnimations
 
 // Content area avec scroll
 const ScrollableContent = styled(Box)(({ theme: _theme }) => ({
@@ -117,95 +34,72 @@ const ScrollableContent = styled(Box)(({ theme: _theme }) => ({
   width: '100%',
 }));
 
-// Header pour le mode collapsed
-const CollapsedHeader = styled(Box)(({ theme }) => ({
-  '& h3': {
-    color: theme.navigator?.colors?.postsHeader || '#555',
-    fontSize: '1.1em',
-    fontWeight: 600,
-    margin: '-.2em 0 0 0',
-    textTransform: 'uppercase',
+// Header compact quand article ouvert - Avatar + "Expand the box" (flèche vers le bas)
+const CompactArticleHeader = styled(Box)(({ theme }) => ({
+  '& .avatar': {
+    backgroundColor: '#f0f0f0',
+    borderRadius: '50%',
+    height: '40px',
+    marginRight: '10px',
+    width: '40px'
   },
-  
-  '.is-aside.closed &, .moving-featured.closed &': {
-    alignItems: 'center',
-    background: theme.navigator?.colors?.background || '#ffffff',
-    display: 'flex',
-    flexDirection: 'row',
-    height: `${theme.navigator?.sizes?.closedHeight || 80}px`,
-    justifyContent: 'space-between',
-    left: 0,
-    margin: 0,
-    padding: '0 30px 0 40px',
-    position: 'absolute',
-    top: 0,
-    width: '100%',
-  },
-  
-  display: 'none',
-}));
-
-// Article item temporaire
-const ArticleItem = styled(Box)(({ theme }) => ({
-  '&:hover': {
-    backgroundColor: theme.palette?.action?.hover || 'rgba(0, 0, 0, 0.04)',
+  '& .expand-box-button': {
+    '& .MuiSvgIcon-root': {
+      fontSize: '1.2rem'
+    }
   },
   alignItems: 'center',
-  borderBottom: `1px solid ${theme.base?.colors?.lines || '#dedede'}`,
-  cursor: 'pointer',
+  background: theme.navigator?.colors?.background || '#ffffff',
+  borderBottom: '1px solid #f0f0f0',
   display: 'flex',
-  padding: '1rem',
+  flexDirection: 'row',
+  height: `${theme.navigator?.sizes?.closedHeight || 80}px`,
+  justifyContent: 'space-between',
+  left: 0,
+  padding: '0 30px 0 40px',
+  position: 'absolute',
   
-  transition: 'background-color 0.2s ease',
+  top: 0,
+  
+  width: '100%'
 }));
 
-const ArticleThumb = styled(Box)({
-  backgroundColor: '#f0f0f0',
-  borderRadius: '75% 65%',
-  flexShrink: 0,
-  height: '60px',
-  marginRight: '1rem',
-  width: '60px',
-});
-
-const ArticleContent = styled(Box)({
-  '& h3': {
-    fontSize: '1.1em',
-    fontWeight: 600,
-    lineHeight: 1.2,
-    margin: 0,
-  },
-  
-  '& p': {
-    color: '#666',
-    fontSize: '0.9em',
-    lineHeight: 1.3,
-    margin: '0.5em 0 0 0',
-  },
-  
-  flexGrow: 1,
-});
+// Footer supprimé - InfoBox gère "Latest Posts" pour éviter duplication
 
 const Navigator: React.FC<NavigatorProps> = ({
   navigatorPosition = '',
   navigatorShape = '',
   posts = [],
 }) => {
-  const [categoryFilter, setCategoryFilter] = useState('all posts');
+  const { navigatorPosition: storePosition, navigatorShape: storeShape } = useNavigatorState();
+  const { setShowInfoContent, setShowPostsList, showInfoContent, showPostsList } = useGatsbyUIStore();
   
-  const handleExpandClick = () => {
-    // TODO: Intégrer avec le state management
-    console.log('Expand navigator');
+  // Utiliser les états du store si disponibles
+  const currentPosition = storePosition || navigatorPosition;
+  const currentShape = storeShape || navigatorShape;
+  
+  // Gérer les 3 états de la première colonne
+  const isArticleMode = currentPosition === 'is-aside'; // Article ouvert
+  const isInfoBoxExpanded = showInfoContent; // InfoBox complète visible  
+  const isPostsListMode = showPostsList; // Liste d'articles visible
+  
+  // ÉTATS CORRECTS :
+  // État 1: Page d'accueil -> !isArticleMode = InfoBox complète
+  // État 2: Article ouvert -> isArticleMode + !isInfoBoxExpanded + isPostsListMode = Avatar + liste auto
+  // État 3: "Expand box" -> isArticleMode + isInfoBoxExpanded + !isPostsListMode = InfoBox + "List of posts"
+  
+  const handleExpandBoxClick = () => {
+    // Clic sur "Expand the box" - Retour à InfoBox complète + "List of posts" en bas
+    setShowInfoContent(true);
+    setShowPostsList(false);
   };
   
-  const handleRemoveFilter = () => {
-    setCategoryFilter('all posts');
-  };
+  // handleExpandListClick supprimé - plus nécessaire car InfoBox gère "Expand the list"
   
   // Classes CSS selon l'état
   const containerClasses = [
-    navigatorPosition,
-    navigatorShape,
+    currentPosition,
+    currentShape,
   ].filter(Boolean).join(' ');
   
   // Posts mock pour le développement
@@ -234,67 +128,46 @@ const Navigator: React.FC<NavigatorProps> = ({
   ];
   
   return (
-    <NavigatorContainer className={containerClasses}>
-      {/* Header en mode collapsed */}
-      <CollapsedHeader>
-        <Typography variant="h3" component="h3">
-          List of posts
-        </Typography>
-        <IconButton
-          aria-label="Expand the list"
-          onClick={handleExpandClick}
-          title="Expand the list"
-        >
-          <ExpandLess />
-        </IconButton>
-      </CollapsedHeader>
-      
-      {/* Contenu scrollable */}
-      <ScrollableContent>
-        {/* Filter header si actif */}
-        {navigatorShape === 'open' && categoryFilter !== 'all posts' && (
-          <Box sx={{ 
-            alignItems: 'center', 
-            borderBottom: '1px solid #dedede',
-            display: 'flex',
-            justifyContent: 'space-between',
-            padding: '1rem'
-          }}>
-            <Box>
+    <NavigatorAnimations className={containerClasses}>
+      {/* ÉTAT 2: Mode Article Ouvert - Avatar + "Expand the box" (flèche vers le bas) + Liste auto */}
+      {isArticleMode && !isInfoBoxExpanded && isPostsListMode && (
+        <>
+          <CompactArticleHeader>
+            <Box sx={{ alignItems: 'center', display: 'flex' }}>
+              <Box className="avatar" />
               <Typography variant="body2" color="textSecondary">
-                Active category filter:
-              </Typography>
-              <Typography variant="body1" fontWeight="bold">
-                {categoryFilter}
+                Greg Lobinski
               </Typography>
             </Box>
-            <IconButton onClick={handleRemoveFilter} size="small">
-              <Close />
+            <IconButton
+              className="expand-box-button"
+              aria-label="Expand the box"
+              onClick={handleExpandBoxClick}
+              title="Expand the box"
+            >
+              <ExpandMore />
             </IconButton>
-          </Box>
-        )}
-        
-        {/* Liste des articles */}
-        <Box>
-          {mockPosts.map((post) => (
-            <ArticleItem key={post.id}>
-              <ArticleThumb />
-              <ArticleContent>
-                <Typography variant="h3" component="h3">
-                  {post.title}
-                </Typography>
-                <Typography variant="body2" component="p">
-                  {post.excerpt}
-                </Typography>
-                <Typography variant="caption" color="textSecondary">
-                  {post.category} • {post.date}
-                </Typography>
-              </ArticleContent>
-            </ArticleItem>
-          ))}
-        </Box>
-      </ScrollableContent>
-    </NavigatorContainer>
+          </CompactArticleHeader>
+          
+          {/* Liste des articles affichée automatiquement en format COMPACT */}
+          <ScrollableContent sx={{ top: '80px' }}> {/* Décalage pour le header compact */}
+            <NavigatorSlideUpAnimation>
+              <CompactArticleList 
+                posts={mockPosts.map(post => ({
+                  category: post.category,
+                  id: post.id,
+                  slug: post.id,
+                  title: post.title
+                }))}
+              />
+            </NavigatorSlideUpAnimation>
+          </ScrollableContent>
+        </>
+      )}
+      
+      {/* ÉTAT 3: InfoBox étendue - Géré entièrement par InfoBox, pas de contenu Navigator */}
+      {/* L'InfoBox s'occupe d'afficher "Latest Posts" + articles quand isInfoBoxExpanded = true */}
+    </NavigatorAnimations>
   );
 };
 

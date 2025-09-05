@@ -60,20 +60,29 @@ export default function Main({ children }: MainProps) {
       <Box
         sx={{
           '&::-webkit-scrollbar': {
+            height: '8px',
             width: '8px'
+          },
+          '&::-webkit-scrollbar-corner': {
+            background: 'transparent'
           },
           '&::-webkit-scrollbar-thumb': {
             background: '#c1c1c1',
-            borderRadius: '4px'
+            border: 'none',
+            borderRadius: '4px',
+            minHeight: '20px' // Hauteur minimale pour éviter que le thumb disparaisse
           },
           '&::-webkit-scrollbar-thumb:hover': {
             background: '#a1a1a1'
           },
           '&::-webkit-scrollbar-track': {
-            background: '#f1f1f1'
+            background: '#f1f1f1',
+            borderRadius: '4px',
+            margin: '0' // Assure que le track couvre toute la hauteur
           },
           height: '100%',
-          overflow: 'auto'
+          overflow: 'auto',
+          scrollbarGutter: 'stable' // Maintient l'espace pour la scrollbar
         }}
       >
         {children}

@@ -8,7 +8,7 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 
 interface NavigatorBorderScrollbarProps {
-  targetElementRef: React.RefObject<HTMLElement>
+  targetElementRef: React.RefObject<HTMLElement | null>
   className?: string
   forceCheckOnScroll?: boolean
   isNavigator?: boolean
@@ -196,12 +196,12 @@ export default function NavigatorBorderScrollbar({
       tabIndex={0}
       style={{
         backgroundColor: 'transparent',
-        bottom: '20px',
+        bottom: '20px',  // Marge de 20px en bas pour éviter les bords
         opacity: '0',  // AutoHide par défaut
         pointerEvents: 'none', // Permet le survol du Navigator derrière
         position: 'fixed',
         right: '60px', // Décalé de 4px pour plus de visibilité
-        top: '20px',   // Aligné sur les marges Navigator Gatsby v1
+        top: '20px',   // Marge de 20px en haut pour éviter les bords
         transition: 'opacity 0.2s ease', // Animation douce comme Gatsby v1
         width: '8px',  // Plus large pour visibilité (malvoyants)
         zIndex: 1000
@@ -232,13 +232,13 @@ export default function NavigatorBorderScrollbar({
         aria-label="Scrollbar thumb"
         tabIndex={0}
         style={{
-          backgroundColor: '#a0a0a0', // Plus foncé pour contraste
-          border: '1px solid #888', // Bordure contrastée
+          backgroundColor: '#d0d0d0', // Plus clair et doux
+          border: '1px solid #c0c0c0', // Bordure plus claire
           borderRadius: '3px', // Forme cylindrique
           boxShadow: `
-            0 1px 2px rgba(0,0,0,0.2),
-            inset 0 1px 0 rgba(255,255,255,0.3)
-          `, // Effet relief 3D
+            0 1px 2px rgba(0,0,0,0.1),
+            inset 0 1px 0 rgba(255,255,255,0.5)
+          `, // Effet relief 3D plus doux
           cursor: 'pointer',
           left: '1px',  // Marge interne
           minHeight: '24px', // Plus haut pour visibilité
@@ -250,21 +250,21 @@ export default function NavigatorBorderScrollbar({
         onMouseDown={handleThumbMouseDown}
         onMouseEnter={() => {
           if (thumbRef.current) {
-            thumbRef.current.style.backgroundColor = '#808080' // Hover plus foncé
-            thumbRef.current.style.borderColor = '#666'
+            thumbRef.current.style.backgroundColor = '#b8b8b8' // Hover plus clair
+            thumbRef.current.style.borderColor = '#a8a8a8'
             thumbRef.current.style.boxShadow = `
-              0 2px 4px rgba(0,0,0,0.3),
-              inset 0 1px 0 rgba(255,255,255,0.4)
+              0 2px 4px rgba(0,0,0,0.15),
+              inset 0 1px 0 rgba(255,255,255,0.6)
             `
           }
         }}
         onMouseLeave={() => {
           if (thumbRef.current && !isDraggingRef.current) {
-            thumbRef.current.style.backgroundColor = '#a0a0a0' // Retour normal
-            thumbRef.current.style.borderColor = '#888'
+            thumbRef.current.style.backgroundColor = '#d0d0d0' // Retour normal plus clair
+            thumbRef.current.style.borderColor = '#c0c0c0'
             thumbRef.current.style.boxShadow = `
-              0 1px 2px rgba(0,0,0,0.2),
-              inset 0 1px 0 rgba(255,255,255,0.3)
+              0 1px 2px rgba(0,0,0,0.1),
+              inset 0 1px 0 rgba(255,255,255,0.5)
             `
           }
         }}

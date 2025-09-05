@@ -52,6 +52,7 @@ interface GatsbyLayoutNewProps {
     image?: string
     url?: string
   }
+  isArticleView?: boolean
 }
 
 // Styles globaux reproduisant Gatsby
@@ -146,13 +147,15 @@ const globalStyles = (
 
 export default function GatsbyLayoutNew({ 
   children, 
+  isArticleView = false, 
   pages = [], 
-  parts = [], 
+  parts = [],
   posts = [],
-  seo 
+  seo
 }: GatsbyLayoutNewProps) {
   const { fontSizeIncrease } = useGatsbyUIStore()
   const navigatorRef = React.useRef<HTMLDivElement>(null)
+  const mainContentRef = React.useRef<HTMLDivElement>(null)
   
   // Extraire les catégories des posts pour alimenter l'ActionsBar
   const categories = React.useMemo(() => {
@@ -198,235 +201,252 @@ export default function GatsbyLayoutNew({
           }))}
         />
         
-        {/* Navigator - Liste d'articles (position flexible selon l'état) */}
-        <Box
-          ref={navigatorRef}
-          className="navigator"
-          sx={{
-            '&::-webkit-scrollbar': {
-              display: 'none'
-            },
-            // Barre de séparation droite (vers ActionsBar)
-            '&::after': {
-              borderRight: '1px solid var(--lines-color, #e0e0e0)',
-              bottom: '20px',
-              content: '""',
-              position: 'absolute',
-              right: 0,
-              top: '20px',
-              width: '1px'
-            },
-            // Medium/Small screens: moins de 1024px = Pleine largeur entre barres horizontales (zoom 175%+)
-            '@media (max-width: 1023px)': {
-              bottom: '64px !important', // Espace pour ActionsBar en bas (restaurée)
-              left: '0 !important',
-              right: '0 !important',
-              top: '72px !important' // Espace pour InfoBar en haut (hauteur augmentée)
-            },
-            // Large screens: 1024px+ = Position entre InfoBox et ActionsBar (vertical)
-            '@media (min-width: 1024px)': {
-              bottom: '0 !important',
-              left: '320px !important',
-              right: '64px !important',
-              top: '0 !important'
-            },
-            backgroundColor: '#ffffff',
-            bottom: 0,
-            left: '320px',
-            overflowX: 'hidden',
-            overflowY: 'auto',
-            position: 'fixed',
-            right: '64px',
-            // Masquer SEULEMENT la scrollbar native du Navigator
-            scrollbarWidth: 'none',
-            top: 0
-          }}
-        >
-          <Box sx={{ padding: '40px 40px 40px 40px' }}>
-              {posts.map((post, index) => (
-              <Link
-                key={post.slug}
-                href={`/posts/${post.slug}`}
-                style={{ textDecoration: 'none' }}
-              >
-                <Box
-                  sx={{
-                    alignItems: 'flex-start',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    padding: '15px 0'
-                  }}
-                >
-                  <Box
-                    sx={{
-                      // Hover effects organiques comme NavigatorItem
-                      '&:hover': {
-                        border: '1px solid #ccc',    // Bordure légèrement plus foncée
-                        borderRadius: '65% 75%', // Inversion du borderRadius
-                        transform: 'scale(1.05)'   // Scaling subtil
-                      },
-                      alignItems: 'center',
-                      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-                      border: '1px solid #ddd', // Bordure fine comme NavigatorItem
-                      borderRadius: '75% 65%', // Forme organique comme NavigatorItem
-                      cursor: 'pointer',
-                      display: 'flex',
-                      flexShrink: 0,
-                      // Tailles responsives exactes comme NavigatorItem
-                      height: {
-                        lg: '90px',       // Large (1200px+)
-                        md: '80px',      // Desktop (900-1200px)
-                        sm: '60px',      // Tablet (600-900px)
-                        xs: '30px'      // Mobile (moins de 600px)
-                      },
-                      justifyContent: 'center',
-                      marginRight: '20px',
-                      overflow: 'hidden',
-                      // Animation au hover comme NavigatorItem
-                      transition: {
-                        sm: '0.5s ease-out',  // Desktop : transition plus lente
-                        xs: '0.3s ease-out' // Mobile : transition plus rapide
-                      },
-                      width: {
-                        lg: '90px',       // Large (1200px+)
-                        md: '80px',      // Desktop (900-1200px)
-                        sm: '60px',      // Tablet (600-900px)
-                        xs: '30px'      // Mobile (moins de 600px)
-                      }
-                    }}
+        {/* Navigator - Liste d'articles (visible seulement sur la page d'accueil) */}
+        {!isArticleView && (
+          <Box
+            ref={navigatorRef}
+            className="navigator"
+            sx={{
+              '&::-webkit-scrollbar': {
+                display: 'none'
+              },
+              // Barre de séparation droite (vers ActionsBar)
+              '&::after': {
+                borderRight: '1px solid var(--lines-color, #e0e0e0)',
+                bottom: '20px',
+                content: '""',
+                position: 'absolute',
+                right: 0,
+                top: '20px',
+                width: '1px'
+              },
+              // Medium/Small screens: moins de 1024px = Pleine largeur entre barres horizontales (zoom 175%+)
+              '@media (max-width: 1023px)': {
+                bottom: '64px !important', // Espace pour ActionsBar en bas (restaurée)
+                left: '0 !important',
+                right: '0 !important',
+                top: '72px !important' // Espace pour InfoBar en haut (hauteur augmentée)
+              },
+              // Large screens: 1024px+ = Position entre InfoBox et ActionsBar (vertical)
+              '@media (min-width: 1024px)': {
+                bottom: '0 !important',
+                left: '320px !important',
+                right: '64px !important',
+                top: '0 !important'
+              },
+              backgroundColor: '#ffffff',
+              bottom: 0,
+              left: '320px',
+              overflowX: 'hidden',
+              overflowY: 'auto',
+              position: 'fixed',
+              right: '64px',
+              // Masquer SEULEMENT la scrollbar native du Navigator
+              scrollbarWidth: 'none',
+              top: 0
+            }}
+          >
+            <Box sx={{ padding: '40px 40px 40px 40px' }}>
+                {posts.map((post, index) => (
+                <React.Fragment key={post.slug}>
+                  <Link
+                    href={`/posts/${post.slug}`}
+                    style={{ textDecoration: 'none' }}
                   >
-                    <img 
-                      src={getArticleAvatar(post.slug, post.category, post.title, index)}
-                      alt={`Illustration pour ${post.title}`}
-                      style={{
-                        borderRadius: 'inherit', // Hérite du borderRadius du parent
-                        height: '100%',
-                        objectFit: 'cover',
-                        // Même transition que le parent
-                        transition: 'inherit',
-                        width: '100%'
-                      }}
-                      onError={(e) => {
-                        // Fallback vers un pattern SVG en cas d'erreur de chargement
-                        const target = e.target as HTMLImageElement
-                        target.src = getArticleAvatar(post.slug, post.category, post.title, index, true)
-                      }}
-                    />
-                  </Box>
-
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Typography
-                      className="post-list-title"
+                    <Box
                       sx={{
-                        color: 'rgb(85, 85, 85)',
-                        fontFamily: '"Open Sans"',
-                        fontSize: '27px',
-                        fontWeight: 600,
-                        letterSpacing: '-0.04em',
-                        lineHeight: '31px',
-                        marginBottom: '6px'
-                      }}
-                    >
-                      {post.title}
-                    </Typography>
-                    
-                    <Typography
-                      component="h2"
-                      className="blog-subtitle article-subtitle post-subtitle"
-                      sx={{
-                        '&:hover': {
-                          color: 'rgb(112, 148, 37) !important'
-                        },
-                        color: 'rgb(85, 85, 85) !important',
+                        alignItems: 'center', // Centrer verticalement par rapport à l'image
                         cursor: 'pointer',
-                        fontFamily: '"Open Sans" !important',
-                        fontSize: '23px !important',
-                        fontStyle: 'normal !important',
-                        fontWeight: '300 !important',
-                        lineHeight: '27px !important',
-                        marginBottom: '8px'
+                        display: 'flex',
+                        padding: '15px 0'
                       }}
                     >
-                      {post.excerpt}
-                    </Typography>
-                    
-                    {/* Date masquée sur la page d'accueil comme demandé */}
-                    {/* <Typography
-                      sx={{
-                        fontSize: '0.75rem',
-                        color: '#888888',
-                        fontFamily: '"Open Sans", Arial, sans-serif'
+                      {/* ...existing code... */}
+                      <Box
+                        sx={{
+                          // Hover effects organiques comme NavigatorItem
+                          '&:hover': {
+                            border: '1px solid #ccc',    // Bordure légèrement plus foncée
+                            borderRadius: '65% 75%', // Inversion du borderRadius
+                            transform: 'scale(1.05)'   // Scaling subtil
+                          },
+                          alignItems: 'center',
+                          background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+                          border: '1px solid #ddd', // Bordure fine comme NavigatorItem
+                          borderRadius: '75% 65%', // Forme organique comme NavigatorItem
+                          cursor: 'pointer',
+                          display: 'flex',
+                          flexShrink: 0,
+                          // Tailles responsives exactes comme NavigatorItem
+                          height: {
+                            lg: '90px',       // Large (1200px+)
+                            md: '80px',      // Desktop (900-1200px)
+                            sm: '60px',      // Tablet (600-900px)
+                            xs: '30px'      // Mobile (moins de 600px)
+                          },
+                          justifyContent: 'center',
+                          marginRight: {
+                            lg: '45px',  // Distance égale au rayon de l'image (90px/2 = 45px)
+                            md: '40px',  // Distance égale au rayon de l'image (80px/2 = 40px)
+                            sm: '30px',  // Distance égale au rayon de l'image (60px/2 = 30px)
+                            xs: '15px'   // Distance égale au rayon de l'image (30px/2 = 15px)
+                          },
+                          overflow: 'hidden',
+                          // Animation au hover ralentie
+                          transition: {
+                            sm: '1.2s ease-out',  // Desktop : transition beaucoup plus lente
+                            xs: '0.8s ease-out' // Mobile : transition plus lente
+                          },
+                          width: {
+                            lg: '90px',       // Large (1200px+)
+                            md: '80px',      // Desktop (900-1200px)
+                            sm: '60px',      // Tablet (600-900px)
+                            xs: '30px'      // Mobile (moins de 600px)
+                          }
+                        }}
+                      >
+                        <img 
+                          src={getArticleAvatar(post.slug, post.category, post.title, index)}
+                          alt={`Illustration pour ${post.title}`}
+                          style={{
+                            borderRadius: 'inherit', // Hérite du borderRadius du parent
+                            height: '100%',
+                            objectFit: 'cover',
+                            // Même transition que le parent
+                            transition: 'inherit',
+                            width: '100%'
+                          }}
+                          onError={(e) => {
+                            // Fallback vers un pattern SVG en cas d'erreur de chargement
+                            const target = e.target as HTMLImageElement
+                            target.src = getArticleAvatar(post.slug, post.category, post.title, index, true)
+                          }}
+                        />
+                      </Box>
+
+                      <Box sx={{ 
+                        display: 'flex',
+                        flexDirection: 'column',
+                        flexGrow: 1,
+                        justifyContent: 'center', // Centrer le contenu texte verticalement
+                        paddingTop: '12px' // Décalage un peu plus vers le bas
+                      }}>
+                        <Typography
+                          className="post-list-title"
+                          sx={{
+                            color: 'rgb(85, 85, 85)',
+                            fontFamily: '"Open Sans"',
+                            fontSize: '27px',
+                            fontWeight: 600,
+                            letterSpacing: '-0.04em',
+                            lineHeight: '31px',
+                            marginBottom: '6px'
+                          }}
+                        >
+                          {post.title}
+                        </Typography>
+                        
+                        <Typography
+                          component="h2"
+                          className="blog-subtitle article-subtitle post-subtitle"
+                          sx={{
+                            '&:hover': {
+                              color: 'rgb(112, 148, 37) !important'
+                            },
+                            color: 'rgb(85, 85, 85) !important',
+                            cursor: 'pointer',
+                            fontFamily: '"Open Sans" !important',
+                            fontSize: '23px !important',
+                            fontStyle: 'normal !important',
+                            fontWeight: '300 !important',
+                            lineHeight: '27px !important',
+                            marginBottom: '8px'
+                          }}
+                        >
+                          {post.excerpt}
+                        </Typography>
+                        
+                        {/* Date masquée sur la page d'accueil comme demandé */}
+                        {/* <Typography
+                          sx={{
+                            fontSize: '0.75rem',
+                            color: '#888888',
+                            fontFamily: '"Open Sans", Arial, sans-serif'
+                          }}
+                        >
+                          {new Date(post.date).toLocaleDateString('fr-FR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                          })}
+                        </Typography> */}
+                      </Box>
+                    </Box>
+                  </Link>
+                  
+                  {/* Zone neutre entre les articles */}
+                  {index < posts.length - 1 && (
+                    <Box 
+                      sx={{ 
+                        color: 'rgb(51, 51, 51)',
+                        cursor: 'default',
+                        fontFamily: '"Open Sans"',
+                        fontSize: '16px',
+                        fontStyle: 'normal',
+                        fontWeight: 400,
+                        height: '20px',
+                        lineHeight: '18px',
+                        marginBottom: '0px'
                       }}
                     >
-                      {new Date(post.date).toLocaleDateString('fr-FR', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                      })}
-                    </Typography> */}
-                  </Box>
-                </Box>
-              </Link>
-            ))}
-            
-            {/* Contenu de test pour voir la barre de défilement */}
-            <Box sx={{ padding: '20px 0' }}>
-              <Typography variant="h6" sx={{ color: '#666', marginBottom: '20px' }}>
-                📍 Contenu de test pour la barre de défilement
-              </Typography>
-              {Array.from({ length: 15 }, (_, i) => (
-                <Box
-                  key={`test-scroll-${i}`}
-                  sx={{
-                    backgroundColor: '#f9f9f9',
-                    border: '1px solid #eee',
-                    borderRadius: '4px',
-                    marginBottom: '10px',
-                    padding: '20px'
-                  }}
-                >
-                  <Typography sx={{ fontSize: '16px', marginBottom: '8px' }}>
-                    📝 Article de test #{i + 1}
-                  </Typography>
-                  <Typography sx={{ color: '#666', fontSize: '14px' }}>
-                    Ceci est du contenu de test pour forcer le défilement vertical et voir apparaître la barre de défilement personnalisée. La barre devrait être visible sur le côté droit avec un style gris.
-                  </Typography>
-                </Box>
+                      {/* Zone neutre invisible */}
+                    </Box>
+                  )}
+                </React.Fragment>
               ))}
             </Box>
           </Box>
-        </Box>
+        )}
         
-        {/* Barre de défilement auto-hide sur la ligne de démarcation */}
-        <NavigatorBorderScrollbar targetElementRef={navigatorRef} />
+        {/* Barre de défilement auto-hide sur la ligne de démarcation (seulement pour Navigator) */}
+        {!isArticleView && (
+          <NavigatorBorderScrollbar targetElementRef={navigatorRef} />
+        )}
         
         {/* ActionsBar - Barre d'actions droite (64px, desktop only) */}
         <ActionsBar categories={categories} />
         
         {/* Zone de contenu principal (pour les pages post/page individuelles) */}
         {children && (
-          <div 
-            className="main-content"
-            style={{ 
-              backgroundColor: '#ffffff',
-              bottom: 0,
-              fontSize: `${fontSizeIncrease}rem`,
-              left: '320px',
-              msOverflowStyle: 'none',
-              overflowX: 'hidden',
-              overflowY: 'auto',
-              padding: '40px',
-              position: 'fixed',
-              right: '64px',
-              // Masquage complet de la barre de défilement comme Gatsby original
-              scrollbarWidth: 'none',
-              
-              top: 0,
-              zIndex: 100 // Au-dessus du Navigator
-            }}
-          >
-            {children}
-          </div>
+          <>
+            <div 
+              ref={mainContentRef}
+              className="main-content"
+              style={{ 
+                backgroundColor: '#ffffff',
+                bottom: 0,
+                fontSize: `${fontSizeIncrease}rem`,
+                left: '320px',
+                msOverflowStyle: 'none',
+                overflowX: 'hidden',
+                overflowY: 'auto',
+                padding: '40px',
+                position: 'fixed',
+                right: '64px',
+                // Masquage complet de la barre de défilement native
+                scrollbarWidth: 'none',
+                top: 0,
+                zIndex: 100 // Au-dessus du Navigator
+              }}
+            >
+              {children}
+            </div>
+            
+            {/* Barre de défilement personnalisée pour le contenu principal (articles) */}
+            {isArticleView && (
+              <NavigatorBorderScrollbar targetElementRef={mainContentRef} />
+            )}
+          </>
         )}
       </LayoutWrapper>
     </ThemeProvider>

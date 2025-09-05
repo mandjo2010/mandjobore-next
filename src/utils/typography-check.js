@@ -83,7 +83,7 @@ function checkTypographyStyles() {
             });
           }
         });
-      } catch (e) {
+      } catch {
         // Ignore cross-origin stylesheet errors
       }
     });

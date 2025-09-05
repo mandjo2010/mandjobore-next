@@ -7,10 +7,11 @@
 import { MoreVert } from '@mui/icons-material'
 import { Box, Typography, Avatar, IconButton, Menu, MenuItem } from '@mui/material'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import React, { useState } from 'react'
 
-import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 import authorConfig from '@/config/author'
+import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 
 interface Page {
   slug: string
@@ -25,6 +26,7 @@ interface InfoBarProps {
 export default function InfoBar({ pages }: InfoBarProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const { featureNavigator, moveNavigatorAside } = useGatsbyUIStore()
+  const router = useRouter()
   
   const open = Boolean(anchorEl)
 
@@ -37,7 +39,8 @@ export default function InfoBar({ pages }: InfoBarProps) {
   }
 
   const homeLinkOnClick = () => {
-    featureNavigator()
+    featureNavigator() // Retour à l'accueil avec 3 colonnes
+    router.push('/') // Navigation vers la page d'accueil
     handleClose()
   }
 
@@ -60,10 +63,6 @@ export default function InfoBar({ pages }: InfoBarProps) {
           position: 'absolute',
           right: 'var(--lines-margin)'
         },
-        // Visible en mode horizontal (moins de 1024px) comme dans l'original
-        '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
-          display: 'none' // Masqué en mode vertical (3 colonnes)
-        },
         '@media (max-width: 1023px)': {
           // Barre de séparation horizontale en bas (mode horizontal)
           '&::before': {
@@ -76,6 +75,10 @@ export default function InfoBar({ pages }: InfoBarProps) {
             right: 'var(--lines-margin, 20px)'
           },
           display: 'block' // Visible en mode horizontal (2 barres)
+        },
+        // Visible en mode horizontal (moins de 1024px) comme dans l'original
+        '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+          display: 'none' // Masqué en mode vertical (3 colonnes)
         },
         background: 'var(--bars-background)', // theme.bars.colors.background
         height: 'var(--layout-infobar-height)', // theme.bars.sizes.infoBar = 60px
@@ -130,11 +133,11 @@ export default function InfoBar({ pages }: InfoBarProps) {
           },
           // Nom auteur selon spécifications: Open Sans 300, 27px/27px, color #555
           color: '#555555',
+          float: 'left',
           fontFamily: '"Open Sans"',
           fontSize: '27px',
           fontWeight: 300,
           lineHeight: '27px',
-          float: 'left',
           margin: '15px 0 0 15px'
         }}
       >

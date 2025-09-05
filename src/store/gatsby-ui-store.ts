@@ -7,6 +7,7 @@ import { create } from 'zustand'
 // Types exacts de l'ancien store Gatsby + nouveau mode 3 colonnes
 export type NavigatorPosition = 'is-featured' | 'is-aside' | 'is-three-columns' | 'moving-aside' | 'moving-featured'
 export type NavigatorShape = 'open' | 'closed'
+export type AnimationPhase = 'idle' | 'navigator-moving' | 'content-loading' | 'content-entering'
 
 interface GatsbyUIState {
   // États exacts de l'ancien Redux store
@@ -22,6 +23,8 @@ interface GatsbyUIState {
   isInfoBoxExpanded: boolean
   isTransitioning: boolean
   lastNavigatorPosition: NavigatorPosition
+  animationPhase: AnimationPhase
+  currentArticleSlug: string | null
   
   // États pour reproduire les comportements Gatsby
   showPostsList: boolean // Affiche la liste des posts dans la sidebar (comme dans l'ancien Navigator)
@@ -45,15 +48,22 @@ interface GatsbyUIState {
   // Helpers reproduisant les utilitaires Gatsby
   featureNavigator: () => void
   moveNavigatorAside: () => void
+  navigateToArticle: (slug: string) => void // Nouvelle fonction pour clic article
   resetToHome: () => void // Nouvelle action pour reset complet
 }
 
 export const useGatsbyUIStore = create<GatsbyUIState>((set, get) => ({
+  // Nouveaux états pour les animations
+  animationPhase: 'idle',
   categoryFilter: 'all posts',
+  currentArticleSlug: null,
+  
   // Helpers reproduisant src/utils/shared.js (simplified to avoid infinite loops)
   featureNavigator: () => {
     const state = get()
     set({ 
+      animationPhase: 'idle',
+      currentArticleSlug: null,
       isTransitioning: false,
       lastNavigatorPosition: state.navigatorPosition,
       navigatorPosition: 'is-three-columns', // Mode 3 colonnes pour la page d'accueil
@@ -69,12 +79,77 @@ export const useGatsbyUIStore = create<GatsbyUIState>((set, get) => ({
 
   moveNavigatorAside: () => {
     const state = get()
+    
+    // Phase 1: Démarrer la transition - Navigator commence à bouger
     set({ 
-      isTransitioning: false,
+      animationPhase: 'navigator-moving',
+      isTransitioning: true,
       lastNavigatorPosition: state.navigatorPosition,
-      navigatorPosition: 'is-aside',
-      navigatorShape: 'open'
+      navigatorPosition: 'moving-aside',
+      navigatorShape: 'closed',
+      // CORRECTION: Masquer InfoBox et afficher liste automatiquement
+      showInfoContent: false,
+      showPostsList: true
     })
+    
+    // Phase 2: Après 200ms, Navigator atteint sa position finale
+    setTimeout(() => {
+      set({
+        animationPhase: 'content-loading',
+        navigatorPosition: 'is-aside'
+      })
+    }, 200)
+    
+    // Phase 3: Après 250ms, contenu prêt à apparaître
+    setTimeout(() => {
+      set({
+        animationPhase: 'content-entering'
+      })
+    }, 250)
+    
+    // Phase 4: Animation complète après 850ms
+    setTimeout(() => {
+      set({
+        animationPhase: 'idle',
+        isTransitioning: false
+      })
+    }, 850)
+  },
+  navigateToArticle: (slug: string) => {
+    const state = get()
+    
+    // Étape 1: Sauvegarder le slug et démarrer la transition navigator
+    set({ 
+      animationPhase: 'navigator-moving',
+      currentArticleSlug: slug,
+      isTransitioning: true,
+      lastNavigatorPosition: state.navigatorPosition,
+      navigatorPosition: 'moving-aside',
+      navigatorShape: 'closed'
+    })
+    
+    // Étape 2: Navigator atteint sa position finale (200ms)
+    setTimeout(() => {
+      set({
+        animationPhase: 'content-loading',
+        navigatorPosition: 'is-aside'
+      })
+    }, 200)
+    
+    // Étape 3: Contenu prêt à apparaître (250ms)
+    setTimeout(() => {
+      set({
+        animationPhase: 'content-entering'
+      })
+    }, 250)
+    
+    // Étape 4: Animation terminée (850ms)
+    setTimeout(() => {
+      set({
+        animationPhase: 'idle',
+        isTransitioning: false
+      })
+    }, 850)
   },
   navigatorFilter: '',
   // État initial modifié pour afficher les 3 colonnes dès l'accueil
@@ -172,5 +247,15 @@ export const useAnimations = () => {
   const isTransitioning = useGatsbyUIStore((s) => s.isTransitioning)
   const setIsTransitioning = useGatsbyUIStore((s) => s.setIsTransitioning)
   const lastNavigatorPosition = useGatsbyUIStore((s) => s.lastNavigatorPosition)
-  return { isTransitioning, lastNavigatorPosition, setIsTransitioning }
+  const animationPhase = useGatsbyUIStore((s) => s.animationPhase)
+  const currentArticleSlug = useGatsbyUIStore((s) => s.currentArticleSlug)
+  const navigateToArticle = useGatsbyUIStore((s) => s.navigateToArticle)
+  return { 
+    animationPhase, 
+    currentArticleSlug, 
+    isTransitioning, 
+    lastNavigatorPosition, 
+    navigateToArticle, 
+    setIsTransitioning 
+  }
 }

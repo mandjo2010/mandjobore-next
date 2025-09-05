@@ -12,13 +12,14 @@ interface PostAuthorProps {
     bio: string
     avatar: string
   }
+  authorContent?: string // Contenu markdown depuis content/parts/author.md
 }
 
-export default function PostAuthor({ author }: PostAuthorProps) {
+export default function PostAuthor({ author, authorContent }: PostAuthorProps) {
   // Configuration par défaut comme dans l'original
   const defaultAuthor = {
     avatar: '/images/jpg/avatar.jpg',
-    bio: 'Data analyst - Developer. design and build geospatial applications with modern web technologies.',
+    bio: authorContent || '**Hello**, I am Mandjo and I am an aficionado of data science and programming. I enjoy coding and the challenge of learning something new every day.',
     name: 'Mandjo Béa Boré'
   }
 
@@ -71,21 +72,6 @@ export default function PostAuthor({ author }: PostAuthorProps) {
           minHeight: '50px'
         }}
       >
-        {/* Nom auteur - Spécifications exactes: 27px, line-height 31px, weight 300 */}
-        <Typography
-          component="h3"
-          sx={{
-            color: 'rgb(85, 85, 85)', // Exact selon styles.txt
-            fontFamily: '"Open Sans"', // Exact selon styles.txt
-            fontSize: '27px', // Exact selon styles.txt
-            fontWeight: 300, // Exact selon styles.txt
-            lineHeight: '31px', // Exact selon styles.txt - cohérent avec titre article
-            margin: '0 0 0.5em 0'
-          }}
-        >
-          {authorInfo.name}
-        </Typography>
-        
         {/* Bio auteur - Spécifications exactes: 15px, line-height 23px, weight 300 */}
         <Typography
           className="author-bio"
@@ -99,7 +85,7 @@ export default function PostAuthor({ author }: PostAuthorProps) {
             fontWeight: 300, // Exact selon styles.txt
             lineHeight: '23px', // Exact selon styles.txt
             margin: 0,
-            textAlign: 'center'
+            textAlign: 'justify' // Justification du texte
           }}
           dangerouslySetInnerHTML={{ __html: authorInfo.bio }}
         />

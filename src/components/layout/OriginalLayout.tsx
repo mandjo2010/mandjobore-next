@@ -173,6 +173,39 @@ export default function OriginalLayout({
           font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
         
+        /* Styles globaux pour toutes les scrollbars - Correction défilement complet */
+        *::-webkit-scrollbar {
+          width: 8px;
+          height: 8px;
+        }
+        
+        *::-webkit-scrollbar-track {
+          background: #f1f1f1;
+          border-radius: 4px;
+          margin: 0; /* Assure que le track couvre toute la hauteur */
+        }
+        
+        *::-webkit-scrollbar-thumb {
+          background: #c1c1c1;
+          border-radius: 4px;
+          min-height: 20px; /* Hauteur minimale pour éviter que le thumb disparaisse */
+          border: none;
+        }
+        
+        *::-webkit-scrollbar-thumb:hover {
+          background: #a1a1a1;
+        }
+        
+        *::-webkit-scrollbar-corner {
+          background: transparent;
+        }
+        
+        /* Styles pour Firefox */
+        * {
+          scrollbar-width: thin;
+          scrollbar-color: #c1c1c1 #f1f1f1;
+        }
+        
         /* Couleurs exactes du site original */
         a {
           color: #709425;
@@ -213,19 +246,28 @@ export default function OriginalLayout({
         /* Scrollbars personnalisées */
         #navigator-column::-webkit-scrollbar {
           width: 6px;
+          height: 6px;
         }
         
         #navigator-column::-webkit-scrollbar-track {
           background: #f1f1f1;
+          border-radius: 3px;
+          margin: 0; /* Assure que le track couvre toute la hauteur */
         }
         
         #navigator-column::-webkit-scrollbar-thumb {
           background: #c1c1c1;
           border-radius: 3px;
+          min-height: 20px; /* Hauteur minimale pour éviter que le thumb disparaisse */
+          border: none;
         }
         
         #navigator-column::-webkit-scrollbar-thumb:hover {
           background: #a8a8a8;
+        }
+        
+        #navigator-column::-webkit-scrollbar-corner {
+          background: transparent;
         }
         
         /* Désactiver sélection sur les colonnes fixes */

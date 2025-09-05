@@ -4,13 +4,14 @@
  */
 'use client'
 
-import React from 'react'
 import { Box, styled } from '@mui/material'
 import { motion } from 'framer-motion'
+import React from 'react'
+
+import SpringScrollbars from '@/components/SpringScrollbars/SpringScrollbars'
 
 // Components
 import NavigatorItem from './NavigatorItem'
-import SpringScrollbars from '@/components/SpringScrollbars/SpringScrollbars'
 
 const ListContainer = styled(Box)({
   flex: 1,
@@ -49,9 +50,12 @@ export default function NavigatorList({ posts }: NavigatorListProps) {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ 
-                duration: 0.3, 
-                delay: index * 0.1,
+                delay: index * 0.1, 
+                duration: 0.3,
                 ease: 'easeOut'
+              }}
+              style={{ 
+                marginBottom: index < posts.length - 1 ? '2rem' : '0'
               }}
             >
               <NavigatorItem post={post} />
@@ -59,7 +63,7 @@ export default function NavigatorList({ posts }: NavigatorListProps) {
           ))}
           
           {/* Espacement en bas pour scroll */}
-          <Box sx={{ height: '2rem' }} />
+          <Box sx={{ height: '3rem' }} />
         </ListInner>
       </SpringScrollbars>
     </ListContainer>

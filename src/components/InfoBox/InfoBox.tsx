@@ -126,7 +126,8 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
   }
 
   const avatarOnClick = () => {
-    featureNavigator() // Retour à l'accueil
+    featureNavigator() // Retour à l'accueil avec 3 colonnes
+    router.push('/') // Navigation vers la page d'accueil
   }
 
   return (

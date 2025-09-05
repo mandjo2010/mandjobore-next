@@ -14,6 +14,7 @@ import React, { useState, useEffect } from 'react'
 
 import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
 
+import FontSetter from '../ActionsBar/FontSetter'
 import CategoryFilter from './CategoryFilter'
 
 /**
@@ -76,6 +77,33 @@ export default function ActionsBar({
     <Box
       component="aside"
       sx={{
+        // Medium/Small screens: moins de 1024px = ActionsBar horizontale en bas (zoom 175%+)
+        '@media (max-width: 1023px)': {
+          // Ligne de séparation en haut (comme l'original InfoBar mobile)
+          '&::before': {
+            borderLeft: 'none',
+            borderTop: '1px solid #e0e0e0',
+            content: '""',
+            height: 0,
+            left: '20px',
+            position: 'absolute',
+            right: '20px',
+            top: 0,
+            width: 'auto'
+          },
+          backgroundColor: '#ffffff',
+          bottom: 0,
+          display: 'flex',
+          flexDirection: 'row',
+          height: '64px',
+          justifyContent: 'space-between', // Répartir gauche et droite
+          left: 0,
+          padding: '10px 20px',
+          position: 'fixed',
+          right: 0,
+          width: '100%'
+        },
+        
         // Large screens: 1024px+ = Affichage complet de l'ActionsBar (mode vertical)
         '@media (min-width: 1024px)': {
           // Ligne de séparation à gauche (reproduction exacte Gatsby)
@@ -103,33 +131,6 @@ export default function ActionsBar({
           width: '64px'
         },
         
-        // Medium/Small screens: moins de 1024px = ActionsBar horizontale en bas (zoom 175%+)
-        '@media (max-width: 1023px)': {
-          // Ligne de séparation en haut (comme l'original InfoBar mobile)
-          '&::before': {
-            borderTop: '1px solid #e0e0e0',
-            borderLeft: 'none',
-            content: '""',
-            height: 0,
-            left: '20px',
-            position: 'absolute',
-            right: '20px',
-            top: 0,
-            width: 'auto'
-          },
-          backgroundColor: '#ffffff',
-          bottom: 0,
-          display: 'flex',
-          flexDirection: 'row',
-          height: '64px',
-          justifyContent: 'space-between', // Répartir gauche et droite
-          left: 0,
-          padding: '10px 20px',
-          position: 'fixed',
-          right: 0,
-          width: '100%'
-        },
-        
         // Style de base (comme l'original)
         display: 'none'
       }}
@@ -137,14 +138,14 @@ export default function ActionsBar({
       {/* Groupe de boutons principaux (haut en mode vertical, gauche en mode horizontal) */}
       <Box
         sx={{
+          '@media (max-width: 1023px)': {
+            flexDirection: 'row',
+            gap: 1
+          },
           '@media (min-width: 1024px)': {
             flexDirection: 'column',
             gap: 2,
             width: '100%'
-          },
-          '@media (max-width: 1023px)': {
-            flexDirection: 'row',
-            gap: 1
           },
           alignItems: 'center',
           display: 'flex'
@@ -168,8 +169,8 @@ export default function ActionsBar({
         {isHomePage && categories.length > 0 && (
           <Box 
             sx={{ 
-              '@media (min-width: 1024px)': { display: 'block' }, // Visible en mode vertical (EN HAUT)
-              '@media (max-width: 1023px)': { display: 'block' } // Visible en mode horizontal
+              '@media (max-width: 1023px)': { display: 'block' }, // Visible en mode horizontal
+              '@media (min-width: 1024px)': { display: 'block' } // Visible en mode vertical (EN HAUT)
             }}
           >
             <CategoryFilter categories={categories} />
@@ -194,19 +195,27 @@ export default function ActionsBar({
       {/* Groupe de boutons secondaires (bas en mode vertical, droite en mode horizontal) */}
       <Box
         sx={{
+          '@media (max-width: 1023px)': {
+            flexDirection: 'row',
+            gap: 1
+          },
           '@media (min-width: 1024px)': {
             flexDirection: 'column',
             gap: 2,
             marginTop: 'auto'
           },
-          '@media (max-width: 1023px)': {
-            flexDirection: 'row',
-            gap: 1
-          },
           alignItems: 'center',
           display: 'flex'
         }}
       >
+        {/* FontSetter - Uniquement sur les pages d'articles (pas sur la page d'accueil) */}
+        {!isHomePage && (
+          <FontSetter onIncreaseFont={(val) => {
+            console.log('Font size changed:', val)
+            // TODO: Implémenter la logique de changement de police
+          }} />
+        )}
+
         {/* Bouton Fullscreen */}
         <Tooltip title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen"} placement="top">
           <IconButton
@@ -236,7 +245,7 @@ export default function ActionsBar({
         </Tooltip>
       </Box>
 
-      {/* FontSetter supprimé - pas d'icônes de zoom */}
+      {/* FontSetter maintenant affiché conditionnellement sur les pages d'articles */}
     </Box>
   )
 }

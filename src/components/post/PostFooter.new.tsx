@@ -5,9 +5,10 @@
 'use client'
 
 import { Box } from '@mui/material'
-import PostShare from './PostShare'
+
 import PostAuthor from './PostAuthor'
 import PostComments from './PostComments'
+import PostShare from './PostShare'
 
 interface PostFooterProps {
   post: {
@@ -24,9 +25,9 @@ interface PostFooterProps {
 }
 
 export default function PostFooter({ 
-  post, 
-  author,
-  facebookAppId
+  author, 
+  facebookAppId,
+  post
 }: PostFooterProps) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mandjobore.dev'
   const fullUrl = `${siteUrl}${post.slug}`
@@ -35,13 +36,13 @@ export default function PostFooter({
     <Box
       component="footer"
       sx={{
+        '& p': {
+          margin: 0
+        },
         // Reproduction exacte des styles footer du theme original
         color: 'var(--main-footer-color)', // theme.main.colors.footer
         fontSize: '1em', // theme.main.fonts.footer.size
-        lineHeight: 1.4, // theme.main.fonts.footer.lineHeight
-        '& p': {
-          margin: 0
-        }
+        lineHeight: 1.4 // theme.main.fonts.footer.lineHeight
       }}
     >
       {/* Partage social */}
@@ -57,6 +58,7 @@ export default function PostFooter({
       {/* Commentaires */}
       <PostComments 
         slug={post.slug}
+        title={post.title}
         facebookAppId={facebookAppId}
       />
     </Box>

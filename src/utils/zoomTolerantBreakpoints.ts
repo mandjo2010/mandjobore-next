@@ -84,13 +84,13 @@ export function useZoomTolerantBreakpoints() {
     return () => window.removeEventListener('resize', updateBreakpoints);
   }, []);
   
-  return { isWide, isMedium, isHorizontalMode };
+  return { isHorizontalMode, isMedium, isWide };
 }
 
 // Export par défaut pour compatibility
 export default {
-  isWideScreenZoomTolerant,
-  isMediumScreenZoomTolerant,
   isHighZoomHorizontalMode,
+  isMediumScreenZoomTolerant,
+  isWideScreenZoomTolerant,
   useZoomTolerantBreakpoints,
 };

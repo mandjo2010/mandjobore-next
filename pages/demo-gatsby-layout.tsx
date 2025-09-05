@@ -7,57 +7,9 @@ import { CssBaseline, Typography, Button, Box } from '@mui/material';
 import { ThemeProvider } from '@mui/material/styles';
 import React, { useState } from 'react';
 
-import GatsbyInspiredLayout from '../src/components/layout/GatsbyInspiredLayout';
+// Temporarily commenting out GatsbyInspiredLayout to debug build issue
+// import GatsbyInspiredLayout from '../src/components/layout/GatsbyInspiredLayout';
 import { theme } from '../src/theme';
-
-// Données mockées pour les tests
-const mockPosts = [
-  {
-    category: 'GIS Analysis',
-    cover: '/images/test-cover.svg',
-    date: 'Fri, 03 Jan 2020',
-    excerpt: 'How satellite imagery and the science of remote sensing detect wildfires, help manage their spread, and guide ecological restoration',
-    id: '1',
-    title: 'Remote Sensing of Mt. Kenya Wildfire',
-  },
-  {
-    category: 'Research',
-    cover: '/images/test-cover.svg',
-    date: 'Thu, 02 Jan 2020',
-    excerpt: 'The role of agroforestry in providing a wide range of benefits',
-    id: '2',
-    title: 'A System for Economic, Sociocultural, and Environmental Benefits',
-  },
-  {
-    category: 'Data Science',
-    cover: '/images/test-cover.svg',
-    date: 'Wed, 01 Jan 2020',
-    excerpt: 'Best practices and resources for finding quality geographic datasets for your projects',
-    id: '3',
-    title: 'Finding Geographic Data',
-  },
-];
-
-const mockPages = [
-  {
-    node: {
-      fields: { slug: '/about' },
-      frontmatter: { menuTitle: 'About', title: 'About' },
-    },
-  },
-  {
-    node: {
-      fields: { slug: '/cartography' },
-      frontmatter: { menuTitle: 'Cartography', title: 'Cartography' },
-    },
-  },
-  {
-    node: {
-      fields: { slug: '/portfolio' },
-      frontmatter: { menuTitle: 'Portfolio', title: 'Portfolio' },
-    },
-  },
-];
 
 const DemoGatsbyLayout = () => {
   const [navigatorPosition, setNavigatorPosition] = useState<'is-aside' | 'is-featured' | ''>('is-featured');
@@ -68,13 +20,14 @@ const DemoGatsbyLayout = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       
-      <GatsbyInspiredLayout
+      {/* Temporarily commenting out GatsbyInspiredLayout */}
+      {/* <GatsbyInspiredLayout
         posts={mockPosts}
         pages={mockPages}
         navigatorPosition={navigatorPosition}
         navigatorShape={navigatorShape}
         isWideScreen={isWideScreen}
-      >
+      > */}
         {/* Contenu principal de test */}
         <Box sx={{ margin: '0 auto', maxWidth: 800, padding: 4 }}>
           <Typography variant="h1" gutterBottom sx={{ 
@@ -83,7 +36,7 @@ const DemoGatsbyLayout = () => {
             fontWeight: 600,
             marginBottom: '0.5rem'
           }}>
-            Demo - Migration Gatsby vers Next.js
+            Demo - Migration Gatsby vers Next.js (TEMPORARILY DISABLED)
           </Typography>
           
           <Typography variant="h2" gutterBottom sx={{ 
@@ -178,7 +131,7 @@ const DemoGatsbyLayout = () => {
             </ul>
           </Box>
         </Box>
-      </GatsbyInspiredLayout>
+      {/* </GatsbyInspiredLayout> */}
     </ThemeProvider>
   );
 };

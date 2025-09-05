@@ -35,6 +35,9 @@ export default function PostsList({ posts }: PostsListProps) {
     setNavigatorShape 
   } = useGatsbyUIStore()
 
+  // Debug : vérifier que les posts arrivent bien
+  console.log('PostsList - posts reçus:', posts.length, posts)
+
   const linkOnClick = () => {
     moveNavigatorAside() // Navigation vers un article
   }
@@ -47,6 +50,8 @@ export default function PostsList({ posts }: PostsListProps) {
   const filteredPosts = categoryFilter === 'all posts' 
     ? posts 
     : posts.filter(post => post.category === categoryFilter)
+
+  console.log('PostsList - posts filtrés:', filteredPosts.length, filteredPosts)
 
   return (
     <Box
@@ -101,8 +106,8 @@ export default function PostsList({ posts }: PostsListProps) {
             aria-label="Expand the list"
             size="small"
             sx={{
-              color: 'text.secondary',
               '&:hover': { color: 'primary.main' },
+              color: 'text.secondary',
             }}
           >
             <ExpandMore titleAccess="Expand the list" />
@@ -114,8 +119,11 @@ export default function PostsList({ posts }: PostsListProps) {
       <List
         sx={{
           '& .MuiListItem-root': {
-            mb: 1.5,
+            mb: 0,
             p: 0,
+          },
+          '& .MuiListItem-root:not(:last-child)': {
+            mb: 2,
           },
           flexGrow: 1,
           overflow: 'auto',
@@ -137,17 +145,17 @@ export default function PostsList({ posts }: PostsListProps) {
               <ListItemButton
                 sx={{
                   '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.04)',
                     // Animation hover exacte Gatsby v1 : inversion borderRadius
                     '& .post-image': {
                       borderRadius: '65% 75% !important'
-                    }
+                    },
+                    backgroundColor: 'rgba(0, 0, 0, 0.04)'
                   },
                   alignItems: 'flex-start',
                   borderRadius: 1,
                   flexDirection: 'row',
                   gap: 1.5,
-                  p: 1
+                  p: 1.5
                 }}
               >
                 {/* Image de l'article (reproduit listItemPointer) */}
@@ -171,6 +179,8 @@ export default function PostsList({ posts }: PostsListProps) {
                       borderRadius: '75% 65%', // Forme par défaut Gatsby v1
                       flexShrink: 0,
                       height: 60, // Base mobile Gatsby v1
+                      objectFit: 'cover',
+                      objectPosition: 'center',
                       overflow: 'hidden',
                       position: 'relative',
                       transition: 'all 0.5s ease', // Transition lente comme Gatsby v1
@@ -193,13 +203,13 @@ export default function PostsList({ posts }: PostsListProps) {
                     component="h3"
                     sx={{
                       color: 'rgb(85, 85, 85)',
+                      display: '-webkit-box',
                       fontFamily: '"Open Sans"',
                       fontSize: '27px',
                       fontWeight: 600,
                       letterSpacing: '-0.04em',
                       lineHeight: '31px',
                       m: 0,
-                      display: '-webkit-box',
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       WebkitBoxOrient: 'vertical',

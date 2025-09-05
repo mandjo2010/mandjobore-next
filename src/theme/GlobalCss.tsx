@@ -1,5 +1,4 @@
 import { GlobalStyles } from '@mui/material'
-import { GlobalStyles } from '@mui/material'
 import type { CSSProperties } from 'react'
 
 // Import des styles d'auteur pour application globale

@@ -54,6 +54,17 @@ export function getAllCategories(posts: MDEntry[]) {
   return Array.from(set).sort();
 }
 
+// Lire un fichier part (author.md, etc.)
+export function getPartContent(filename: string): { content: string; data: FrontMatter } {
+  const file = path.join(CONTENT_DIR, "parts", filename);
+  if (!fs.existsSync(file)) {
+    return { content: "", data: {} };
+  }
+  const raw = fs.readFileSync(file, "utf8");
+  const { content, data } = matter(raw);
+  return { content, data: data as FrontMatter };
+}
+
 // URL de cover depuis frontmatter (fallback si manquant)
 export function getCoverUrl(entry: MDEntry, type: "posts" | "pages"): string {
   const cover = entry.data?.cover?.toString().trim();

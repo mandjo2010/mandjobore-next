@@ -51,7 +51,7 @@ export default function ProjetPage({ page, pages }: ProjetPageProps) {
 
 export const getStaticProps: GetStaticProps<ProjetPageProps> = async () => {
   // Récupérer le contenu de la page
-  const pageData = getBySlug('pages', '4--projet')
+  const pageData = getBySlug('pages', '4--projects')
   
   // Récupérer les pages pour le menu
   const allPages = [
