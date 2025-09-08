@@ -89,11 +89,11 @@ interface InfoBoxProps {
   pages: Page[]
   parts: Part[]
   posts?: Post[] // Ajout pour la liste des posts dans la sidebar
+  isArticleView?: boolean // Nouveau: pour savoir si on est en mode article
 }
 
-export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxProps) {
+const InfoBox = React.forwardRef<HTMLDivElement, InfoBoxProps>(({ isArticleView = false, pages, parts: _parts, posts = [] }, ref) => {
   const router = useRouter()
-  const isHomePage = router.pathname === '/'
   
   // États du store Gatsby
   const { 
@@ -105,20 +105,23 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
     setShowPostsList,
     showPostsList
   } = useGatsbyUIStore()
+
+  // Effect pour auto-expansion quand on arrive sur une page d'article
+  React.useEffect(() => {
+    if (isArticleView) {
+      setShowPostsList(true) // Active automatiquement la liste des posts
+    }
+  }, [isArticleView, setShowPostsList])
   
   // Actions du composant original
   const expandOnClick = () => {
     setNavigatorShape('closed') // Reproduit exactement l'action du original
   }
 
-  // Action pour basculer vers la liste des posts (bouton "Expand the list")
-  const expandListOnClick = () => {
-    setShowPostsList(true) // Affiche la liste des posts dans la sidebar
-  }
-
   // Action pour revenir au contenu auteur (bouton "Expand the box")
   const expandBoxOnClick = () => {
-    setShowPostsList(false) // Cache la liste des posts
+    featureNavigator() // Retour à l'accueil avec 3 colonnes
+    router.push('/') // Navigation vers la page d'accueil
   }
   
   const menuLinkOnClick = () => {
@@ -133,6 +136,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
   return (
     <Box
       component="aside"
+      ref={ref}
       className={`${navigatorPosition} ${navigatorShape}`}
       sx={{
         // Medium/Small screens: moins de 1024px = InfoBox masquée (InfoBar prend le relais)
@@ -176,193 +180,299 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
           position: 'relative'
         }}
       >
-        {/* Avatar avec lien vers accueil - styles exacts InfoHeader */}
-        <Box
-          component={Link}
-          href="/" 
-          onClick={avatarOnClick}
-          title="back to Home page"
-          sx={{
-            '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
-              margin: '0 20px 0 0'
-            },
-            '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
-              // Position selon l'état du navigator (.is-aside.open &)
-              '.is-aside.open &': {
-                left: '8%',
-                top: '0'
-              },
-              // Styles pour .navigator-in-transition-from.navigator-is-opened
-              '.navigator-in-transition-from.navigator-is-opened &': {
-                left: '50%'
-              },
-              left: '50%',
-              marginLeft: '-30px',
-              position: 'absolute',
-              
-              top: '10px',
-              
-              transition: 'all 0.5s ease'
-            },
-            display: 'block',
-            float: 'left',
-            margin: '0 12px 0 0',
-            position: 'relative',
-            
-            textDecoration: 'none',
-            
-            // Reproduction exacte des styles avatarLink du theme original
-            willChange: 'left, top'
-          }}
-        >
-          <Avatar
-            src={author.avatar}
-            alt={author.name}
+        {/* Layout spécial pour les pages d'articles */}
+        {isArticleView && showPostsList ? (
+          <Box
             sx={{
-              '& img': {
-                maxWidth: '100%'
-              },
-              // Hover effect exact de l'original
-              '@media (hover: hover)': {
-                '&:hover': {
-                  borderRadius: '75% 65%'
-                }
-              },
-              '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
-                height: '44px',
-                width: '44px'
-              },
-              '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
-                height: '60px',
-                width: '60px'
-              },
-              border: '1px solid #ddd',
-              borderRadius: '65% 75%',
-              display: 'inline-block',
-              
-              height: '36px',
-              
-              overflow: 'hidden',
-              
-              transition: 'all 0.3s ease',
-              
-              // Reproduction exacte des styles avatar du theme original
-              width: '36px'
+              alignItems: 'center',
+              display: 'flex',
+              gap: 2,
+              mb: 2
             }}
-          />
-        </Box>
+          >
+            {/* Avatar à l'extrême gauche */}
+            <Box
+              component={Link}
+              href="/" 
+              onClick={avatarOnClick}
+              title="back to Home page"
+              sx={{
+                textDecoration: 'none'
+              }}
+            >
+              <Avatar
+                src={author.avatar}
+                alt={author.name}
+                sx={{
+                  '& img': {
+                    maxWidth: '100%'
+                  },
+                  '@media (hover: hover)': {
+                    '&:hover': {
+                      borderRadius: '75% 65%'
+                    }
+                  },
+                  border: '1px solid #ddd',
+                  borderRadius: '65% 75%',
+                  height: '44px',
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease',
+                  width: '44px'
+                }}
+              />
+            </Box>
 
-        {/* Nom de l'auteur - styles selon spécifications exactes */}
-        <Typography
-          component="h1"
-          sx={{
-            '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
-              fontSize: '27px !important', // Taille selon spécifications
-              // Garde les éléments groupés même sur tablet
-              position: 'relative',
-              textAlign: 'left'
-            },
-            '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
-              // Position selon l'état du navigator (.is-aside.open &)
-              '.is-aside.open &': {
-                left: '60%',
-                textAlign: 'left',
-                top: '0.5em',
-                transform: 'none'
-              },
-              fontSize: '27px !important', // Nom auteur selon spécifications: 27px
-              left: '50%',
-              position: 'absolute',
-              textAlign: 'center',
-              top: '85px',
-              transform: 'translate(-50%)',
-              transition: 'all 0.5s ease'
-            },
-            // Nom auteur selon spécifications exactes: Open Sans 300, 27px/27px, color #555
-            color: '#555555 !important',
-            float: 'left',
-            fontFamily: '"Open Sans" !important',
-            fontSize: '27px !important',
-            fontWeight: '300 !important',
-            lineHeight: '27px !important',
-            margin: '0 !important',
-            transition: 'all 0.5s ease',
-            // Reproduction exacte des styles title du theme original
-            willChange: 'transform, left, top'
-          }}
-        >
-          {author.name.replace(/ /g, '\u00a0')} {/* Non-breaking spaces comme l'original */}
-        </Typography>
+            {/* Nom et titre de l'auteur (compact) */}
+            <Box sx={{ flexGrow: 1, minWidth: 0 }}>
+              <Typography
+                component="h1"
+                sx={{
+                  color: '#555555',
+                  fontFamily: '"Open Sans"',
+                  fontSize: '18px',
+                  fontWeight: '300',
+                  lineHeight: '20px',
+                  margin: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {author.name}
+              </Typography>
+              <Typography
+                component="div"
+                sx={{
+                  color: '#555555',
+                  fontFamily: '"Open Sans"',
+                  fontSize: '14px',
+                  fontWeight: '300',
+                  lineHeight: '16px',
+                  margin: 0,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {author.tagline}
+              </Typography>
+            </Box>
 
-        {/* Titre/tagline de l'auteur - élément séparé pour meilleure sélectabilité */}
-        <Typography
-          component="div"
-          className="avatar-title-tagline" // Classe spécifique pour override CSS
-          sx={{
-            // Force l'override de tous les styles externes qui pourraient affecter la line-height
-            '&, & *': {
-              lineHeight: '16px !important'
-            },
-            '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
-              // Garde les éléments groupés même sur tablet
-              position: 'relative',
-              textAlign: 'left'
-            },
-            '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
-              // Position selon l'état du navigator (.is-aside.open &)
-              '.is-aside.open &': {
-                left: '60%',
-                textAlign: 'left',
-                top: '2em', // Positionné sous le nom
-                transform: 'none'
-              },
-              left: '50%',
-              position: 'absolute',
-              textAlign: 'center',
-              top: '115px', // Positionné sous le nom (85px + 27px + 3px de marge)
-              transform: 'translate(-50%)',
-              transition: 'all 0.5s ease'
-            },
-            // Titre auteur selon spécifications: Open Sans 300, 16px/16px, color #555
-            color: '#555555 !important',
-            cursor: 'text', // Indication visuelle que le texte est sélectionnable
-            display: 'inline', // Une seule ligne
-            fontFamily: '"Open Sans" !important',
-            fontSize: '16px !important',
-            fontWeight: '300 !important',
-            lineHeight: '16px !important', // Force la line-height à 16px exactement
-            margin: '4px 0 0 0 !important',
-            transition: 'all 0.5s ease',
-            userSelect: 'text', // Assure la sélectabilité du texte
-            whiteSpace: 'nowrap', // Empêche le retour à la ligne
-            willChange: 'transform, left, top'
-          }}
-        >
-          {author.tagline}
-        </Typography>
+            {/* Bouton "Expand the box" à droite */}
+            <IconButton
+              onClick={expandBoxOnClick}
+              aria-label="Expand the box"
+              size="small"
+              sx={{
+                '&:hover': { color: 'primary.main' },
+                color: 'text.secondary',
+              }}
+            >
+              <ExpandMore titleAccess="Expand the box" />
+            </IconButton>
+          </Box>
+        ) : (
+          <>
+            {/* Layout normal pour les autres pages */}
+            <Box
+              component={Link}
+              href="/" 
+              onClick={avatarOnClick}
+              title="back to Home page"
+              sx={{
+                '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
+                  margin: '0 20px 0 0'
+                },
+                '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+                  // Position selon l'état du navigator (.is-aside.open &)
+                  '.is-aside.open &': {
+                    left: '8%',
+                    top: '0'
+                  },
+                  // Styles pour .navigator-in-transition-from.navigator-is-opened
+                  '.navigator-in-transition-from.navigator-is-opened &': {
+                    left: '50%'
+                  },
+                  left: '50%',
+                  marginLeft: '-30px',
+                  position: 'absolute',
+                  
+                  top: '10px',
+                  
+                  transition: 'all 0.5s ease'
+                },
+                display: 'block',
+                float: 'left',
+                margin: '0 12px 0 0',
+                position: 'relative',
+                
+                textDecoration: 'none',
+                
+                // Reproduction exacte des styles avatarLink du theme original
+                willChange: 'left, top'
+              }}
+            >
+              <Avatar
+                src={author.avatar}
+                alt={author.name}
+                sx={{
+                  '& img': {
+                    maxWidth: '100%'
+                  },
+                  // Hover effect exact de l'original
+                  '@media (hover: hover)': {
+                    '&:hover': {
+                      borderRadius: '75% 65%'
+                    }
+                  },
+                  '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
+                    height: '44px',
+                    width: '44px'
+                  },
+                  '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+                    height: '60px',
+                    width: '60px'
+                  },
+                  border: '1px solid #ddd',
+                  borderRadius: '65% 75%',
+                  display: 'inline-block',
+                  
+                  height: '36px',
+                  
+                  overflow: 'hidden',
+                  
+                  transition: 'all 0.3s ease',
+                  
+                  // Reproduction exacte des styles avatar du theme original
+                  width: '36px'
+                }}
+              />
+            </Box>
 
-        {/* Bouton "Expand the box" - styles exacts du theme original */}
-        <IconButton
-          aria-label="Expand the box"
-          onClick={expandOnClick}
-          title="Expand the box"
-          sx={{
-            // Visible uniquement quand .is-aside.open (mode article)
-            '.is-aside.open &': {
-              display: 'block'
-            },
-            color: 'var(--c-text)', // theme.info.colors.text
-            display: 'none',
-            // Reproduction exacte des styles expand du theme original
-            position: 'absolute',
-            right: '-25px',
-            
-            top: '30px'
-          }}
-        >
-          <ExpandMore />
-        </IconButton>
+            {/* Nom de l'auteur - styles selon spécifications exactes */}
+            <Typography
+              component="h1"
+              sx={{
+                '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
+                  fontSize: '27px !important', // Taille selon spécifications
+                  // Garde les éléments groupés même sur tablet
+                  position: 'relative',
+                  textAlign: 'left'
+                },
+                '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+                  // Position selon l'état du navigator (.is-aside.open &)
+                  '.is-aside.open &': {
+                    left: '60%',
+                    textAlign: 'left',
+                    top: '0.5em',
+                    transform: 'none'
+                  },
+                  fontSize: '27px !important', // Nom auteur selon spécifications: 27px
+                  left: '50%',
+                  position: 'absolute',
+                  textAlign: 'center',
+                  top: '85px',
+                  transform: 'translate(-50%)',
+                  transition: 'all 0.5s ease'
+                },
+                // Nom auteur selon spécifications exactes: Open Sans 300, 27px/27px, color #555
+                color: '#555555 !important',
+                float: 'left',
+                fontFamily: '"Open Sans" !important',
+                fontSize: '27px !important',
+                fontWeight: '300 !important',
+                lineHeight: '27px !important',
+                margin: '0 !important',
+                transition: 'all 0.5s ease',
+                // Reproduction exacte des styles title du theme original
+              }}
+            >
+              {author.name.replace(/ /g, '\u00a0')} {/* Non-breaking spaces comme l'original */}
+            </Typography>
+
+            {/* Titre/tagline de l'auteur - élément séparé pour meilleure sélectabilité */}
+            <Typography
+              component="div"
+              className="avatar-title-tagline" // Classe spécifique pour override CSS
+              sx={{
+                // Force l'override de tous les styles externes qui pourraient affecter la line-height
+                '&, & *': {
+                  lineHeight: '16px !important'
+                },
+                '@media (min-width: 768px)': { // theme.mediaQueryTresholds.M
+                  // Garde les éléments groupés même sur tablet
+                  position: 'relative',
+                  textAlign: 'left'
+                },
+                '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+                  // Position selon l'état du navigator (.is-aside.open &)
+                  '.is-aside.open &': {
+                    left: '60%',
+                    textAlign: 'left',
+                    top: '2em', // Positionné sous le nom
+                    transform: 'none'
+                  },
+                  left: '50%',
+                  position: 'absolute',
+                  textAlign: 'center',
+                  top: '115px', // Positionné sous le nom (85px + 27px + 3px de marge)
+                  transform: 'translate(-50%)',
+                  transition: 'all 0.5s ease'
+                },
+                // Titre auteur selon spécifications: Open Sans 300, 16px/16px, color #555
+                color: '#555555 !important',
+                cursor: 'text', // Indication visuelle que le texte est sélectionnable
+                display: 'inline', // Une seule ligne
+                fontFamily: '"Open Sans" !important',
+                fontSize: '16px !important',
+                fontWeight: '300 !important',
+                lineHeight: '16px !important', // Force la line-height à 16px exactement
+                margin: '4px 0 0 0 !important',
+                transition: 'all 0.5s ease',
+                userSelect: 'text', // Assure la sélectabilité du texte
+                whiteSpace: 'nowrap', // Empêche le retour à la ligne
+                willChange: 'transform, left, top'
+              }}
+            >
+              {author.tagline}
+            </Typography>
+
+            {/* Bouton "Expand the box" - styles exacts du theme original */}
+            <IconButton
+              aria-label="Expand the box"
+              onClick={expandOnClick}
+              title="Expand the box"
+              sx={{
+                // Visible uniquement quand .is-aside.open (mode article)
+                '.is-aside.open &': {
+                  display: 'block'
+                },
+                color: 'var(--c-text)', // theme.info.colors.text
+                display: 'none',
+                // Reproduction exacte des styles expand du theme original
+                position: 'absolute',
+                right: '-25px',
+                
+                top: '30px'
+              }}
+            >
+              <ExpandMore />
+            </IconButton>
+          </>
+        )}
       </Box>
+
+      {/* Ligne de séparation entre avatar et contenu - visible uniquement en mode article */}
+      {isArticleView && (
+        <Box
+          sx={{
+            backgroundColor: '#e0e0e0',
+            height: '1px',
+            margin: '15px 10px 8px 10px', // Marge top augmentée pour rabaisser, marges horizontales réduites pour rallonger
+            width: 'calc(100% - 20px)' // Largeur augmentée pour une ligne plus longue
+          }}
+        />
+      )}
 
       {/* Wrapper du contenu avec transitions exactes du original */}
       <Box
@@ -387,7 +497,7 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
           opacity: 1,
           overflowX: 'hidden',
           overflowY: 'auto',
-          padding: '0 40px 0',
+          padding: '0 20px 0',
           // Reproduction exacte des styles wrapper du theme original
           position: 'absolute',
           
@@ -401,11 +511,22 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
           willChange: 'opacity, bottom'
         }}
       >
-        {/* Affichage conditionnel : Info auteur OU Liste des posts */}
-        {/* Reproduit exactement la logique Gatsby : toujours afficher le contenu auteur par défaut */}
-        {/* La liste des posts s'affiche seulement quand showPostsList est true */}
-        {!showPostsList ? (
-          // Contenu auteur (original InfoBox)
+        {/* Affichage conditionnel selon le mode */}
+        {isArticleView ? (
+          <>
+            {/* Section liste des posts */}
+            <Box>
+              {posts.length > 0 ? (
+                <PostsList posts={posts} hideHeader={true} />
+              ) : (
+                <Typography sx={{ color: '#666', fontSize: '0.9em', fontStyle: 'italic' }}>
+                  Aucun article disponible
+                </Typography>
+              )}
+            </Box>
+          </>
+        ) : !showPostsList ? (
+          // Mode normal : Contenu auteur seul (original InfoBox)
           <>
             {/* InfoText - Bio de l'auteur avec styles exacts */}
             <Box
@@ -575,48 +696,6 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
 
             {/* InfoMenu - Menu de navigation */}
             <InfoMenu pages={pages} onLinkClick={menuLinkOnClick} />
-
-            {/* Bouton "Expand the list" en bas - reproduit ListHeader behavior */}
-            {/* N'affiche pas sur la page d'accueil */}
-            {!isHomePage && (
-              <Box
-                sx={{
-                  alignItems: 'center',
-                  borderTop: '1px solid #eeeeee',
-                  bottom: '120px', // Au-dessus du StackIcons
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  left: '40px',
-                  padding: '1em 0',
-                  position: 'absolute',
-                  right: '40px'
-                }}
-              >
-                <Typography
-                  variant="overline"
-                  sx={{
-                    color: '#666666',
-                    fontSize: '0.75em',
-                    fontWeight: 600,
-                    letterSpacing: '0.3em',
-                    textTransform: 'uppercase'
-                  }}
-                >
-                  List of posts
-                </Typography>
-                
-                <IconButton
-                  onClick={expandListOnClick}
-                  title="Expand the list"
-                  sx={{
-                    '&:hover': { color: '#709425' },
-                    color: '#666666'
-                  }}
-                >
-                  <ExpandMore />
-                </IconButton>
-              </Box>
-            )}
           </>
         ) : (
           // Liste des posts (remplace le contenu auteur)
@@ -658,16 +737,16 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
             </Box>
 
             {/* Liste des posts dans la sidebar */}
-            <PostsList posts={posts} />
+            <PostsList posts={posts} hideHeader={false} />
           </>
         )}
 
         {/* StackIcons - Tech Stack en bas avec styles exacts du theme original */}
-        {!showPostsList && (
+        {!showPostsList && !isArticleView && (
           <Box
             sx={{
               '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
-                bottom: 0,
+                bottom: 0, // Revient tout en bas car plus de section "List of posts"
                 display: 'block',
                 left: 0,
                 padding: '1em 2em',
@@ -736,4 +815,8 @@ export default function InfoBox({ pages, parts: _parts, posts = [] }: InfoBoxPro
       </Box>
     </Box>
   )
-}
+})
+
+InfoBox.displayName = 'InfoBox'
+
+export default InfoBox

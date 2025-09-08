@@ -6,10 +6,11 @@
 
 import { ExpandMore } from '@mui/icons-material'
 import { Box, Typography, List, ListItem, ListItemButton, Avatar, IconButton } from '@mui/material'
-import Link from 'next/link'
 import React from 'react'
 
+import { useArticleNavigation } from '@/hooks/useArticleNavigation'
 import { useGatsbyUIStore } from '@/store/gatsby-ui-store'
+import { getArticleAvatar } from '@/utils/articleImages'
 
 interface Post {
   id: string
@@ -24,12 +25,13 @@ interface Post {
 
 interface PostsListProps {
   posts: Post[]
+  hideHeader?: boolean // Nouveau: permet de masquer l'en-tête
 }
 
-export default function PostsList({ posts }: PostsListProps) {
+export default function PostsList({ hideHeader = false, posts }: PostsListProps) {
+  const { navigateToArticle } = useArticleNavigation()
   const { 
     categoryFilter, 
-    moveNavigatorAside, 
     navigatorPosition,
     navigatorShape,
     setNavigatorShape 
@@ -38,8 +40,8 @@ export default function PostsList({ posts }: PostsListProps) {
   // Debug : vérifier que les posts arrivent bien
   console.log('PostsList - posts reçus:', posts.length, posts)
 
-  const linkOnClick = () => {
-    moveNavigatorAside() // Navigation vers un article
+  const linkOnClick = (slug: string) => {
+    navigateToArticle(slug) // Utilise la navigation avec animations
   }
 
   const expandOnClick = () => {
@@ -65,55 +67,103 @@ export default function PostsList({ posts }: PostsListProps) {
             display: 'none',
           },
           '& .post-title': {
-            fontSize: '1em !important',
-            fontWeight: 400,
+            color: 'rgb(85, 85, 85) !important',
+            fontFamily: '"Open Sans" !important',
+            fontSize: '16px !important',
+            fontStyle: 'normal !important',
+            fontWeight: '400 !important',
+            lineHeight: '18px !important'
           }
         },
         display: 'flex',
         flexDirection: 'column',
         height: '100%',
-        p: 2,
+        p: 0, // Supprime le padding pour utiliser toute la largeur
         width: '100%'
       }}
       className={`${navigatorPosition} ${navigatorShape}`}
     >
       {/* Header avec bouton expand (reproduit ListHeader.js) */}
-      <Box
-        sx={{
-          alignItems: 'center',
-          borderBottom: '1px solid #eeeeee',
-          display: 'flex',
-          justifyContent: 'space-between',
-          mb: 2,
-          pb: 1
-        }}
-      >
-        <Typography
-          variant="overline"
+      {!hideHeader && (
+        <Box
           sx={{
-            fontSize: '0.75em',
-            fontWeight: 600,
-            letterSpacing: '0.3em',
-            textTransform: 'uppercase'
+            alignItems: 'center',
+            borderBottom: '1px solid #eeeeee',
+            display: 'flex',
+            justifyContent: 'space-between',
+            mb: 2,
+            mx: 1.5, // Marges horizontales pour aligner avec le contenu
+            pb: 1
           }}
         >
-          Latest Posts
-        </Typography>
-        
-        {navigatorShape === 'closed' && (
-          <IconButton
-            onClick={expandOnClick}
-            aria-label="Expand the list"
-            size="small"
-            sx={{
-              '&:hover': { color: 'primary.main' },
-              color: 'text.secondary',
-            }}
-          >
-            <ExpandMore titleAccess="Expand the list" />
-          </IconButton>
-        )}
-      </Box>
+          <Box>
+            {categoryFilter === 'all posts' ? (
+              <Typography
+                variant="overline"
+                sx={{
+                  fontSize: '0.75em',
+                  fontWeight: 600,
+                  letterSpacing: '0.3em',
+                  textTransform: 'uppercase'
+                }}
+              >
+                Latest Posts
+              </Typography>
+            ) : (
+              <Box>
+                <Typography
+                  variant="overline"
+                  sx={{
+                    color: 'primary.main',
+                    fontSize: '0.65em',
+                    fontWeight: 600,
+                    letterSpacing: '0.3em',
+                    textTransform: 'uppercase'
+                  }}
+                >
+                  Active category filter
+                </Typography>
+                <Typography
+                  variant="h6"
+                  sx={{
+                    fontSize: '0.85em',
+                    fontWeight: 600,
+                    letterSpacing: '0.1em',
+                    mt: 0.2,
+                    textTransform: 'capitalize'
+                  }}
+                >
+                  {categoryFilter}
+                </Typography>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: 'text.secondary',
+                    display: 'block',
+                    fontSize: '0.7em'
+                  }}
+                >
+                  {filteredPosts.length} article{filteredPosts.length > 1 ? 's' : ''}
+                </Typography>
+              </Box>
+            )}
+          </Box>
+          
+          {navigatorShape === 'closed' && (
+            <IconButton
+              onClick={expandOnClick}
+              aria-label="Expand the list"
+              size="small"
+              sx={{
+                '&:hover': { color: 'primary.main' },
+                color: 'text.secondary',
+              }}
+            >
+              <ExpandMore titleAccess="Expand the list" />
+            </IconButton>
+          )}
+        </Box>
+      )}
 
       {/* Liste des posts reproduisant ListItem.js */}
       <List
@@ -123,20 +173,20 @@ export default function PostsList({ posts }: PostsListProps) {
             p: 0,
           },
           '& .MuiListItem-root:not(:last-child)': {
-            mb: 2,
+            mb: '0.4em',
           },
           flexGrow: 1,
           overflow: 'auto',
           p: 0
         }}
       >
-        {filteredPosts.slice(0, 10).map((post) => (
+        {filteredPosts.map((post) => (
           <ListItem key={post.id}>
-            <Link
-              href={post.slug}
-              onClick={linkOnClick}
+            <div
+              onClick={() => linkOnClick(post.slug)}
               style={{
                 color: 'inherit',
+                cursor: 'pointer',
                 display: 'block',
                 textDecoration: 'none',
                 width: '100%'
@@ -145,49 +195,54 @@ export default function PostsList({ posts }: PostsListProps) {
               <ListItemButton
                 sx={{
                   '&:hover': {
-                    // Animation hover exacte Gatsby v1 : inversion borderRadius
+                    // Animation hover améliorée pour les vignettes rondes
                     '& .post-image': {
-                      borderRadius: '65% 75% !important'
+                      boxShadow: '0 4px 16px rgba(244, 67, 54, 0.3)',
+                      transform: 'scale(1.05)'
                     },
-                    backgroundColor: 'rgba(0, 0, 0, 0.04)'
+                    backgroundColor: 'rgba(244, 67, 54, 0.05)'
                   },
                   alignItems: 'flex-start',
                   borderRadius: 1,
                   flexDirection: 'row',
-                  gap: 1.5,
-                  p: 1.5
+                  gap: '1em',
+                  p: '0.5em 0.8em', // Réduit le padding pour optimiser l'espace
+                  transition: 'all 0.2s ease',
+                  width: '100%' // Assure que le bouton utilise toute la largeur
                 }}
               >
-                {/* Image de l'article (reproduit listItemPointer) */}
-                {post.cover && (
-                  <Avatar
-                    src={post.cover}
-                    alt=""
-                    className="post-image"
-                    sx={{
-                      // Breakpoints exacts Gatsby v1
-                      '@media (min-width: 600px)': { // theme.mediaQueryTresholds.M
-                        height: 80,
-                        width: 80,
-                      },
-                      '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
-                        height: 90,
-                        transition: 'all 0.3s ease', // Plus rapide sur desktop
-                        width: 90,
-                      },
-                      border: '1px solid #ddd', // Bordure grise fine comme l'original
-                      borderRadius: '75% 65%', // Forme par défaut Gatsby v1
-                      flexShrink: 0,
-                      height: 60, // Base mobile Gatsby v1
-                      objectFit: 'cover',
-                      objectPosition: 'center',
-                      overflow: 'hidden',
-                      position: 'relative',
-                      transition: 'all 0.5s ease', // Transition lente comme Gatsby v1
-                      width: 60
-                    }}
-                  />
-                )}
+                {/* Image de l'article (reproduit listItemPointer) avec getArticleAvatar */}
+                <Avatar
+                  src={getArticleAvatar(post.category || '', post.cover || '')}
+                  alt={post.title}
+                  className="post-image"
+                  sx={{
+                    // Breakpoints exacts Gatsby v1 - tailles réduites de moitié
+                    '@media (min-width: 600px)': { // theme.mediaQueryTresholds.M
+                      height: 32.5, // 65/2
+                      width: 32.5,
+                    },
+                    '@media (min-width: 1024px)': { // theme.mediaQueryTresholds.L
+                      height: 37.5, // 75/2
+                      transition: 'all 0.3s ease', // Plus rapide sur desktop
+                      width: 37.5,
+                    },
+                    border: '2px solid #ffffff', // Bordure blanche pour ressortir
+                    borderRadius: '50%', // Forme ronde comme demandé
+                    boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15)', // Ombre pour profondeur
+                    flexShrink: 0,
+                    height: 25, // Base mobile Gatsby v1 - 50/2
+                    objectFit: 'cover',
+                    objectPosition: 'center',
+                    overflow: 'hidden',
+                    position: 'relative',
+                    transition: 'all 0.3s ease', // Transition plus rapide
+                    width: 50
+                  }}
+                >
+                  {/* Fallback avec première lettre du titre */}
+                  {post.title.charAt(0).toUpperCase()}
+                </Avatar>
 
                 {/* Texte de l'article (reproduit listItemText) */}
                 <Box
@@ -202,46 +257,26 @@ export default function PostsList({ posts }: PostsListProps) {
                     className="post-title post-list-title"
                     component="h3"
                     sx={{
-                      color: 'rgb(85, 85, 85)',
+                      color: 'rgb(85, 85, 85) !important',
                       display: '-webkit-box',
-                      fontFamily: '"Open Sans"',
-                      fontSize: '27px',
-                      fontWeight: 600,
-                      letterSpacing: '-0.04em',
-                      lineHeight: '31px',
+                      fontFamily: '"Open Sans" !important',
+                      fontSize: '16px !important', // Nouvelle taille selon spécifications
+                      fontStyle: 'normal !important', // Style normal
+                      fontWeight: '400 !important', // Poids 400 selon spécifications
+                      letterSpacing: '-0.02em',
+                      lineHeight: '18px !important', // Hauteur de ligne selon spécifications
                       m: 0,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       WebkitBoxOrient: 'vertical',
-                      WebkitLineClamp: 2
+                      WebkitLineClamp: 2 // Max 2 lignes
                     }}
                   >
                     {post.title}
                   </Typography>
-                  
-                  {post.subtitle && (
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        color: 'rgb(85, 85, 85) !important', // Exact selon styles.txt
-                        display: '-webkit-box',
-                        fontFamily: '"Open Sans" !important', // Exact selon styles.txt
-                        fontSize: '23px !important', // Exact selon styles.txt
-                        fontWeight: '300 !important', // Exact selon styles.txt
-                        lineHeight: '27px !important', // Exact selon styles.txt
-                        mt: 0.3,
-                        overflow: 'hidden',
-                        textOverflow: 'ellipsis',
-                        WebkitBoxOrient: 'vertical',
-                        WebkitLineClamp: 1
-                      }}
-                    >
-                      {post.subtitle}
-                    </Typography>
-                  )}
                 </Box>
               </ListItemButton>
-            </Link>
+            </div>
           </ListItem>
         ))}
       </List>
@@ -252,6 +287,7 @@ export default function PostsList({ posts }: PostsListProps) {
           sx={{
             borderTop: '1px solid #eeeeee',
             mt: 2,
+            mx: 1.5, // Marges horizontales pour aligner avec le contenu
             pt: 2,
             textAlign: 'center'
           }}
