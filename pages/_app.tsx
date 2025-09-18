@@ -9,6 +9,9 @@ import '../src/styles/scrollbar-hidden.css' // Masquage complet des barres de d�
 import '../src/styles/typography.css' // Styles généraux
 import '../src/styles/subtitle-force.css' // FORCE ABSOLUE - Dernier import
 import '../src/styles/avatar-title-override.css' // Override spécifique pour le titre de l'avatar
+import NavigationLayout from '../src/components/layout/NavigationLayout'
+// Redux Provider et Layout Navigation
+import ReduxProvider from '../src/components/providers/ReduxProvider'
 
 // Composant wrapper pour utiliser le hook
 function AppWrapper({ Component, pageProps }: { Component: React.ComponentType<Record<string, unknown>>; pageProps: Record<string, unknown> }) {
@@ -24,7 +27,7 @@ export default function MyApp(props: {
 	const { Component, pageProps } = props
 	
 	return (
-		<>
+		<ReduxProvider>
 			<Head>
 				<meta
 					name='viewport'
@@ -32,8 +35,10 @@ export default function MyApp(props: {
 				/>
 			</Head>
 			<main style={{ fontFamily: '"Open Sans"' }}>
-				<AppWrapper Component={Component} pageProps={pageProps} />
+				<NavigationLayout>
+					<AppWrapper Component={Component} pageProps={pageProps} />
+				</NavigationLayout>
 			</main>
-		</>
+		</ReduxProvider>
 	)
 }

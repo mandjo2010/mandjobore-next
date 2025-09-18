@@ -1,0 +1,57 @@
+/* Styles adaptés du code Gatsby v1 original */
+
+.infoBox {
+  display: none;
+}
+
+.wrapper {
+  position: absolute;
+  top: 170px;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 40px 0;
+  will-change: opacity, bottom;
+  transition: bottom 0.5s 0s;
+  opacity: 1;
+  transition-timing-function: ease;
+}
+
+/* Styles pour écrans larges - seuil à 1024px comme dans Gatsby */
+@media (min-width: 1024px) {
+  .infoBox {
+    display: block;
+    color: #555555;
+    background: #ffffff;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 320px;
+    height: 100%;
+    padding: 20px 40px;
+    z-index: 2;
+  }
+  
+  /* Bordure droite comme dans l'original */
+  .infoBox::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 20px;
+    bottom: 20px;
+    width: 1px;
+    border-right: 1px solid #dedede;
+  }
+}
+
+/* États de navigation - reproduit exactement les classes Gatsby */
+.infoBox.is-aside.closed .wrapper {
+  bottom: 80px;
+}
+
+/* Responsive - ajustements pour tablettes */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .wrapper {
+    padding: 0 30px 0;
+  }
+}

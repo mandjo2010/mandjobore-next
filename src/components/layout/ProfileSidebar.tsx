@@ -2,8 +2,8 @@ import { useMediaQuery, useTheme } from '@mui/material'
 import { Github, Linkedin, Facebook, Twitter } from 'lucide-react'
 import Image from 'next/image'
 
-import animations from '@/styles/AdvancedAnimations.module.css'
 import authorConfig from '@/config/author'
+import animations from '@/styles/AdvancedAnimations.module.css'
 
 import InfoMenu from './InfoMenu'
 import OrganicProfileBar from './OrganicProfileBar'
@@ -87,7 +87,7 @@ export default function ProfileSidebar({ isHorizontal }: ProfileSidebarProps) {
       </div>
 
       <div className={`${styles.builtWith} ${animations.lazyLoadElement}`}>
-        <p className={styles.builtTitle}>BUILT WITH:</p>
+        <p className={styles.builtTitle} style={{ textTransform: 'none' }}>built with:</p>
         <ul className={styles.builtGrid}>
           {techStack.map((tech, index) => (
             <li key={tech.name}>

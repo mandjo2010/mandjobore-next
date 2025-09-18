@@ -164,7 +164,7 @@ h1.authorName,
   color: #666;
   margin: 0 0 12px 0;
   text-align: center;
-  text-transform: uppercase;
+  text-transform: none !important;
   letter-spacing: 0.5px;
 }
 
@@ -313,7 +313,7 @@ h1.authorName,
   color: #666;
   margin: 0;
   white-space: nowrap;
-  text-transform: uppercase;
+  text-transform: none !important;
   letter-spacing: 0.5px;
 }
 

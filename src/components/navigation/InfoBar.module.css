@@ -1,0 +1,82 @@
+/* Styles du InfoBar adaptés du code Gatsby v1 */
+
+.infoBar {
+  position: absolute;
+  background: #ffffff;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 64px;
+  z-index: 3;
+  border-bottom: 1px solid #dedede;
+}
+
+.infoBar::before {
+  border-top: 1px solid #dedede;
+}
+
+.title {
+  float: left;
+  margin: 10px 0 0 15px;
+  color: #555555;
+  font-size: 1.1em;
+  font-weight: 600;
+}
+
+.title a {
+  text-decoration: none;
+  color: inherit;
+}
+
+.title small {
+  display: block;
+  font-size: 0.7em;
+  font-weight: 300;
+  color: #666;
+  margin-top: 0.2em;
+}
+
+.avatarLink {
+  display: block;
+  float: left;
+  margin: 13px 0 0 30px;
+  text-decoration: none;
+}
+
+.avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 65% 75%;
+  border: 1px solid #ddd;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.avatar:hover {
+  border-color: #709425;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Masquer sur les grands écrans comme dans Gatsby */
+@media (min-width: 1024px) {
+  .infoBar {
+    display: none;
+  }
+}
+
+/* Ajustements pour tablettes */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .title {
+    margin: 12px 0 0 20px;
+    font-size: 1.2em;
+  }
+  
+  .avatarLink {
+    margin: 14px 0 0 40px;
+  }
+}

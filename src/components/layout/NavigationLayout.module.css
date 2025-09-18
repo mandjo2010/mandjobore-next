@@ -1,0 +1,53 @@
+/* Styles du NavigationLayout - reproduit l'architecture Gatsby v1 */
+
+.layoutWrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.mainContent {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  padding-top: 64px; /* Hauteur de l'InfoBar mobile */
+  transition: margin-left 0.5s ease;
+}
+
+/* Styles pour écrans larges - marge pour la sidebar comme dans Gatsby */
+@media (min-width: 1024px) {
+  .mainContent {
+    margin-left: 320px; /* Largeur de l'InfoBox */
+    padding-top: 0;
+  }
+  
+  /* États de navigation - reproduit les classes Gatsby */
+  .layoutWrapper.is-featured .mainContent {
+    margin-left: 0;
+  }
+  
+  .layoutWrapper.moving-featured .mainContent {
+    margin-left: 160px; /* Transition partielle */
+  }
+}
+
+/* Animations de transition */
+.layoutWrapper.is-aside .mainContent {
+  transition: margin-left 0.5s ease;
+}
+
+.layoutWrapper.is-featured .mainContent {
+  transition: margin-left 0.5s ease;
+}
+
+.layoutWrapper.moving-featured .mainContent {
+  transition: margin-left 0.3s ease;
+}
+
+/* Responsive - ajustements pour tablettes */
+@media (min-width: 600px) and (max-width: 1023px) {
+  .mainContent {
+    padding-top: 70px;
+  }
+}
